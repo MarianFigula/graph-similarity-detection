@@ -40,3 +40,8 @@ class GUIUtil:
             component.pack()  # Default to pack if no grid options are provided
 
         return component
+
+    @staticmethod
+    def removeWindow(root):
+        for widget in root.winfo_children():
+            widget.destroy()

@@ -1,6 +1,6 @@
 import customtkinter as ctk
 
-from GUIChooseOptions import GUIChooseOptions
+from UI.GUIChooseOptions import GUIChooseOptions
 
 
 if __name__ == "__main__":

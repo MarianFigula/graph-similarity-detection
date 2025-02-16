@@ -1,14 +1,13 @@
-from tkinter import filedialog
 import customtkinter as ctk
 
-from GUITrainNeuralNetwork import GUITrainNeuralNetwork
-from GUIUtil import GUIUtil
+from UI.GUITrainNeuralNetwork import GUITrainNeuralNetwork
+from UI.GUIUtil import GUIUtil
 
 
-class GUIChooseOptions():
+class GUIChooseOptions:
     def __init__(self, root):
         self.root = root
-        self.root.title("Choose Options")
+        self.root.title("Choose options")
         self.root.geometry("315x80")
         self.root.fontTitle = ("Lato", 16)
         self.guiUtil = GUIUtil()
@@ -21,7 +20,7 @@ class GUIChooseOptions():
             self.root,
             component_type="Label",
             grid_options={"row": 0, "column": 0, "columnspan": 7, "sticky": "n","padx": 30, "pady": 5},
-            text="Choose Option you want to perform",
+            text="Choose an option you want to perform:",
             font=self.guiUtil.fontTitle,
             anchor="center"
         )
@@ -46,9 +45,10 @@ class GUIChooseOptions():
         pass
 
     def __runTrainNeuralNetwork(self):
-        self.root.quit()
-        root = ctk.CTk()  # Use CTk instead of Tk for the main window
-        app = GUITrainNeuralNetwork(root)
+        self.guiUtil.removeWindow(root=self.root)
+
+        # Create the new GUI in the same root window
+        app = GUITrainNeuralNetwork(self.root)
         app.run()
 
     def run(self):
