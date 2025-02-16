@@ -2,6 +2,7 @@ import os
 from tkinter import filedialog, IntVar
 import customtkinter as ctk
 
+from BusinessLogic.DataVisualiser.DataVisualiser import DataVisualiser
 from GUI.GUIUtil import GUIUtil
 from BusinessLogic.ProcessFiles.ProcessFiles import ProcessFiles
 import GUI.GUIConstants as guiconst
@@ -17,7 +18,7 @@ class GUITrainNeuralNetwork:
         self.root.font = ("Lato", 12)
         self.root.smallFont = ("Lato", 10)
         self.guiUtil = GUIUtil()
-        self.process_files = ProcessFiles()
+        self.process_files = None
         self.root.grid_columnconfigure(1, weight=1)  # Make the column expand to center content
         self.root.grid_columnconfigure(2, weight=1)  # Make the column expand to center content
         self.root.grid_columnconfigure(3, weight=1)  # Make the column expand to center content
@@ -76,6 +77,7 @@ class GUITrainNeuralNetwork:
             button.configure(state="disabled")
 
     def __processFiles(self, input_folder_path, output_folder_path, is_out_files=False):
+        # self.progress_bar.start()
         print("input_folder_path:", input_folder_path)
         print("output_folder_path:", output_folder_path)
         print("is_orca_files:", is_out_files)
@@ -87,6 +89,10 @@ class GUITrainNeuralNetwork:
             is_out_files=is_out_files)
 
         self.process_files.process()
+        self.show_graphs_button.configure(state="normal")
+
+        # self.progress_bar.set(100)
+        # self.progress_bar.stop()
 
     def __createProcessingDataFrame(self):
         """Input"""
@@ -215,7 +221,7 @@ class GUITrainNeuralNetwork:
             command=lambda: self.__processFiles(self.input_entry.get(), self.output_entry.get(), bool(out_files_val.get())),
         )
 
-        self.guiUtil.add_component(
+        self.show_graphs_button = self.guiUtil.add_component(
             self,
             component_type="Button",
             text="Show graphs",
@@ -227,8 +233,18 @@ class GUITrainNeuralNetwork:
             fg_color=guiconst.COLOR_GREY,
             hover_color=guiconst.COLOR_GREY_HOVER,
             state="disabled",
-            command="",
+            command=lambda: DataVisualiser(
+                self.process_files.get_orbit_counts_df(),
+            ).visualize()
         )
+
+        # self.progress_bar = self.guiUtil.add_component(
+        #     self,
+        #     component_type="Progressbar",
+        #     frame=self.process_data_frame,
+        #     grid_options={"row": 7, "column": 0, "columnspan": 2, "sticky": "ew", "padx": 10, "pady": (15, 0)}
+        # )
+        # self.progress_bar.set(0)
 
     def run(self):
         self.__addHeader()

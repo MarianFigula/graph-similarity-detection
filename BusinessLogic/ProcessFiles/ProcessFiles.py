@@ -118,3 +118,7 @@ class ProcessFiles:
                 f"{self.output_folder_path}/{GRAPHLETS_COUNTS_FILE_NAME}",
                 encoding="utf-8",
             )
+        return True
+
+    def get_orbit_counts_df(self):
+        return self.__orbit_counts_df
