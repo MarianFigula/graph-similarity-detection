@@ -1,6 +1,7 @@
 import customtkinter as ctk
 
 from UI.GUITrainNeuralNetwork import GUITrainNeuralNetwork
+from UI.GUICompareNetworks import GUICompareNetworks
 from UI.GUIUtil import GUIUtil
 
 
@@ -42,8 +43,9 @@ class GUIChooseOptions:
         )
 
     def __runCompareNetworks(self):
-        pass
-
+        self.guiUtil.removeWindow(root=self.root)
+        app = GUICompareNetworks(self.root)
+        app.run()
     def __runTrainNeuralNetwork(self):
         self.guiUtil.removeWindow(root=self.root)
 

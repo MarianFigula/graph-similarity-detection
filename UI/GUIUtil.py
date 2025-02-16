@@ -1,7 +1,9 @@
 import customtkinter as ctk
 
+
 class GUIUtil:
     fontTitle = ("Lato", 16)
+
     def __init__(self):
         pass
 

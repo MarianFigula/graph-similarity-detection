@@ -2,20 +2,14 @@ from tkinter import filedialog
 import customtkinter as ctk
 
 from UI.GUIUtil import GUIUtil
+import GUIConstants as guiconst
 
-
-COLOR_GREY = "#7d8597"
-COLOR_GREY_HOVER = "#979dac"
-COLOR_GREEN = "#38b000"
-COLOR_GREEN_HOVER = "#008000"
-COLOR_RED = "#e63946"
-COLOR_RED_HOVER = "#d90429"
 
 
 class GUITrainNeuralNetwork:
     def __init__(self, root):
         self.root = root
-        self.root.title("App")
+        self.root.title("Train neural network")
         self.root.geometry("1000x300")
         self.root.fontTitle = ("Lato", 16)
         self.root.font = ("Lato", 12)
@@ -33,7 +27,6 @@ class GUITrainNeuralNetwork:
         self.process_data_frame = ctk.CTkFrame(self.root, width=300, height=300)
         self.process_data_frame.grid(row=1, column=0, padx=10, pady=10, sticky="ns")  # No horizontal expansion
 
-
     def __goBackToOptions(self):
         self.guiUtil.removeWindow(root=self.root)
         # Create the new GUI in the same root window
@@ -50,11 +43,10 @@ class GUITrainNeuralNetwork:
             command=lambda: self.__goBackToOptions(),
             grid_options={"row": 0, "column": 0, "columnspan": 1, "sticky": "n", "pady": 10},
             font=self.root.font,
-            fg_color=COLOR_GREY,
-            hover_color=COLOR_GREY_HOVER,
+            fg_color=guiconst.COLOR_GREY,
+            hover_color=guiconst.COLOR_GREY_HOVER,
             width=30,
             height=25
-
 
         )
         self.guiUtil.add_component(
@@ -122,8 +114,8 @@ class GUITrainNeuralNetwork:
             grid_options={"row": 4, "column": 0, "sticky": "w", "padx": 10},
             font=self.root.font,
             width=50,
-            fg_color=COLOR_RED,
-            hover_color=COLOR_RED_HOVER,
+            fg_color=guiconst.COLOR_RED,
+            hover_color=guiconst.COLOR_RED_HOVER,
             command=lambda: self.__removeDirectory(self.input_entry, self.process_files_button)
         )
 
@@ -168,8 +160,8 @@ class GUITrainNeuralNetwork:
             grid_options={"row": 4, "column": 1, "sticky": "w"},
             font=self.root.font,
             width=50,
-            fg_color=COLOR_RED,
-            hover_color=COLOR_RED_HOVER,
+            fg_color=guiconst.COLOR_RED,
+            hover_color=guiconst.COLOR_RED_HOVER,
             command=lambda: self.__removeDirectory(self.output_entry)
         )
 
@@ -185,8 +177,8 @@ class GUITrainNeuralNetwork:
             checkbox_width=18,
             checkbox_height=17,
             corner_radius=7,
-            fg_color=COLOR_GREEN,
-            hover_color=COLOR_GREEN_HOVER,
+            fg_color=guiconst.COLOR_GREEN,
+            hover_color=guiconst.COLOR_GREEN_HOVER,
             border_width=2
         )
 
@@ -199,8 +191,8 @@ class GUITrainNeuralNetwork:
             font=self.root.font,
             width=50,
             height=25,
-            fg_color=COLOR_GREY,
-            hover_color=COLOR_GREY_HOVER,
+            fg_color=guiconst.COLOR_GREY,
+            hover_color=guiconst.COLOR_GREY_HOVER,
             state="disabled",
             command="",
         )
@@ -214,8 +206,8 @@ class GUITrainNeuralNetwork:
             font=self.root.font,
             width=50,
             height=25,
-            fg_color=COLOR_GREY,
-            hover_color=COLOR_GREY_HOVER,
+            fg_color=guiconst.COLOR_GREY,
+            hover_color=guiconst.COLOR_GREY_HOVER,
             state="disabled",
             command="",
         )
