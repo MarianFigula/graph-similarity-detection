@@ -33,40 +33,6 @@ class GUITrainNeuralNetwork:
         self.process_data_frame = ctk.CTkFrame(self.root, width=300, height=300)
         self.process_data_frame.grid(row=1, column=0, padx=10, pady=10, sticky="ns")  # No horizontal expansion
 
-    def __add_component(self, component_type, frame=None, grid_options=None, **kwargs):
-        """
-        Adds a component to the window.
-
-        Args:
-            component_type (str): The type of component to add (e.g., "Label", "Button", "Entry").
-            grid_options (dict): A dictionary containing grid options (e.g., {"row": 0, "column": 0}).
-            **kwargs: Additional keyword arguments to configure the component.
-        """
-        # Create the component based on the type
-        if component_type == "Label":
-            component = ctk.CTkLabel(frame, **kwargs)
-        elif component_type == "Button":
-            component = ctk.CTkButton(frame, **kwargs)
-        elif component_type == "Entry":
-            component = ctk.CTkEntry(frame, **kwargs)
-        elif component_type == "Checkbutton":
-            component = ctk.CTkCheckBox(frame, **kwargs)
-        elif component_type == "Radiobutton":
-            component = ctk.CTkRadioButton(frame, **kwargs)
-        elif component_type == "Combobox":
-            component = ctk.CTkComboBox(frame, **kwargs)
-        elif component_type == "Text":
-            component = ctk.CTkTextbox(frame, **kwargs)
-        else:
-            raise ValueError(f"Unsupported component type: {component_type}")
-
-        # Place the component in the grid
-        if grid_options:
-            component.grid(**grid_options)
-        else:
-            component.pack()  # Default to pack if no grid options are provided
-
-        return component
 
     def __goBackToOptions(self):
         self.guiUtil.removeWindow(root=self.root)
@@ -76,25 +42,27 @@ class GUITrainNeuralNetwork:
         app.run()
 
     def __addHeader(self):
-        self.__add_component(
+        self.guiUtil.add_component(
+            self,
             component_type="Button",
             frame=self.root,
             text="< Back to options",
             command=lambda: self.__goBackToOptions(),
             grid_options={"row": 0, "column": 0, "columnspan": 1, "sticky": "n", "pady": 10},
-            font=self.root.smallFont,
+            font=self.root.font,
             fg_color=COLOR_GREY,
             hover_color=COLOR_GREY_HOVER,
             width=30,
-            height=20
+            height=25
 
 
         )
-        self.__add_component(
+        self.guiUtil.add_component(
+            self,
             component_type="Label",
             frame=self.root,
             text="Train Neural Network",
-            grid_options={"row": 0, "column": 0, "columnspan": 7, "sticky": "n", "pady": 10},
+            grid_options={"row": 0, "column": 0, "columnspan": 7, "sticky": "n", "pady": 5},
             font=self.root.fontTitle
         )
 
@@ -115,7 +83,8 @@ class GUITrainNeuralNetwork:
     def __createProcessingDataFrame(self):
         """Input"""
 
-        self.__add_component(
+        self.guiUtil.add_component(
+            self,
             component_type="Label",
             frame=self.process_data_frame,
             text="Input directory",
@@ -124,7 +93,8 @@ class GUITrainNeuralNetwork:
             anchor="center"
         )
 
-        self.input_entry = self.__add_component(
+        self.input_entry = self.guiUtil.add_component(
+            self,
             component_type="Entry",
             frame=self.process_data_frame,
             grid_options={"row": 2, "column": 0, "sticky": "w", "padx": 10},
@@ -133,7 +103,8 @@ class GUITrainNeuralNetwork:
             height=20
         )
 
-        self.__add_component(
+        self.guiUtil.add_component(
+            self,
             component_type="Button",
             frame=self.process_data_frame,
             text="Select input directory",
@@ -143,7 +114,8 @@ class GUITrainNeuralNetwork:
             command=lambda: self.__select_directory(self.input_entry, self.process_files_button)
         )
 
-        self.__add_component(
+        self.guiUtil.add_component(
+            self,
             component_type="Button",
             frame=self.process_data_frame,
             text="Reset input directory",
@@ -157,7 +129,8 @@ class GUITrainNeuralNetwork:
 
         """Output"""
 
-        self.__add_component(
+        self.guiUtil.add_component(
+            self,
             component_type="Label",
             frame=self.process_data_frame,
             text="Output directory",
@@ -166,7 +139,8 @@ class GUITrainNeuralNetwork:
             anchor="w"
         )
 
-        self.output_entry = self.__add_component(
+        self.output_entry = self.guiUtil.add_component(
+            self,
             component_type="Entry",
             frame=self.process_data_frame,
             grid_options={"row": 2, "column": 1, "sticky": "w", "padx": (0, 10), "pady": 5},
@@ -175,7 +149,8 @@ class GUITrainNeuralNetwork:
             height=20
         )
 
-        self.__add_component(
+        self.guiUtil.add_component(
+            self,
             component_type="Button",
             frame=self.process_data_frame,
             text="Select output directory",
@@ -185,7 +160,8 @@ class GUITrainNeuralNetwork:
             command=lambda: self.__select_directory(self.output_entry)
         )
 
-        self.__add_component(
+        self.guiUtil.add_component(
+            self,
             component_type="Button",
             frame=self.process_data_frame,
             text="Reset output directory",
@@ -199,7 +175,8 @@ class GUITrainNeuralNetwork:
 
         """Is Orca files checkbox"""
 
-        self.__add_component(
+        self.guiUtil.add_component(
+            self,
             component_type="Checkbutton",
             frame=self.process_data_frame,
             text="Data are Orca files",
@@ -213,7 +190,8 @@ class GUITrainNeuralNetwork:
             border_width=2
         )
 
-        self.process_files_button = self.__add_component(
+        self.process_files_button = self.guiUtil.add_component(
+            self,
             component_type="Button",
             frame=self.process_data_frame,
             text="Process files",
@@ -227,7 +205,8 @@ class GUITrainNeuralNetwork:
             command="",
         )
 
-        self.__add_component(
+        self.guiUtil.add_component(
+            self,
             component_type="Button",
             text="Show graphs",
             frame=self.process_data_frame,
@@ -244,9 +223,10 @@ class GUITrainNeuralNetwork:
     def run(self):
         self.__addHeader()
         self.__createProcessingDataFrame()
+        self.root.mainloop()
 
 
-# if __name__ == "__main__":
-#     root = ctk.CTk()  # Use CTk instead of Tk for the main window
-#     app = GUITrainNeuralNetwork(root)
-#     app.run()
+if __name__ == "__main__":
+    root = ctk.CTk()  # Use CTk instead of Tk for the main window
+    app = GUITrainNeuralNetwork(root)
+    app.run()
