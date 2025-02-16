@@ -1,8 +1,9 @@
 from tkinter import filedialog
 import customtkinter as ctk
 
-from UI.GUIUtil import GUIUtil
-import GUIConstants as guiconst
+from GUI.GUIUtil import GUIUtil
+import GUI.GUIConstants as guiconst
+
 class GUICompareNetworks:
     def __init__(self, root):
         self.root = root
@@ -27,7 +28,7 @@ class GUICompareNetworks:
     def __goBackToOptions(self):
         self.guiUtil.removeWindow(root=self.root)
         # Create the new GUI in the same root window
-        from UI.GUIChooseOptions import GUIChooseOptions
+        from GUI.GUIChooseOptions import GUIChooseOptions
         app = GUIChooseOptions(self.root)
         app.run()
 

@@ -1,8 +1,10 @@
-from tkinter import filedialog
+import os
+from tkinter import filedialog, IntVar
 import customtkinter as ctk
 
-from UI.GUIUtil import GUIUtil
-import GUIConstants as guiconst
+from GUI.GUIUtil import GUIUtil
+from BusinessLogic.ProcessFiles.ProcessFiles import ProcessFiles
+import GUI.GUIConstants as guiconst
 
 
 
@@ -15,6 +17,7 @@ class GUITrainNeuralNetwork:
         self.root.font = ("Lato", 12)
         self.root.smallFont = ("Lato", 10)
         self.guiUtil = GUIUtil()
+        self.process_files = ProcessFiles()
         self.root.grid_columnconfigure(1, weight=1)  # Make the column expand to center content
         self.root.grid_columnconfigure(2, weight=1)  # Make the column expand to center content
         self.root.grid_columnconfigure(3, weight=1)  # Make the column expand to center content
@@ -30,7 +33,7 @@ class GUITrainNeuralNetwork:
     def __goBackToOptions(self):
         self.guiUtil.removeWindow(root=self.root)
         # Create the new GUI in the same root window
-        from UI.GUIChooseOptions import GUIChooseOptions
+        from GUI.GUIChooseOptions import GUIChooseOptions
         app = GUIChooseOptions(self.root)
         app.run()
 
@@ -71,6 +74,19 @@ class GUITrainNeuralNetwork:
         entry.delete(0, ctk.END)
         if button:
             button.configure(state="disabled")
+
+    def __processFiles(self, input_folder_path, output_folder_path, is_out_files=False):
+        print("input_folder_path:", input_folder_path)
+        print("output_folder_path:", output_folder_path)
+        print("is_orca_files:", is_out_files)
+        print("Current working directory:", os.getcwd())
+
+        self.process_files = ProcessFiles(
+            input_folder_path=input_folder_path,
+            output_folder_path=output_folder_path,
+            is_out_files=is_out_files)
+
+        self.process_files.process()
 
     def __createProcessingDataFrame(self):
         """Input"""
@@ -167,12 +183,14 @@ class GUITrainNeuralNetwork:
 
         """Is Orca files checkbox"""
 
+        out_files_val = IntVar()
         self.guiUtil.add_component(
             self,
             component_type="Checkbutton",
             frame=self.process_data_frame,
             text="Data are Orca files",
             grid_options={"row": 5, "column": 0, "sticky": "w", "padx": 10, "pady": (15, 0)},
+            variable=out_files_val,
             font=self.root.font,
             checkbox_width=18,
             checkbox_height=17,
@@ -194,7 +212,7 @@ class GUITrainNeuralNetwork:
             fg_color=guiconst.COLOR_GREY,
             hover_color=guiconst.COLOR_GREY_HOVER,
             state="disabled",
-            command="",
+            command=lambda: self.__processFiles(self.input_entry.get(), self.output_entry.get(), bool(out_files_val.get())),
         )
 
         self.guiUtil.add_component(

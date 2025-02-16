@@ -1,15 +1,15 @@
 import customtkinter as ctk
 
-from UI.GUITrainNeuralNetwork import GUITrainNeuralNetwork
-from UI.GUICompareNetworks import GUICompareNetworks
-from UI.GUIUtil import GUIUtil
+from GUI.GUITrainNeuralNetwork import GUITrainNeuralNetwork
+from GUI.GUICompareNetworks import GUICompareNetworks
+from GUI.GUIUtil import GUIUtil
 
 
 class GUIChooseOptions:
     def __init__(self, root):
         self.root = root
         self.root.title("Choose options")
-        self.root.geometry("315x80")
+        self.root.geometry("350x80")
         self.root.fontTitle = ("Lato", 16)
         self.guiUtil = GUIUtil()
         ctk.set_appearance_mode("light")
@@ -30,14 +30,14 @@ class GUIChooseOptions:
         self.guiUtil.add_component(
             self.root,
             component_type="Button",
-            grid_options={"row": 1, "column": 0, "sticky": "w", "padx": 10},
+            grid_options={"row": 1, "column": 0,  "padx": 20},
             text="Compare 2 networks",
             command=lambda: self.__runCompareNetworks()
         )
         self.guiUtil.add_component(
             self.root,
             component_type="Button",
-            grid_options={"row": 1, "column": 1, "sticky": "w"},
+            grid_options={"row": 1, "column": 1, "sticky": "e"},
             text="Train Neural Network",
             command=lambda: self.__runTrainNeuralNetwork()
         )
