@@ -3,8 +3,9 @@ from tkinter import filedialog, IntVar
 import customtkinter as ctk
 
 from BusinessLogic.DataVisualiser.DataVisualiser import DataVisualiser
+from BusinessLogic.ProcessFiles.SnapShotOfGraphletsAsGraph import SnapShotOfGraphletsAsGraph
 from GUI.GUIUtil import GUIUtil
-from BusinessLogic.ProcessFiles.ProcessFiles import ProcessFiles
+from BusinessLogic.ProcessFiles.ProcessInAndOutFiles import ProcessInAndOutFiles
 import GUI.GUIConstants as guiconst
 
 
@@ -19,6 +20,7 @@ class GUITrainNeuralNetwork:
         self.root.smallFont = ("Lato", 10)
         self.guiUtil = GUIUtil()
         self.process_files = None
+        self.create_snapshots = None
         self.root.grid_columnconfigure(1, weight=1)  # Make the column expand to center content
         self.root.grid_columnconfigure(2, weight=1)  # Make the column expand to center content
         self.root.grid_columnconfigure(3, weight=1)  # Make the column expand to center content
@@ -76,19 +78,24 @@ class GUITrainNeuralNetwork:
         if button:
             button.configure(state="disabled")
 
-    def __processFiles(self, input_folder_path, output_folder_path, is_out_files=False):
+    def __processFiles(self, input_folder_path, output_folder_path, is_out_files=False, should_create_images=False):
         # self.progress_bar.start()
         print("input_folder_path:", input_folder_path)
         print("output_folder_path:", output_folder_path)
-        print("is_orca_files:", is_out_files)
+        print("is_out_files:", is_out_files)
         print("Current working directory:", os.getcwd())
 
-        self.process_files = ProcessFiles(
+        self.process_files = ProcessInAndOutFiles(
             input_folder_path=input_folder_path,
             output_folder_path=output_folder_path,
             is_out_files=is_out_files)
 
         self.process_files.process()
+
+        if should_create_images:
+            self.create_snapshots = SnapShotOfGraphletsAsGraph(self.process_files.get_orbit_counts_df())
+            self.create_snapshots.create_images()
+
         self.show_graphs_button.configure(state="normal")
 
         # self.progress_bar.set(100)
@@ -206,6 +213,23 @@ class GUITrainNeuralNetwork:
             border_width=2
         )
 
+        create_images_val = IntVar()
+        self.guiUtil.add_component(
+            self,
+            component_type="Checkbutton",
+            frame=self.process_data_frame,
+            text="Create images",
+            grid_options={"row": 5, "column": 1, "sticky": "w", "padx": 10, "pady": (15, 0)},
+            variable=create_images_val,
+            font=self.root.font,
+            checkbox_width=18,
+            checkbox_height=17,
+            corner_radius=7,
+            fg_color=guiconst.COLOR_GREEN,
+            hover_color=guiconst.COLOR_GREEN_HOVER,
+            border_width=2
+        )
+
         self.process_files_button = self.guiUtil.add_component(
             self,
             component_type="Button",
@@ -218,7 +242,12 @@ class GUITrainNeuralNetwork:
             fg_color=guiconst.COLOR_GREY,
             hover_color=guiconst.COLOR_GREY_HOVER,
             state="disabled",
-            command=lambda: self.__processFiles(self.input_entry.get(), self.output_entry.get(), bool(out_files_val.get())),
+            command=lambda: self.__processFiles(
+                self.input_entry.get(),
+                self.output_entry.get(),
+                bool(out_files_val.get()),
+                bool(create_images_val.get())
+            )
         )
 
         self.show_graphs_button = self.guiUtil.add_component(
@@ -233,9 +262,7 @@ class GUITrainNeuralNetwork:
             fg_color=guiconst.COLOR_GREY,
             hover_color=guiconst.COLOR_GREY_HOVER,
             state="disabled",
-            command=lambda: DataVisualiser(
-                self.process_files.get_orbit_counts_df(),
-            ).visualize()
+            command=lambda: DataVisualiser(self.process_files.get_orbit_counts_df()).visualize()
         )
 
         # self.progress_bar = self.guiUtil.add_component(
