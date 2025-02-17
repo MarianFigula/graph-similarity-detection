@@ -7,7 +7,7 @@ GRAPHLETS_COUNTS_FILE_NAME = "graphlet_counts.csv"
 SIMILARITY_MEASURES_FILE_NAME = "similarity_measures.csv"
 
 
-class ProcessFiles:
+class ProcessInAndOutFiles:
     def __init__(self, input_folder_path=None, output_folder_path=None, is_out_files=False):
         self.input_folder_path = input_folder_path
         self.output_folder_path = output_folder_path
