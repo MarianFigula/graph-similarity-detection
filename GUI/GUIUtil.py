@@ -46,6 +46,12 @@ class GUIUtil:
         return component
 
     @staticmethod
+    def create_horizontal_line(frame=None, width=50, height=2, fg_color="gray", **kwargs):
+        line = ctk.CTkFrame(frame,width=width, height=height, fg_color=fg_color)
+        line.grid(**kwargs)  # No horizontal expansion
+        return line
+
+    @staticmethod
     def removeWindow(root):
         for widget in root.winfo_children():
             widget.destroy()

@@ -1,4 +1,6 @@
 import os
+import uuid
+
 import plotly.graph_objects as go
 import plotly.io as pio
 
@@ -7,7 +9,8 @@ class SnapShotOfGraphletsAsGraph:
     def __init__(self, orbit_counts_df):
         self.orbit_counts = orbit_counts_df
         self.categories = list(f"G{i}" for i in range(30))
-        self.img_dir = "../img_graphs"
+        self.img_dir_id = str(uuid.uuid4())[:8]
+        self.img_dir = f"../img_graphs_{self.img_dir_id}"
         self.fig = None
 
         os.makedirs(self.img_dir, exist_ok=True)

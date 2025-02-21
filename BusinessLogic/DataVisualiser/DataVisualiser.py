@@ -1,12 +1,13 @@
 import plotly.graph_objects as go
+from BusinessLogic.DataNormaliser.DataNormaliser import DataNormaliser
 
 
 class DataVisualiser:
     def __init__(self, orbit_counts):
-        self.orbit_counts = orbit_counts
+        self.orbit_counts = DataNormaliser(
+            orbit_counts).log_scale_percentage_normalisation()
         self.categories = list(f"G{i}" for i in range(30))
         self.fig = None
-        print(self.categories)
 
     def create_scatter(self):
         self.fig = go.Figure()

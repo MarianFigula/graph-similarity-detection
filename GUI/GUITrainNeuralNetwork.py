@@ -14,7 +14,7 @@ class GUITrainNeuralNetwork:
     def __init__(self, root):
         self.root = root
         self.root.title("Train neural network")
-        self.root.geometry("1000x300")
+        self.root.geometry("1000x700")
         self.root.fontTitle = ("Lato", 16)
         self.root.font = ("Lato", 12)
         self.root.smallFont = ("Lato", 10)
@@ -64,7 +64,7 @@ class GUITrainNeuralNetwork:
             font=self.root.fontTitle
         )
 
-    def __select_directory(self, entry, button=None):
+    def __handleSelectDirectory(self, entry, button=None):
         path = filedialog.askdirectory()
         if path:
             entry.delete(0, ctk.END)
@@ -73,12 +73,12 @@ class GUITrainNeuralNetwork:
             if button:
                 button.configure(state="normal")
 
-    def __removeDirectory(self, entry, button=None):
+    def __handleRemoveDirectory(self, entry, button=None):
         entry.delete(0, ctk.END)
         if button:
             button.configure(state="disabled")
 
-    def __processFiles(self, input_folder_path, output_folder_path, is_out_files=False, should_create_images=False):
+    def __handleProcessFiles(self, input_folder_path, output_folder_path, is_out_files=False, should_create_images=False):
         # self.progress_bar.start()
         print("input_folder_path:", input_folder_path)
         print("output_folder_path:", output_folder_path)
@@ -90,7 +90,8 @@ class GUITrainNeuralNetwork:
             output_folder_path=output_folder_path,
             is_out_files=is_out_files)
 
-        self.process_files.process()
+        if not self.process_files.process():
+            return
 
         if should_create_images:
             self.create_snapshots = SnapShotOfGraphletsAsGraph(self.process_files.get_orbit_counts_df())
@@ -98,8 +99,16 @@ class GUITrainNeuralNetwork:
 
         self.show_graphs_button.configure(state="normal")
 
+        self.__handleCheckboxLabelingMethodStates()
         # self.progress_bar.set(100)
         # self.progress_bar.stop()
+
+    def __handleCheckboxLabelingMethodStates(self):
+        self.netsimile_checkbox.configure(state="normal" if not bool(self.out_files_val.get()) else "disabled")
+
+        self.resnet_checkbox.configure(state="normal" if bool(self.create_images_val.get()) else "disabled")
+
+        self.hellinger_checkbox.configure(state="normal")
 
     def __createProcessingDataFrame(self):
         """Input"""
@@ -132,7 +141,7 @@ class GUITrainNeuralNetwork:
             grid_options={"row": 3, "column": 0, "sticky": "w", "padx": 10, "pady": 5},
             font=self.root.font,
             width=50,
-            command=lambda: self.__select_directory(self.input_entry, self.process_files_button)
+            command=lambda: self.__handleSelectDirectory(self.input_entry, self.process_files_button)
         )
 
         self.guiUtil.add_component(
@@ -145,7 +154,7 @@ class GUITrainNeuralNetwork:
             width=50,
             fg_color=guiconst.COLOR_RED,
             hover_color=guiconst.COLOR_RED_HOVER,
-            command=lambda: self.__removeDirectory(self.input_entry, self.process_files_button)
+            command=lambda: self.__handleRemoveDirectory(self.input_entry, self.process_files_button)
         )
 
         """Output"""
@@ -178,7 +187,7 @@ class GUITrainNeuralNetwork:
             grid_options={"row": 3, "column": 1, "sticky": "w", "pady": 5},
             font=self.root.font,
             width=50,
-            command=lambda: self.__select_directory(self.output_entry)
+            command=lambda: self.__handleSelectDirectory(self.output_entry)
         )
 
         self.guiUtil.add_component(
@@ -191,39 +200,39 @@ class GUITrainNeuralNetwork:
             width=50,
             fg_color=guiconst.COLOR_RED,
             hover_color=guiconst.COLOR_RED_HOVER,
-            command=lambda: self.__removeDirectory(self.output_entry)
+            command=lambda: self.__handleRemoveDirectory(self.output_entry)
         )
 
         """Is Orca files checkbox"""
 
-        out_files_val = IntVar()
+        self.out_files_val = IntVar()
         self.guiUtil.add_component(
             self,
             component_type="Checkbutton",
             frame=self.process_data_frame,
             text="Data are Orca files",
             grid_options={"row": 5, "column": 0, "sticky": "w", "padx": 10, "pady": (15, 0)},
-            variable=out_files_val,
+            variable=self.out_files_val,
             font=self.root.font,
-            checkbox_width=18,
-            checkbox_height=17,
+            checkbox_width=15,
+            checkbox_height=15,
             corner_radius=7,
             fg_color=guiconst.COLOR_GREEN,
             hover_color=guiconst.COLOR_GREEN_HOVER,
             border_width=2
         )
 
-        create_images_val = IntVar()
+        self.create_images_val = IntVar()
         self.guiUtil.add_component(
             self,
             component_type="Checkbutton",
             frame=self.process_data_frame,
             text="Create images",
             grid_options={"row": 5, "column": 1, "sticky": "w", "padx": 10, "pady": (15, 0)},
-            variable=create_images_val,
+            variable=self.create_images_val,
             font=self.root.font,
-            checkbox_width=18,
-            checkbox_height=17,
+            checkbox_width=15,
+            checkbox_height=15,
             corner_radius=7,
             fg_color=guiconst.COLOR_GREEN,
             hover_color=guiconst.COLOR_GREEN_HOVER,
@@ -242,11 +251,11 @@ class GUITrainNeuralNetwork:
             fg_color=guiconst.COLOR_GREY,
             hover_color=guiconst.COLOR_GREY_HOVER,
             state="disabled",
-            command=lambda: self.__processFiles(
+            command=lambda: self.__handleProcessFiles(
                 self.input_entry.get(),
                 self.output_entry.get(),
-                bool(out_files_val.get()),
-                bool(create_images_val.get())
+                bool(self.out_files_val.get()),
+                bool(self.create_images_val.get())
             )
         )
 
@@ -273,9 +282,100 @@ class GUITrainNeuralNetwork:
         # )
         # self.progress_bar.set(0)
 
+    def __createChooseLabelingMethods(self):
+        self.guiUtil.add_component(
+            self,
+            component_type="Label",
+            frame=self.process_data_frame,
+            text="Choose labeling methods",
+            grid_options={"row": 8, "column": 0, "columnspan": 2, "sticky": "n"},
+            font=self.root.font
+        )
+
+        self.hellinger_val = IntVar()
+        self.hellinger_checkbox = self.guiUtil.add_component(
+            self,
+            component_type="Checkbutton",
+            frame=self.process_data_frame,
+            text="Hellinger",
+            grid_options={"row": 9, "column": 0, "sticky": "w", "padx": (10,0)},
+            variable=self.hellinger_val,
+            font=self.root.font,
+            checkbox_width=15,
+            checkbox_height=15,
+            corner_radius=7,
+            fg_color=guiconst.COLOR_GREEN,
+            hover_color=guiconst.COLOR_GREEN_HOVER,
+            border_width=2,
+            state="disabled"
+        )
+
+        self.netsimile_val = IntVar()
+        self.netsimile_checkbox = self.guiUtil.add_component(
+            self,
+            component_type="Checkbutton",
+            frame=self.process_data_frame,
+            text="NetSimile - input data must be graphs",
+            grid_options={"row": 10, "column": 0, "columnspan": 2, "sticky": "w", "padx": (10, 0)},
+            variable=self.netsimile_val,
+            font=self.root.font,
+            checkbox_width=15,
+            checkbox_height=15,
+            corner_radius=7,
+            fg_color=guiconst.COLOR_GREEN,
+            hover_color=guiconst.COLOR_GREEN_HOVER,
+            border_width=2,
+            state="disabled"
+        )
+
+        self.resnet_val = IntVar()
+        self.resnet_checkbox = self.guiUtil.add_component(
+            self,
+            component_type="Checkbutton",
+            frame=self.process_data_frame,
+            text="Resnet (images has to be created)",
+            grid_options={"row": 11, "column": 0, "columnspan": 2, "sticky": "w", "padx": 10},
+            variable=self.resnet_val,
+            font=self.root.font,
+            checkbox_width=15,
+            checkbox_height=15,
+            corner_radius=7,
+            fg_color=guiconst.COLOR_GREEN,
+            hover_color=guiconst.COLOR_GREEN_HOVER,
+            border_width=2,
+            state="disabled"
+        )
+
+        self.count_similarities_button = self.guiUtil.add_component(
+            self,
+            component_type="Button",
+            text="Count similarities",
+            frame=self.process_data_frame,
+            grid_options={"row": 12, "column": 0, "columnspan": 2, "sticky": "ew", "padx": 10, "pady": (15, 0)},
+            font=self.root.font,
+            width=50,
+            height=25,
+            fg_color=guiconst.COLOR_GREY,
+            hover_color=guiconst.COLOR_GREY_HOVER,
+            state="disabled",
+            command=lambda: ""
+        )
+
+
     def run(self):
         self.__addHeader()
         self.__createProcessingDataFrame()
+        self.guiUtil.create_horizontal_line(
+            self.process_data_frame,
+            width=300,
+            row=7,
+            column=0,
+            columnspan=3,
+            padx=5,
+            pady=15,
+            sticky="w"
+        )
+        self.__createChooseLabelingMethods()
         self.root.mainloop()
 
 

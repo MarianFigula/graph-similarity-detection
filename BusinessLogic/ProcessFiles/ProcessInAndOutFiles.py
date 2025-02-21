@@ -108,6 +108,11 @@ class ProcessInAndOutFiles:
     def process(self):
         # print(self.is_out_files)
         self.__input_files = self.__read_folder()
+
+        # TODO: mozno check ci su prazdne alebo nie ? na input je checker
+        if not self.input_folder_path:
+            return False
+
         if not self.is_out_files:
             self.__orbit_counts_df = self.__process_in_files_using_orca()
         else:
