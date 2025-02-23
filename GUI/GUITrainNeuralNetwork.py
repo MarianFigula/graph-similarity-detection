@@ -3,7 +3,7 @@ from tkinter import filedialog, IntVar
 import customtkinter as ctk
 
 from BusinessLogic.DataVisualiser.DataVisualiser import DataVisualiser
-from BusinessLogic.ProcessFiles.SimilarityCalculation import SimilarityCalculation
+from BusinessLogic.ProcessFiles.SimilarityHandler import SimilarityHandler
 from BusinessLogic.ProcessFiles.SnapShotOfGraphletsAsGraph import SnapShotOfGraphletsAsGraph
 from GUI.GUIUtil import GUIUtil
 from BusinessLogic.ProcessFiles.ProcessInAndOutFiles import ProcessInAndOutFiles
@@ -23,7 +23,7 @@ class GUITrainNeuralNetwork:
         self.process_files = None
         self.create_snapshots = None
         self.orbit_counts_df = None
-        self.similarityCalculation = None
+        self.similarityHandler = None
         self.similarity_measures = None
         self.root.grid_columnconfigure(1, weight=1)  # Make the column expand to center content
         self.root.grid_columnconfigure(2, weight=1)  # Make the column expand to center content
@@ -135,20 +135,32 @@ class GUITrainNeuralNetwork:
 
     def __handleComputeSimilarity(self):
         orbit_counts_df = self.process_files.get_orbit_counts_df()
-        self.similarityCalculation = SimilarityCalculation(orbit_counts_df,
-                                                           self.input_entry.get(),
-                                                           self.create_snapshots.getImgDir()
-                                                           )
+        self.similarityHandler = SimilarityHandler(orbit_counts_df,
+                                                   self.input_entry.get(),
+                                                   self.create_snapshots.getImgDir()
+                                                   )
 
-        self.similarity_measures = self.similarityCalculation.countSimilarities(
+        self.similarity_measures = self.similarityHandler.countSimilarities(
             hellinger_check_val=bool(self.hellinger_val.get()),
             netsimile_check_val=bool(self.netsimile_val.get()),
             resnet_check_val=bool(self.resnet_val.get()))
 
+        # self.exportSimilarityMeasures()
+        self.label_similarity_button.configure(state="normal")
+
+    def __handleLabelSimilarities(self):
+        self.similarityHandler.labelSimilarities(
+            hellinger_check_val=bool(self.hellinger_val.get()),
+            netsimile_check_val=bool(self.netsimile_val.get()),
+            resnet_check_val=bool(self.resnet_val.get())
+        )
+
         self.exportSimilarityMeasures()
 
+
+
     def exportSimilarityMeasures(self):
-        self.similarityCalculation.exportSimilarity(self.output_entry.get() + "/similarity_measures.csv")
+        self.similarityHandler.exportSimilarity(self.output_entry.get() + "/similarity_measures.csv")
 
     def __createProcessingDataFrame(self):
         """Input"""
@@ -399,6 +411,21 @@ class GUITrainNeuralNetwork:
             hover_color=guiconst.COLOR_GREY_HOVER,
             state="disabled",
             command=lambda: self.__handleComputeSimilarity()
+        )
+
+        self.label_similarity_button = self.guiUtil.add_component(
+            self,
+            component_type="Button",
+            text="Label similarities",
+            frame=self.process_data_frame,
+            grid_options={"row": 13, "column": 0, "columnspan": 2, "sticky": "ew", "padx": 10, "pady": (15, 0)},
+            font=self.root.font,
+            width=50,
+            height=25,
+            fg_color=guiconst.COLOR_GREY,
+            hover_color=guiconst.COLOR_GREY_HOVER,
+            state="disabled",
+            command=lambda: self.__handleLabelSimilarities()
         )
 
 

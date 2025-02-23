@@ -57,5 +57,5 @@ class ResNetModel:
 
         df = pd.DataFrame([similarity_dict])  # Create a DataFrame with one row
         df = df.T
-        df.columns = ["Resnet"]
+        df.columns = ["ResNet"]
         return df

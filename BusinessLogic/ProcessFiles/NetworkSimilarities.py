@@ -17,6 +17,12 @@ class NetworkSimilarities:
             list(combinations(sorted(self.orbit_counts_df.columns), 2))
         )
 
+    def getSimilarityMeasures(self):
+        return self.similarity_measures_df
+
+    def setSimilarityMeasures(self, similarity_measures_df):
+        self.similarity_measures_df = similarity_measures_df
+
     def computeHellingerSimilarity(self):
         print("computing Hellinger")
         print(self.orbit_counts_df)
@@ -94,6 +100,3 @@ class NetworkSimilarities:
             )
 
         print("done")
-
-    def exportSimilarityMeasures(self, path_to_export):
-        self.similarity_measures_df.to_csv(path_to_export)
