@@ -355,7 +355,7 @@ class GUITrainNeuralNetwork:
             self,
             component_type="Checkbutton",
             frame=self.process_data_frame,
-            text="NetSimile - input data must be graphs",
+            text="NetSimile (input data must be graphs)",
             grid_options={"row": 10, "column": 0, "columnspan": 2, "sticky": "w", "padx": (10, 0)},
             variable=self.netsimile_val,
             font=self.root.font,
