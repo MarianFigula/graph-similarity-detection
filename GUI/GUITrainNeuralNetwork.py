@@ -3,6 +3,7 @@ from tkinter import filedialog, IntVar
 import customtkinter as ctk
 
 from BusinessLogic.DataVisualiser.DataVisualiser import DataVisualiser
+from BusinessLogic.ProcessFiles.SimilarityCalculation import SimilarityCalculation
 from BusinessLogic.ProcessFiles.SnapShotOfGraphletsAsGraph import SnapShotOfGraphletsAsGraph
 from GUI.GUIUtil import GUIUtil
 from BusinessLogic.ProcessFiles.ProcessInAndOutFiles import ProcessInAndOutFiles
@@ -21,6 +22,9 @@ class GUITrainNeuralNetwork:
         self.guiUtil = GUIUtil()
         self.process_files = None
         self.create_snapshots = None
+        self.orbit_counts_df = None
+        self.similarityCalculation = None
+        self.similarity_measures = None
         self.root.grid_columnconfigure(1, weight=1)  # Make the column expand to center content
         self.root.grid_columnconfigure(2, weight=1)  # Make the column expand to center content
         self.root.grid_columnconfigure(3, weight=1)  # Make the column expand to center content
@@ -100,15 +104,51 @@ class GUITrainNeuralNetwork:
         self.show_graphs_button.configure(state="normal")
 
         self.__handleCheckboxLabelingMethodStates()
+        self.count_similarities_button.configure(state="normal")
         # self.progress_bar.set(100)
         # self.progress_bar.stop()
 
+    def disableCheckboxWithValue(self, checkbox, checkbox_val):
+        checkbox.configure(state="disabled")
+        checkbox_val.set(0)
+
+    def enableCheckboxWithValue(self, checkbox, checkbox_val):
+        checkbox.configure(state="normal")
+        checkbox_val.set(1)
+
+    def toggleCheckboxWithValue(self, checkbox, checkbox_val):
+        checkbox.configure(state="normal" if bool(checkbox_val.get()) else "disabled")
+        checkbox_val.set(1 if not bool(checkbox_val.get()) else 0)
+
     def __handleCheckboxLabelingMethodStates(self):
-        self.netsimile_checkbox.configure(state="normal" if not bool(self.out_files_val.get()) else "disabled")
+        if not bool(self.out_files_val.get()):
+            self.enableCheckboxWithValue(self.netsimile_checkbox, self.netsimile_val)
+        else:
+            self.disableCheckboxWithValue(self.netsimile_checkbox, self.netsimile_val)
 
-        self.resnet_checkbox.configure(state="normal" if bool(self.create_images_val.get()) else "disabled")
+        if bool(self.create_images_val.get()):
+            self.enableCheckboxWithValue(self.resnet_checkbox, self.resnet_val)
+        else:
+            self.disableCheckboxWithValue(self.resnet_checkbox, self.resnet_val)
 
-        self.hellinger_checkbox.configure(state="normal")
+        self.enableCheckboxWithValue(self.hellinger_checkbox, self.hellinger_val)
+
+    def __handleComputeSimilarity(self):
+        orbit_counts_df = self.process_files.get_orbit_counts_df()
+        self.similarityCalculation = SimilarityCalculation(orbit_counts_df,
+                                                           self.input_entry.get(),
+                                                           self.create_snapshots.getImgDir()
+                                                           )
+
+        self.similarity_measures = self.similarityCalculation.countSimilarities(
+            hellinger_check_val=bool(self.hellinger_val.get()),
+            netsimile_check_val=bool(self.netsimile_val.get()),
+            resnet_check_val=bool(self.resnet_val.get()))
+
+        self.exportSimilarityMeasures()
+
+    def exportSimilarityMeasures(self):
+        self.similarityCalculation.exportSimilarity(self.output_entry.get() + "/similarity_measures.csv")
 
     def __createProcessingDataFrame(self):
         """Input"""
@@ -358,7 +398,7 @@ class GUITrainNeuralNetwork:
             fg_color=guiconst.COLOR_GREY,
             hover_color=guiconst.COLOR_GREY_HOVER,
             state="disabled",
-            command=lambda: ""
+            command=lambda: self.__handleComputeSimilarity()
         )
 
 

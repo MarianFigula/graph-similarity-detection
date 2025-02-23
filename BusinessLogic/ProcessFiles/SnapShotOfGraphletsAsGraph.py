@@ -10,7 +10,7 @@ class SnapShotOfGraphletsAsGraph:
         self.orbit_counts = orbit_counts_df
         self.categories = list(f"G{i}" for i in range(30))
         self.img_dir_id = str(uuid.uuid4())[:8]
-        self.img_dir = f"../img_graphs_{self.img_dir_id}"
+        self.img_dir = f"../img_graphs"  #_{self.img_dir_id}"
         self.fig = None
 
         os.makedirs(self.img_dir, exist_ok=True)
@@ -48,3 +48,6 @@ class SnapShotOfGraphletsAsGraph:
             # height = 800  # Set height in pixels
             scale = 1.5  # Scale factor (higher means better quality)
             pio.write_image(self.fig, img_path, format="png", scale=scale)
+
+    def getImgDir(self):
+        return self.img_dir
