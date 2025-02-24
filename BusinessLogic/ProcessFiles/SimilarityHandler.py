@@ -21,7 +21,7 @@ class SimilarityHandler:
             self.network_similarities.computeHellingerSimilarity()
 
         if netsimile_check_val:
-            self.network_similarities.computeNetSimileSimilarity(self.path)
+            self.network_similarities.computeNetSimileSimilarity(self.path) #"D:/Škola/DP1/project/a_dp/input/test"
 
         if resnet_check_val:
             self.network_similarities.computeResNetSimilarity(self.img_dir)

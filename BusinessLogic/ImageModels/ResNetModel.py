@@ -42,7 +42,7 @@ class ResNetModel:
     from sklearn.metrics.pairwise import cosine_similarity
 
     def computeSimilarity(self):
-        similarity_dict = {}
+        similarity_list = []
         feature_dict = self.getImageFeatures(self.getListOfImages())
 
         for img1 in feature_dict.keys():
@@ -53,9 +53,14 @@ class ResNetModel:
 
                 if img1 < img2:
                     sim_score = cosine_similarity([feature_dict[img1]], [feature_dict[img2]])[0][0]
-                    similarity_dict[f"{img1_clean}---{img2_clean}"] = sim_score
 
-        df = pd.DataFrame([similarity_dict])  # Create a DataFrame with one row
-        df = df.T
-        df.columns = ["ResNet"]
+                    # Append result as a dictionary
+                    similarity_list.append({
+                        'Graph1': img1_clean,
+                        'Graph2': img2_clean,
+                        'ResNet': sim_score
+                    })
+
+        # Create DataFrame from list of dictionaries
+        df = pd.DataFrame(similarity_list)
         return df

@@ -54,7 +54,7 @@ class NetSimileCustom:
         start_time = time.time()
 
         files = os.listdir(TARGET_DIRECTORY)
-        results = {}
+        results = []
 
         for file1, file2 in combinations(files, 2):
             print(f"processing {file1, file2}", end=" ")
@@ -68,15 +68,20 @@ class NetSimileCustom:
             G1_signature = graph_signature(G1_features)
             G2_signature = graph_signature(G2_features)
 
+
             # Calculate distance using Canberra metric
+            # skusit hellingerovu vzdialenost
             distance = abs(canberra(G1_signature, G2_signature))
 
-            # Store result
+            # Extract graph names and store result
             graph_name_1 = os.path.splitext(file1)[0]
             graph_name_2 = os.path.splitext(file2)[0]
-            pair_key = f"{graph_name_1}---{graph_name_2}"
 
-            results[pair_key] = [distance]
+            results.append({
+                'Graph1': graph_name_1,
+                'Graph2': graph_name_2,
+                'NetSimile': distance
+            })
 
             pair_end_time = time.time()
             pair_elapsed_time = pair_end_time - pair_start_time
@@ -94,7 +99,5 @@ class NetSimileCustom:
     def compile_process(self):
         self.remove_first_line()
         self.calculate_net_simile()
-        self.result_df = self.result_df.T
-        self.result_df.columns = ["NetSimile"]
 
         return self.result_df

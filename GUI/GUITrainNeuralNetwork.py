@@ -121,10 +121,10 @@ class GUITrainNeuralNetwork:
         checkbox_val.set(1 if not bool(checkbox_val.get()) else 0)
 
     def __handleCheckboxLabelingMethodStates(self):
-        if not bool(self.out_files_val.get()):
-            self.enableCheckboxWithValue(self.netsimile_checkbox, self.netsimile_val)
-        else:
-            self.disableCheckboxWithValue(self.netsimile_checkbox, self.netsimile_val)
+        # if not bool(self.out_files_val.get()):
+        #     self.enableCheckboxWithValue(self.netsimile_checkbox, self.netsimile_val)
+        # else:
+            # self.disableCheckboxWithValue(self.netsimile_checkbox, self.netsimile_val)
 
         if bool(self.create_images_val.get()):
             self.enableCheckboxWithValue(self.resnet_checkbox, self.resnet_val)
@@ -377,7 +377,7 @@ class GUITrainNeuralNetwork:
             fg_color=guiconst.COLOR_GREEN,
             hover_color=guiconst.COLOR_GREEN_HOVER,
             border_width=2,
-            state="disabled"
+            state="normal"
         )
 
         self.resnet_val = IntVar()
