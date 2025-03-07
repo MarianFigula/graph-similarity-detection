@@ -12,8 +12,12 @@ FEATURES_CACHE_DIR = "../netSimFeaturesCache"
 TARGET_DIRECTORY = "../netSimFiles"
 
 
-class NetSimileCustom:
+class NetSimileModel:
+
     def __init__(self, path):
+        """
+        :param path: path to net simile input (.in) files
+        """
         self.path = path
         self.result_df = pd.DataFrame()
 

@@ -1,10 +1,6 @@
 import os
 import numpy as np
-import tensorflow as tf
 from keras.applications import ResNet50
-from matplotlib import pyplot as plt
-from scipy.stats import shapiro, ks_1samp, kstest
-from tensorflow.keras.applications import VGG16
 from tensorflow.keras.applications.vgg16 import preprocess_input
 from tensorflow.keras.preprocessing import image
 from sklearn.metrics.pairwise import cosine_similarity
