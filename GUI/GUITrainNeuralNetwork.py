@@ -22,7 +22,6 @@ class GUITrainNeuralNetwork:
         self.guiUtil = GUIUtil()
         self.process_files = None
         self.create_snapshots = None
-        self.orbit_counts_df = None
         self.similarityHandler = None
         self.similarity_measures = None
         self.root.grid_columnconfigure(1, weight=1)  # Make the column expand to center content
@@ -36,6 +35,9 @@ class GUITrainNeuralNetwork:
         # Create a main frame to hold all components
         self.process_data_frame = ctk.CTkFrame(self.root, width=300, height=300)
         self.process_data_frame.grid(row=1, column=0, padx=10, pady=10, sticky="ns")  # No horizontal expansion
+
+        self.train_network_data_frame = ctk.CTkFrame(self.root, width=600, height=300)
+        self.train_network_data_frame.grid(row=1, column=1, padx=10, pady=10, sticky="ns")  # No horizontal expansion
 
     def __goBackToOptions(self):
         self.guiUtil.removeWindow(root=self.root)
@@ -66,6 +68,20 @@ class GUITrainNeuralNetwork:
             text="Train Neural Network",
             grid_options={"row": 0, "column": 0, "columnspan": 7, "sticky": "n", "pady": 5},
             font=self.root.fontTitle
+        )
+
+        self.guiUtil.add_component(
+            self,
+            component_type="Button",
+            text="?",
+            grid_options={"row": 0, "column": 0, "columnspan": 1, "sticky": "ne", "pady": 10},
+            font=self.root.font,
+            fg_color=guiconst.COLOR_GREY,
+            hover_color=guiconst.COLOR_GREY_HOVER,
+            width=30,
+            height=25,
+            command=lambda: "",
+
         )
 
     def __handleSelectDirectory(self, entry, button=None):
@@ -105,8 +121,6 @@ class GUITrainNeuralNetwork:
 
         self.__handleCheckboxLabelingMethodStates()
         self.count_similarities_button.configure(state="normal")
-        # self.progress_bar.set(100)
-        # self.progress_bar.stop()
 
     def disableCheckboxWithValue(self, checkbox, checkbox_val):
         checkbox.configure(state="disabled")
@@ -121,29 +135,26 @@ class GUITrainNeuralNetwork:
         checkbox_val.set(1 if not bool(checkbox_val.get()) else 0)
 
     def __handleCheckboxLabelingMethodStates(self):
-        # if not bool(self.out_files_val.get()):
-        #     self.enableCheckboxWithValue(self.netsimile_checkbox, self.netsimile_val)
-        # else:
-            # self.disableCheckboxWithValue(self.netsimile_checkbox, self.netsimile_val)
-
         if bool(self.create_images_val.get()):
             self.enableCheckboxWithValue(self.resnet_checkbox, self.resnet_val)
         else:
             self.disableCheckboxWithValue(self.resnet_checkbox, self.resnet_val)
 
         self.enableCheckboxWithValue(self.hellinger_checkbox, self.hellinger_val)
+        self.enableCheckboxWithValue(self.kstest_checkbox, self.kstest_val)
 
     def __handleComputeSimilarity(self):
         orbit_counts_df = self.process_files.get_orbit_counts_df()
         self.similarityHandler = SimilarityHandler(orbit_counts_df,
-                                                   self.input_entry.get(),
-                                                   self.create_snapshots.getImgDir()
+                                                   self.input_entry.get(),                                            self.create_snapshots.getImgDir() if self.create_snapshots else None
                                                    )
 
         self.similarity_measures = self.similarityHandler.countSimilarities(
             hellinger_check_val=bool(self.hellinger_val.get()),
             netsimile_check_val=bool(self.netsimile_val.get()),
-            resnet_check_val=bool(self.resnet_val.get()))
+            resnet_check_val=bool(self.resnet_val.get()),
+            ks_check_val=bool(self.kstest_val.get())
+        )
 
         # self.exportSimilarityMeasures()
         self.label_similarity_button.configure(state="normal")
@@ -152,7 +163,8 @@ class GUITrainNeuralNetwork:
         self.similarityHandler.labelSimilarities(
             hellinger_check_val=bool(self.hellinger_val.get()),
             netsimile_check_val=bool(self.netsimile_val.get()),
-            resnet_check_val=bool(self.resnet_val.get())
+            resnet_check_val=bool(self.resnet_val.get()),
+            ks_check_val=bool(self.kstest_val.get())
         )
 
         self.exportSimilarityMeasures()
@@ -398,12 +410,30 @@ class GUITrainNeuralNetwork:
             state="disabled"
         )
 
+        self.kstest_val = IntVar()
+        self.kstest_checkbox = self.guiUtil.add_component(
+            self,
+            component_type="Checkbutton",
+            frame=self.process_data_frame,
+            text="Kolmogorov-Smirnov test",
+            grid_options={"row": 12, "column": 0, "columnspan": 2, "sticky": "w", "padx": 10},
+            variable=self.kstest_val,
+            font=self.root.font,
+            checkbox_width=15,
+            checkbox_height=15,
+            corner_radius=7,
+            fg_color=guiconst.COLOR_GREEN,
+            hover_color=guiconst.COLOR_GREEN_HOVER,
+            border_width=2,
+            state="disabled"
+        )
+
         self.count_similarities_button = self.guiUtil.add_component(
             self,
             component_type="Button",
             text="Count similarities",
             frame=self.process_data_frame,
-            grid_options={"row": 12, "column": 0, "columnspan": 2, "sticky": "ew", "padx": 10, "pady": (15, 0)},
+            grid_options={"row": 13, "column": 0, "columnspan": 2, "sticky": "ew", "padx": 10, "pady": (15, 0)},
             font=self.root.font,
             width=50,
             height=25,
@@ -418,7 +448,7 @@ class GUITrainNeuralNetwork:
             component_type="Button",
             text="Label similarities",
             frame=self.process_data_frame,
-            grid_options={"row": 13, "column": 0, "columnspan": 2, "sticky": "ew", "padx": 10, "pady": (15, 0)},
+            grid_options={"row": 14, "column": 0, "columnspan": 2, "sticky": "ew", "padx": 10, "pady": (15, 0)},
             font=self.root.font,
             width=50,
             height=25,
@@ -427,6 +457,10 @@ class GUITrainNeuralNetwork:
             state="disabled",
             command=lambda: self.__handleLabelSimilarities()
         )
+
+
+    def __trainingNeuralNetworkGUI(self):
+        pass
 
 
     def run(self):
