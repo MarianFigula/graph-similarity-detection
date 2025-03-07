@@ -1,5 +1,3 @@
-from functools import partial
-
 from BusinessLogic.ProcessFiles.NetworkSimilarities import NetworkSimilarities
 from BusinessLogic.ProcessFiles.SimilarityLabeling import SimilarityLabeling
 
@@ -15,7 +13,8 @@ class SimilarityHandler:
             self,
             hellinger_check_val=False,
             netsimile_check_val=False,
-            resnet_check_val=False):
+            resnet_check_val=False,
+            ks_check_val=False):
 
         if hellinger_check_val:
             self.network_similarities.computeHellingerSimilarity()
@@ -26,6 +25,9 @@ class SimilarityHandler:
         if resnet_check_val:
             self.network_similarities.computeResNetSimilarity(self.img_dir)
 
+        if ks_check_val:
+            self.network_similarities.computeKSTestSimilarity()
+
         return self.network_similarities
 
     def exportSimilarity(self, path_to_export):
@@ -34,7 +36,8 @@ class SimilarityHandler:
     def labelSimilarities(self,
                           hellinger_check_val=False,
                           netsimile_check_val=False,
-                          resnet_check_val=False):
+                          resnet_check_val=False,
+                          ks_check_val=False):
 
         self.similarity_label_handler = SimilarityLabeling(self.network_similarities)
 
@@ -47,5 +50,7 @@ class SimilarityHandler:
         if resnet_check_val:
             self.similarity_label_handler.labelSimilarity("ResNet")
 
-        return self.network_similarities
+        if ks_check_val:
+            self.similarity_label_handler.labelSimilarity("KSTest")
 
+        return self.network_similarities
