@@ -34,6 +34,8 @@ class GUIUtil:
             component = ctk.CTkTextbox(frame, **kwargs)
         elif component_type == "Progressbar":
             component = ctk.CTkProgressBar(frame, **kwargs)
+        elif component_type == "OptionMenu":
+            component = ctk.CTkOptionMenu(frame, **kwargs)
         else:
             raise ValueError(f"Unsupported component type: {component_type}")
 

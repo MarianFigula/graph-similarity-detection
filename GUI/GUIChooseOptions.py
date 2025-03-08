@@ -12,6 +12,17 @@ class GUIChooseOptions:
         self.root.geometry("350x80")
         self.root.fontTitle = ("Lato", 16)
         self.guiUtil = GUIUtil()
+
+        ws = root.winfo_screenwidth()  # width of the screen
+        hs = root.winfo_screenheight()  # height of the screen
+
+        w = 350  # width for the Tk root
+        h = 80  # height for the Tk root
+        x = (ws / 2) - (w / 2)
+        y = (hs / 2) - (h / 2)
+
+        root.geometry('%dx%d+%d+%d' % (w, h, x, y))
+
         ctk.set_appearance_mode("light")
         ctk.set_default_color_theme("blue")
 
@@ -58,3 +69,8 @@ class GUIChooseOptions:
         self.__createOptions()
         self.root.mainloop()
 
+if __name__ == "__main__":
+    # TODO: testnut ci po otvoreni a zvoleny moznost sa pekne zobrazi obrazovka
+    root = ctk.CTk()  # Use CTk instead of Tk for the main window
+    app = GUIChooseOptions(root)
+    app.run()

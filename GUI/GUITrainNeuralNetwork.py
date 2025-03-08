@@ -15,7 +15,7 @@ class GUITrainNeuralNetwork:
     def __init__(self, root):
         self.root = root
         self.root.title("Train neural network")
-        self.root.geometry("1000x700")
+
         self.root.fontTitle = ("Lato", 16)
         self.root.font = ("Lato", 12)
         self.root.smallFont = ("Lato", 10)
@@ -24,6 +24,21 @@ class GUITrainNeuralNetwork:
         self.create_snapshots = None
         self.similarityHandler = None
         self.similarity_measures = None
+
+        ws = root.winfo_screenwidth()  # width of the screen
+        hs = root.winfo_screenheight()  # height of the screen
+
+        w = 1000  # width for the Tk root
+        h = 700  # height for the Tk root
+        x = (ws / 2) - (w / 2)
+        y = (hs / 2) - (h / 2)
+
+        # TODO: zakomentovat 1000x700 a odkomentovat
+        self.root.geometry("1000x700")
+        # root.geometry('%dx%d+%d+%d' % (w, h, x, y))
+
+
+        self.root.grid_columnconfigure(1, weight=1)  # Make the column expand to center content
         self.root.grid_columnconfigure(1, weight=1)  # Make the column expand to center content
         self.root.grid_columnconfigure(2, weight=1)  # Make the column expand to center content
         self.root.grid_columnconfigure(3, weight=1)  # Make the column expand to center content
@@ -34,10 +49,10 @@ class GUITrainNeuralNetwork:
 
         # Create a main frame to hold all components
         self.process_data_frame = ctk.CTkFrame(self.root, width=300, height=300)
-        self.process_data_frame.grid(row=1, column=0, padx=10, pady=10, sticky="ns")  # No horizontal expansion
+        self.process_data_frame.grid(row=2, column=0, padx=10, pady=10, sticky="ns")  # No horizontal expansion
 
         self.train_network_data_frame = ctk.CTkFrame(self.root, width=600, height=300)
-        self.train_network_data_frame.grid(row=1, column=1, padx=10, pady=10, sticky="ns")  # No horizontal expansion
+        self.train_network_data_frame.grid(row=2, column=1, padx=10, pady=10, sticky="ns")  # No horizontal expansion
 
     def __goBackToOptions(self):
         self.guiUtil.removeWindow(root=self.root)
@@ -53,7 +68,7 @@ class GUITrainNeuralNetwork:
             frame=self.root,
             text="< Back to options",
             command=lambda: self.__goBackToOptions(),
-            grid_options={"row": 0, "column": 0, "columnspan": 1, "sticky": "n", "pady": 10},
+            grid_options={"row": 0, "column": 0, "sticky": "nw", "pady": 10, "padx": 15},
             font=self.root.font,
             fg_color=guiconst.COLOR_GREY,
             hover_color=guiconst.COLOR_GREY_HOVER,
@@ -61,27 +76,27 @@ class GUITrainNeuralNetwork:
             height=25
 
         )
-        self.guiUtil.add_component(
-            self,
-            component_type="Label",
-            frame=self.root,
-            text="Train Neural Network",
-            grid_options={"row": 0, "column": 0, "columnspan": 7, "sticky": "n", "pady": 5},
-            font=self.root.fontTitle
-        )
 
         self.guiUtil.add_component(
             self,
             component_type="Button",
             text="?",
-            grid_options={"row": 0, "column": 0, "columnspan": 1, "sticky": "ne", "pady": 10},
+            grid_options={"row": 0, "column": 1, "sticky": "ne", "pady": 10, "padx": 20},
             font=self.root.font,
             fg_color=guiconst.COLOR_GREY,
             hover_color=guiconst.COLOR_GREY_HOVER,
             width=30,
             height=25,
             command=lambda: "",
+        )
 
+        self.guiUtil.add_component(
+            self,
+            component_type="Label",
+            frame=self.root,
+            text="Train Neural Network",
+            grid_options={"row": 1, "column": 0, "columnspan": 7, "sticky": "ew", "pady": 5},
+            font=self.root.fontTitle
         )
 
     def __handleSelectDirectory(self, entry, button=None):
@@ -146,7 +161,8 @@ class GUITrainNeuralNetwork:
     def __handleComputeSimilarity(self):
         orbit_counts_df = self.process_files.get_orbit_counts_df()
         self.similarityHandler = SimilarityHandler(orbit_counts_df,
-                                                   self.input_entry.get(),                                            self.create_snapshots.getImgDir() if self.create_snapshots else None
+                                                   self.input_entry.get(),
+                                                   self.create_snapshots.getImgDir() if self.create_snapshots else None
                                                    )
 
         self.similarity_measures = self.similarityHandler.countSimilarities(
@@ -182,7 +198,7 @@ class GUITrainNeuralNetwork:
             component_type="Label",
             frame=self.process_data_frame,
             text="Input directory",
-            grid_options={"row": 1, "column": 0},
+            grid_options={"row": 2, "column": 0},
             font=self.root.font,
             anchor="center"
         )
@@ -191,7 +207,7 @@ class GUITrainNeuralNetwork:
             self,
             component_type="Entry",
             frame=self.process_data_frame,
-            grid_options={"row": 2, "column": 0, "sticky": "w", "padx": 10},
+            grid_options={"row": 3, "column": 0, "sticky": "w", "padx": 10},
             font=self.root.font,
             width=125,
             height=20
@@ -202,7 +218,7 @@ class GUITrainNeuralNetwork:
             component_type="Button",
             frame=self.process_data_frame,
             text="Select input directory",
-            grid_options={"row": 3, "column": 0, "sticky": "w", "padx": 10, "pady": 5},
+            grid_options={"row": 4, "column": 0, "sticky": "w", "padx": 10, "pady": 5},
             font=self.root.font,
             width=50,
             command=lambda: self.__handleSelectDirectory(self.input_entry, self.process_files_button)
@@ -213,7 +229,7 @@ class GUITrainNeuralNetwork:
             component_type="Button",
             frame=self.process_data_frame,
             text="Reset input directory",
-            grid_options={"row": 4, "column": 0, "sticky": "w", "padx": 10},
+            grid_options={"row": 5, "column": 0, "sticky": "w", "padx": 10},
             font=self.root.font,
             width=50,
             fg_color=guiconst.COLOR_RED,
@@ -228,7 +244,7 @@ class GUITrainNeuralNetwork:
             component_type="Label",
             frame=self.process_data_frame,
             text="Output directory",
-            grid_options={"row": 1, "column": 1, "sticky": "w", "padx": 20, "pady": 5},
+            grid_options={"row": 2, "column": 1, "sticky": "w", "padx": 20, "pady": 5},
             font=self.root.font,
             anchor="w"
         )
@@ -237,7 +253,7 @@ class GUITrainNeuralNetwork:
             self,
             component_type="Entry",
             frame=self.process_data_frame,
-            grid_options={"row": 2, "column": 1, "sticky": "w", "padx": (0, 10), "pady": 5},
+            grid_options={"row": 3, "column": 1, "sticky": "w", "padx": (0, 10), "pady": 5},
             font=self.root.font,
             width=130,
             height=20
@@ -248,7 +264,7 @@ class GUITrainNeuralNetwork:
             component_type="Button",
             frame=self.process_data_frame,
             text="Select output directory",
-            grid_options={"row": 3, "column": 1, "sticky": "w", "pady": 5},
+            grid_options={"row": 4, "column": 1, "sticky": "w", "pady": 5},
             font=self.root.font,
             width=50,
             command=lambda: self.__handleSelectDirectory(self.output_entry)
@@ -259,7 +275,7 @@ class GUITrainNeuralNetwork:
             component_type="Button",
             frame=self.process_data_frame,
             text="Reset output directory",
-            grid_options={"row": 4, "column": 1, "sticky": "w"},
+            grid_options={"row": 5, "column": 1, "sticky": "w"},
             font=self.root.font,
             width=50,
             fg_color=guiconst.COLOR_RED,
@@ -275,7 +291,7 @@ class GUITrainNeuralNetwork:
             component_type="Checkbutton",
             frame=self.process_data_frame,
             text="Data are Orca files",
-            grid_options={"row": 5, "column": 0, "sticky": "w", "padx": 10, "pady": (15, 0)},
+            grid_options={"row": 6, "column": 0, "sticky": "w", "padx": 10, "pady": (15, 0)},
             variable=self.out_files_val,
             font=self.root.font,
             checkbox_width=15,
@@ -292,7 +308,7 @@ class GUITrainNeuralNetwork:
             component_type="Checkbutton",
             frame=self.process_data_frame,
             text="Create images",
-            grid_options={"row": 5, "column": 1, "sticky": "w", "padx": 10, "pady": (15, 0)},
+            grid_options={"row": 6, "column": 1, "sticky": "w", "padx": 10, "pady": (15, 0)},
             variable=self.create_images_val,
             font=self.root.font,
             checkbox_width=15,
@@ -308,7 +324,7 @@ class GUITrainNeuralNetwork:
             component_type="Button",
             frame=self.process_data_frame,
             text="Process files",
-            grid_options={"row": 6, "column": 0, "sticky": "ew", "padx": 10, "pady": (15, 0)},
+            grid_options={"row": 7, "column": 0, "sticky": "ew", "padx": 10, "pady": (15, 0)},
             font=self.root.font,
             width=50,
             height=25,
@@ -328,7 +344,7 @@ class GUITrainNeuralNetwork:
             component_type="Button",
             text="Show graphs",
             frame=self.process_data_frame,
-            grid_options={"row": 6, "column": 1, "sticky": "ew", "padx": (5,10), "pady": (15, 0)},
+            grid_options={"row": 7, "column": 1, "sticky": "ew", "padx": (5, 10), "pady": (15, 0)},
             font=self.root.font,
             width=50,
             height=25,
@@ -352,7 +368,7 @@ class GUITrainNeuralNetwork:
             component_type="Label",
             frame=self.process_data_frame,
             text="Choose labeling methods",
-            grid_options={"row": 8, "column": 0, "columnspan": 2, "sticky": "n"},
+            grid_options={"row": 9, "column": 0, "columnspan": 2, "sticky": "n"},  # Updated row
             font=self.root.font
         )
 
@@ -362,7 +378,7 @@ class GUITrainNeuralNetwork:
             component_type="Checkbutton",
             frame=self.process_data_frame,
             text="Hellinger",
-            grid_options={"row": 9, "column": 0, "sticky": "w", "padx": (10,0)},
+            grid_options={"row": 10, "column": 0, "sticky": "w", "padx": (10, 0)},  # Updated row
             variable=self.hellinger_val,
             font=self.root.font,
             checkbox_width=15,
@@ -380,7 +396,7 @@ class GUITrainNeuralNetwork:
             component_type="Checkbutton",
             frame=self.process_data_frame,
             text="NetSimile (input data must be graphs)",
-            grid_options={"row": 10, "column": 0, "columnspan": 2, "sticky": "w", "padx": (10, 0)},
+            grid_options={"row": 11, "column": 0, "columnspan": 2, "sticky": "w", "padx": (10, 0)},  # Updated row
             variable=self.netsimile_val,
             font=self.root.font,
             checkbox_width=15,
@@ -398,7 +414,7 @@ class GUITrainNeuralNetwork:
             component_type="Checkbutton",
             frame=self.process_data_frame,
             text="Resnet (images has to be created)",
-            grid_options={"row": 11, "column": 0, "columnspan": 2, "sticky": "w", "padx": 10},
+            grid_options={"row": 12, "column": 0, "columnspan": 2, "sticky": "w", "padx": 10},  # Updated row
             variable=self.resnet_val,
             font=self.root.font,
             checkbox_width=15,
@@ -416,7 +432,7 @@ class GUITrainNeuralNetwork:
             component_type="Checkbutton",
             frame=self.process_data_frame,
             text="Kolmogorov-Smirnov test",
-            grid_options={"row": 12, "column": 0, "columnspan": 2, "sticky": "w", "padx": 10},
+            grid_options={"row": 13, "column": 0, "columnspan": 2, "sticky": "w", "padx": 10},  # Updated row
             variable=self.kstest_val,
             font=self.root.font,
             checkbox_width=15,
@@ -433,7 +449,8 @@ class GUITrainNeuralNetwork:
             component_type="Button",
             text="Count similarities",
             frame=self.process_data_frame,
-            grid_options={"row": 13, "column": 0, "columnspan": 2, "sticky": "ew", "padx": 10, "pady": (15, 0)},
+            grid_options={"row": 14, "column": 0, "columnspan": 2, "sticky": "ew", "padx": 10, "pady": (15, 0)},
+            # Updated row
             font=self.root.font,
             width=50,
             height=25,
@@ -448,7 +465,8 @@ class GUITrainNeuralNetwork:
             component_type="Button",
             text="Label similarities",
             frame=self.process_data_frame,
-            grid_options={"row": 14, "column": 0, "columnspan": 2, "sticky": "ew", "padx": 10, "pady": (15, 0)},
+            grid_options={"row": 15, "column": 0, "columnspan": 2, "sticky": "ew", "padx": 10, "pady": (15, 0)},
+            # Updated row
             font=self.root.font,
             width=50,
             height=25,
@@ -469,7 +487,7 @@ class GUITrainNeuralNetwork:
         self.guiUtil.create_horizontal_line(
             self.process_data_frame,
             width=300,
-            row=7,
+            row=8,
             column=0,
             columnspan=3,
             padx=5,
