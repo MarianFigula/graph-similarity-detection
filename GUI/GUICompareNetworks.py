@@ -1,3 +1,4 @@
+import os
 from tkinter import filedialog
 import customtkinter as ctk
 
@@ -88,6 +89,30 @@ class GUICompareNetworks:
             font=self.root.fontTitle
         )
 
+    def __handleSelectDirectory(self, entry, button=None, optionMenu=None):
+        path = filedialog.askopenfilename(filetypes=[("CSV Files", "*.csv")])
+        if path:
+            entry.delete(0, ctk.END)
+            entry.insert(ctk.END, path)
+
+            if button:
+                button.configure(state="normal")
+
+            if optionMenu:
+                optionMenu.configure(state="normal")
+
+    def __handle_optionMenu_callback(self, choice):
+        print("optionmenu dropdown clicked:", choice)
+
+    def __getSavedModels(self):
+        dir_path = "../training_neural_network/saved_models"
+
+        if not os.path.exists(dir_path):
+            os.makedirs(dir_path)
+
+        files = [f for f in os.listdir(dir_path) if f.endswith(".pkl")]
+        return files
+
     def __createGraphletDistributionInput(self):
         self.guiUtil.add_component(
             self,
@@ -119,8 +144,8 @@ class GUICompareNetworks:
             height=25,
             fg_color=guiconst.COLOR_GREY,
             hover_color=guiconst.COLOR_GREY_HOVER,
-            state="disabled",
-            command=lambda: self.input_entry.insert(0, filedialog.askopenfilename(filetypes=[("CSV Files", "*.csv")]))
+            state="normal",
+            command=lambda: self.__handleSelectDirectory(self.input_entry, self.compare_button, self.modelOption)
         )
 
         self.guiUtil.create_horizontal_line(self.process_data_frame, width=300, column=0,row=5, columnspan=2, padx=5, pady=15, sticky="n")
@@ -136,7 +161,6 @@ class GUICompareNetworks:
             font=self.root.font
         )
 
-        # optionmenu_var = customtkinter.StringVar(value="option 2")
         self.modelOption = self.guiUtil.add_component(
             self,
             component_type="OptionMenu",
@@ -145,11 +169,12 @@ class GUICompareNetworks:
             font=self.root.font,
             width=20,
             height=25,
-            values=["Model1", "Model2", "Model3"],
-            command=lambda value: print(value),
+            values=self.__getSavedModels(),
+            state="disabled",
+            command=self.__handle_optionMenu_callback,
         )
 
-        self.guiUtil.add_component(
+        self.compare_button = self.guiUtil.add_component(
             self,
             component_type="Button",
             frame=self.process_data_frame,
