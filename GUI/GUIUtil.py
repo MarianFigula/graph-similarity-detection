@@ -59,6 +59,16 @@ class GUIUtil:
         for widget in root.winfo_children():
             widget.destroy()
 
+    @staticmethod
+    def setComponentNormalState(component=None):
+        if component is None:
+            return
+
+        component.configure(state="normal")
+
+    @staticmethod
+    def resetDownloadLabel(label_component):
+        label_component.configure(text="")
 
     def __create_info_top_level(self, text, **kwargs):
         # TODO: nastavit pozicia kde sa to bude zobrazovat

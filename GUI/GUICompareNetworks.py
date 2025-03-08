@@ -1,14 +1,18 @@
 import os
 from tkinter import filedialog
 import customtkinter as ctk
-
+import pandas as pd
 from GUI.GUIUtil import GUIUtil
 import GUI.GUIConstants as guiconst
+from training_neural_network.NeuralNetworkPredictor import NeuralNetworkPredictor
 
 class GUICompareNetworks:
     def __init__(self, root):
         self.root = root
+        self.neuralNetworkPredictor = NeuralNetworkPredictor()
+
         self.root.title("Compare Networks")
+        self.input_graphlet_df = None
 
         self.root.fontTitle = ("Lato", 16)
         self.root.font = ("Lato", 12)
@@ -71,7 +75,7 @@ class GUICompareNetworks:
             self,
             component_type="Button",
             text="?",
-            grid_options={"row": 0, "column": 0, "sticky": "ne", "pady": 10,  "padx": 20},
+            grid_options={"row": 0, "column": 0, "sticky": "ne", "pady": 10, "padx": 20},
             font=self.root.font,
             fg_color=guiconst.COLOR_GREY,
             hover_color=guiconst.COLOR_GREY_HOVER,
@@ -89,28 +93,48 @@ class GUICompareNetworks:
             font=self.root.fontTitle
         )
 
-    def __handleSelectDirectory(self, entry, button=None, optionMenu=None):
+    def __handleSelectDirectory(self, entry):
         path = filedialog.askopenfilename(filetypes=[("CSV Files", "*.csv")])
         if path:
             entry.delete(0, ctk.END)
             entry.insert(ctk.END, path)
 
-            if button:
-                button.configure(state="normal")
-
-            if optionMenu:
-                optionMenu.configure(state="normal")
+            self.guiUtil.setComponentNormalState(self.compare_button)
+            self.guiUtil.setComponentNormalState(self.modelOptionMenu)
 
     def __handle_optionMenu_callback(self, choice):
-        print("optionmenu dropdown clicked:", choice)
+        self.selected_model = choice
+        print("optionmenu dropdown clicked:", self.selected_model)
+
+    def __handleComparison(self):
+        self.input_graphlet_df = pd.read_csv(self.input_entry.get())
+
+        if self.selected_model is None:
+            return
+
+        self.result_df = self.neuralNetworkPredictor.predict(self.input_graphlet_df, self.selected_model)
+
+        self.guiUtil.setComponentNormalState(self.download_button)
+        self.guiUtil.setComponentNormalState(self.display_button)
+
+
+    def __handleDownload(self):
+        if self.result_df is None:
+            return
+        self.neuralNetworkPredictor.download_predictions(self.result_df)
+
+        self.download_complete_label.configure(text="Download complete!")
+        self.process_data_frame.after(2000, lambda: self.guiUtil.resetDownloadLabel(self.download_complete_label))
 
     def __getSavedModels(self):
-        dir_path = "../training_neural_network/saved_models"
+        self.model_dir_path = "../training_neural_network/saved_models"
 
-        if not os.path.exists(dir_path):
-            os.makedirs(dir_path)
+        if not os.path.exists(self.model_dir_path):
+            os.makedirs(self.model_dir_path)
 
-        files = [f for f in os.listdir(dir_path) if f.endswith(".pkl")]
+        files = [f for f in os.listdir(self.model_dir_path) if f.endswith(".pkl") and f.find("scaler") == -1]
+
+        self.selected_model = files[0]
         return files
 
     def __createGraphletDistributionInput(self):
@@ -132,7 +156,6 @@ class GUICompareNetworks:
             height=20
         )
 
-
         self.guiUtil.add_component(
             self,
             component_type="Button",
@@ -145,11 +168,11 @@ class GUICompareNetworks:
             fg_color=guiconst.COLOR_GREY,
             hover_color=guiconst.COLOR_GREY_HOVER,
             state="normal",
-            command=lambda: self.__handleSelectDirectory(self.input_entry, self.compare_button, self.modelOption)
+            command=lambda: self.__handleSelectDirectory(self.input_entry)
         )
 
-        self.guiUtil.create_horizontal_line(self.process_data_frame, width=300, column=0,row=5, columnspan=2, padx=5, pady=15, sticky="n")
-
+        self.guiUtil.create_horizontal_line(self.process_data_frame, width=300, column=0, row=5, columnspan=2, padx=5,
+                                            pady=15, sticky="n")
 
     def __createChoosingModel(self):
         self.guiUtil.add_component(
@@ -161,7 +184,7 @@ class GUICompareNetworks:
             font=self.root.font
         )
 
-        self.modelOption = self.guiUtil.add_component(
+        self.modelOptionMenu = self.guiUtil.add_component(
             self,
             component_type="OptionMenu",
             frame=self.process_data_frame,
@@ -186,10 +209,11 @@ class GUICompareNetworks:
             fg_color=guiconst.COLOR_GREEN,
             hover_color=guiconst.COLOR_GREEN_HOVER,
             state="disabled",
-            command=lambda: print("Compare")
+            command=lambda: self.__handleComparison()
         )
 
-        self.guiUtil.create_horizontal_line(self.process_data_frame, width=300, column=0, row=9, columnspan=2, padx=5, pady=15, sticky="n")
+        self.guiUtil.create_horizontal_line(self.process_data_frame, width=300, column=0, row=9, columnspan=2, padx=5,
+                                            pady=15, sticky="n")
 
     def __displayResults(self):
         self.guiUtil.add_component(
@@ -201,7 +225,7 @@ class GUICompareNetworks:
             font=self.root.font
         )
 
-        self.guiUtil.add_component(
+        self.download_button = self.guiUtil.add_component(
             self,
             component_type="Button",
             frame=self.process_data_frame,
@@ -213,10 +237,10 @@ class GUICompareNetworks:
             fg_color=guiconst.COLOR_GREY,
             hover_color=guiconst.COLOR_GREY_HOVER,
             state="disabled",
-            command=lambda: print("Download")
+            command=lambda: self.__handleDownload()
         )
 
-        self.guiUtil.add_component(
+        self.display_button = self.guiUtil.add_component(
             self,
             component_type="Button",
             frame=self.process_data_frame,
@@ -228,7 +252,17 @@ class GUICompareNetworks:
             fg_color=guiconst.COLOR_GREY,
             hover_color=guiconst.COLOR_GREY_HOVER,
             state="disabled",
-            command=lambda: print("Display")
+            command=lambda: self.neuralNetworkPredictor.display_predictions(self.result_df)
+        )
+
+        self.download_complete_label = self.guiUtil.add_component(
+            self,
+            component_type="Label",
+            frame=self.process_data_frame,
+            text="",
+            grid_options={"row": 12, "column": 0, "columnspan": 2, "sticky": "n"},
+            font=self.root.font,
+            text_color=guiconst.COLOR_GREEN,
         )
 
     def run(self):
@@ -237,6 +271,7 @@ class GUICompareNetworks:
         self.__createChoosingModel()
         self.__displayResults()
         self.root.mainloop()
+
 
 if __name__ == "__main__":
     root = ctk.CTk()
