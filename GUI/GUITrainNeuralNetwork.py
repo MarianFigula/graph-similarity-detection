@@ -465,7 +465,7 @@ class GUITrainNeuralNetwork:
             component_type="Button",
             text="Label similarities",
             frame=self.process_data_frame,
-            grid_options={"row": 15, "column": 0, "columnspan": 2, "sticky": "ew", "padx": 10, "pady": (15, 0)},
+            grid_options={"row": 15, "column": 0, "columnspan": 2, "sticky": "ew", "padx": 10, "pady": (15, 10)},
             # Updated row
             font=self.root.font,
             width=50,
