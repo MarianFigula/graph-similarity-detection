@@ -87,7 +87,7 @@ class GUITrainNeuralNetwork:
             hover_color=guiconst.COLOR_GREY_HOVER,
             width=30,
             height=25,
-            command=lambda: "",
+            command=lambda: self.guiUtil.openTopLevel("text"),
         )
 
         self.guiUtil.add_component(

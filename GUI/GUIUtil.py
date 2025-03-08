@@ -5,7 +5,8 @@ class GUIUtil:
     fontTitle = ("Lato", 16)
 
     def __init__(self):
-        pass
+        self.info_window = None  # Class-level variable to store the reference to the open window
+
 
     @staticmethod
     def add_component(self, component_type, frame=None, grid_options=None, **kwargs):
@@ -57,3 +58,25 @@ class GUIUtil:
     def removeWindow(root):
         for widget in root.winfo_children():
             widget.destroy()
+
+
+    def __create_info_top_level(self, text, **kwargs):
+        # TODO: nastavit pozicia kde sa to bude zobrazovat
+        info_window = ctk.CTkToplevel()
+        info_window.title("Info")
+        info_window.geometry("300x100")
+
+        info_label = ctk.CTkLabel(info_window, text=text, **kwargs)
+        info_label.grid(row=0, column=0, padx=10, pady=10)
+
+        info_window.lift()
+        info_window.focus_force()
+
+        return info_window
+
+    def openTopLevel(self, text=''):
+        if self.info_window is None or not self.info_window.winfo_exists():
+            self.info_window = self.__create_info_top_level(text)
+        else:
+            self.info_window.lift()
+            self.info_window.focus_force()
