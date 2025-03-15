@@ -2,6 +2,7 @@ import customtkinter as ctk
 
 from GUI.GUIProcessData import GUIProcessData
 from GUI.GUICompareNetworks import GUICompareNetworks
+from GUI.GUITrainNeuralNetwork import GUITrainNeuralNetwork
 from GUI.GUIUtil import GUIUtil
 
 
@@ -25,7 +26,6 @@ class GUIChooseOptions:
         ctk.set_appearance_mode("light")
         ctk.set_default_color_theme("blue")
 
-
     def __addTitle(self):
         self.guiUtil.add_component(
             self.root,
@@ -48,7 +48,7 @@ class GUIChooseOptions:
         self.guiUtil.add_component(
             self.root,
             component_type="Button",
-            grid_options={"row": 2, "column": 0,  "padx": 20, "pady": (0, 15)},
+            grid_options={"row": 2, "column": 0, "padx": 20, "pady": (0, 15)},
             text="Train Neural Network",
             command=lambda: self.__runTrainNeuralNetwork()
         )
@@ -56,7 +56,7 @@ class GUIChooseOptions:
         self.guiUtil.add_component(
             self.root,
             component_type="Button",
-            grid_options={"row": 3, "column": 0,  "padx": 20, "pady": (0, 15)},
+            grid_options={"row": 3, "column": 0, "padx": 20, "pady": (0, 15)},
             text="Compare 2 networks",
             command=lambda: self.__runCompareNetworks()
         )
@@ -65,8 +65,11 @@ class GUIChooseOptions:
         self.guiUtil.removeWindow(root=self.root)
         app = GUICompareNetworks(self.root)
         app.run()
+
     def __runTrainNeuralNetwork(self):
-        pass
+        self.guiUtil.removeWindow(root=self.root)
+        app = GUITrainNeuralNetwork(self.root)
+        app.run()
 
     def __runProcessData(self):
         self.guiUtil.removeWindow(root=self.root)
@@ -78,6 +81,7 @@ class GUIChooseOptions:
         self.__addTitle()
         self.__createOptions()
         self.root.mainloop()
+
 
 if __name__ == "__main__":
     # TODO: testnut ci po otvoreni a zvoleny moznost sa pekne zobrazi obrazovka
