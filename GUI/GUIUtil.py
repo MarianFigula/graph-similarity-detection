@@ -70,6 +70,13 @@ class GUIUtil:
     def resetDownloadLabel(label_component):
         label_component.configure(text="")
 
+    @staticmethod
+    def toggle_component(checkbox_val, component, **kwargs):
+        if bool(checkbox_val.get()):
+            component.grid(**kwargs)
+        else:
+            component.grid_remove()
+
     def __create_info_top_level(self, text, **kwargs):
         # TODO: nastavit pozicia kde sa to bude zobrazovat
         info_window = ctk.CTkToplevel()
