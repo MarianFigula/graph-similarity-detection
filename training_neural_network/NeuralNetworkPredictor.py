@@ -84,6 +84,31 @@ class NeuralNetworkPredictor:
 
         return result_df
 
+    def predict_two_graphlet_distributions(self, graphlet_df, graphlet_df_2, option_model=None):
+        self.mlp, self.scaler = self.modelUtils.load_model(option_model)
+
+        # Clean up the dataframes
+        graphlet_df = graphlet_df.drop('Unnamed: 0', axis=1)
+        graphlet_df_2 = graphlet_df_2.drop('Unnamed: 0', axis=1)
+
+        # Get graph names from both dataframes
+        graph_names = graphlet_df.columns.tolist()
+        graph_names_2 = graphlet_df_2.columns.tolist()
+
+        # Create a combined dataframe for prediction
+        combined_df = pd.concat([graphlet_df, graphlet_df_2], axis=1)
+
+        # Create pairs between the two sets of graph names
+        new_pairs = []
+        for graph1 in graph_names:
+            for graph2 in graph_names_2:
+                new_pairs.append((graph1, graph2))
+
+        # Pass the combined dataframe and pairs to the prediction function
+        result_df = self.__predict_new_pairs(self.mlp, self.scaler, combined_df, new_pairs)
+
+        return result_df
+
     def display_predictions(self, result_df):
         self.predictionViewer = PredictionViewer(result_df)
         self.predictionViewer.showPredictions()
