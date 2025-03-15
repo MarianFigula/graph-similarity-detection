@@ -11,10 +11,10 @@ import GUI.GUIConstants as guiconst
 
 
 
-class GUITrainNeuralNetwork:
+class GUIProcessData:
     def __init__(self, root):
         self.root = root
-        self.root.title("Train neural network")
+        self.root.title("Data processing")
 
         self.root.fontTitle = ("Lato", 16)
         self.root.font = ("Lato", 12)
@@ -25,17 +25,17 @@ class GUITrainNeuralNetwork:
         self.similarityHandler = None
         self.similarity_measures = None
 
-        ws = root.winfo_screenwidth()  # width of the screen
-        hs = root.winfo_screenheight()  # height of the screen
+        ws = root.winfo_screenwidth()
+        hs = root.winfo_screenheight()
 
-        w = 1000  # width for the Tk root
-        h = 700  # height for the Tk root
+        w = 400
+        h = 600
         x = (ws / 2) - (w / 2)
         y = (hs / 2) - (h / 2)
 
         # TODO: zakomentovat 1000x700 a odkomentovat
-        self.root.geometry("1000x700")
-        # root.geometry('%dx%d+%d+%d' % (w, h, x, y))
+        # self.root.geometry("1000x700")
+        root.geometry('%dx%d+%d+%d' % (w, h, x, y))
 
 
         self.root.grid_columnconfigure(1, weight=1)  # Make the column expand to center content
@@ -48,11 +48,8 @@ class GUITrainNeuralNetwork:
         ctk.set_default_color_theme("blue")  # Options: "blue", "green", "dark-blue"
 
         # Create a main frame to hold all components
-        self.process_data_frame = ctk.CTkFrame(self.root, width=300, height=300)
-        self.process_data_frame.grid(row=2, column=0, padx=10, pady=10, sticky="ns")  # No horizontal expansion
-
-        self.train_network_data_frame = ctk.CTkFrame(self.root, width=600, height=300)
-        self.train_network_data_frame.grid(row=2, column=1, padx=10, pady=10, sticky="ns")  # No horizontal expansion
+        self.process_data_frame = ctk.CTkFrame(self.root, width=320, height=300)
+        self.process_data_frame.grid(row=2, column=0, padx=40, pady=20, sticky="ns")  # No horizontal expansion
 
     def __goBackToOptions(self):
         self.guiUtil.removeWindow(root=self.root)
@@ -81,7 +78,7 @@ class GUITrainNeuralNetwork:
             self,
             component_type="Button",
             text="?",
-            grid_options={"row": 0, "column": 1, "sticky": "ne", "pady": 10, "padx": 20},
+            grid_options={"row": 0, "column": 0, "sticky": "ne", "pady": 10, "padx": 20},
             font=self.root.font,
             fg_color=guiconst.COLOR_GREY,
             hover_color=guiconst.COLOR_GREY_HOVER,
@@ -244,7 +241,7 @@ class GUITrainNeuralNetwork:
             component_type="Label",
             frame=self.process_data_frame,
             text="Output directory",
-            grid_options={"row": 2, "column": 1, "sticky": "w", "padx": 20, "pady": 5},
+            grid_options={"row": 2, "column": 1, "sticky": "w", "padx": (30, 0), "pady": 5},
             font=self.root.font,
             anchor="w"
         )
@@ -253,7 +250,7 @@ class GUITrainNeuralNetwork:
             self,
             component_type="Entry",
             frame=self.process_data_frame,
-            grid_options={"row": 3, "column": 1, "sticky": "w", "padx": (0, 10), "pady": 5},
+            grid_options={"row": 3, "column": 1, "sticky": "w", "padx": (10, 10), "pady": 5},
             font=self.root.font,
             width=130,
             height=20
@@ -264,7 +261,7 @@ class GUITrainNeuralNetwork:
             component_type="Button",
             frame=self.process_data_frame,
             text="Select output directory",
-            grid_options={"row": 4, "column": 1, "sticky": "w", "pady": 5},
+            grid_options={"row": 4, "column": 1, "sticky": "w", "padx": 10,"pady": 5},
             font=self.root.font,
             width=50,
             command=lambda: self.__handleSelectDirectory(self.output_entry)
@@ -275,7 +272,7 @@ class GUITrainNeuralNetwork:
             component_type="Button",
             frame=self.process_data_frame,
             text="Reset output directory",
-            grid_options={"row": 5, "column": 1, "sticky": "w"},
+            grid_options={"row": 5, "column": 1, "sticky": "w", "padx": 10},
             font=self.root.font,
             width=50,
             fg_color=guiconst.COLOR_RED,
@@ -476,11 +473,6 @@ class GUITrainNeuralNetwork:
             command=lambda: self.__handleLabelSimilarities()
         )
 
-
-    def __trainingNeuralNetworkGUI(self):
-        pass
-
-
     def run(self):
         self.__addHeader()
         self.__createProcessingDataFrame()
@@ -500,5 +492,5 @@ class GUITrainNeuralNetwork:
 
 if __name__ == "__main__":
     root = ctk.CTk()  # Use CTk instead of Tk for the main window
-    app = GUITrainNeuralNetwork(root)
+    app = GUIProcessData(root)
     app.run()
