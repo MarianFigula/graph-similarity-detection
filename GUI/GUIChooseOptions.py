@@ -1,6 +1,6 @@
 import customtkinter as ctk
 
-from GUI.GUITrainNeuralNetwork import GUITrainNeuralNetwork
+from GUI.GUIProcessData import GUIProcessData
 from GUI.GUICompareNetworks import GUICompareNetworks
 from GUI.GUIUtil import GUIUtil
 
@@ -8,8 +8,7 @@ from GUI.GUIUtil import GUIUtil
 class GUIChooseOptions:
     def __init__(self, root):
         self.root = root
-        self.root.title("Choose options")
-        self.root.geometry("350x80")
+        self.root.title("Choose option")
         self.root.fontTitle = ("Lato", 16)
         self.guiUtil = GUIUtil()
 
@@ -17,7 +16,7 @@ class GUIChooseOptions:
         hs = root.winfo_screenheight()  # height of the screen
 
         w = 350  # width for the Tk root
-        h = 80  # height for the Tk root
+        h = 215  # height for the Tk root
         x = (ws / 2) - (w / 2)
         y = (hs / 2) - (h / 2)
 
@@ -31,8 +30,8 @@ class GUIChooseOptions:
         self.guiUtil.add_component(
             self.root,
             component_type="Label",
-            grid_options={"row": 0, "column": 0, "columnspan": 7, "sticky": "n","padx": 30, "pady": 5},
-            text="Choose an option you want to perform:",
+            grid_options={"row": 0, "column": 0, "sticky": "n", "padx": 30, "pady": (10, 20)},
+            text="Choose an option you want to perform",
             font=self.guiUtil.fontTitle,
             anchor="center"
         )
@@ -41,16 +40,25 @@ class GUIChooseOptions:
         self.guiUtil.add_component(
             self.root,
             component_type="Button",
-            grid_options={"row": 1, "column": 0,  "padx": 20},
-            text="Compare 2 networks",
-            command=lambda: self.__runCompareNetworks()
+            grid_options={"row": 1, "column": 0, "padx": 20, "pady": (0, 15)},
+            text="Process data",
+            command=lambda: self.__runProcessData()
         )
+
         self.guiUtil.add_component(
             self.root,
             component_type="Button",
-            grid_options={"row": 1, "column": 1, "sticky": "e"},
+            grid_options={"row": 2, "column": 0,  "padx": 20, "pady": (0, 15)},
             text="Train Neural Network",
             command=lambda: self.__runTrainNeuralNetwork()
+        )
+
+        self.guiUtil.add_component(
+            self.root,
+            component_type="Button",
+            grid_options={"row": 3, "column": 0,  "padx": 20, "pady": (0, 15)},
+            text="Compare 2 networks",
+            command=lambda: self.__runCompareNetworks()
         )
 
     def __runCompareNetworks(self):
@@ -58,10 +66,12 @@ class GUIChooseOptions:
         app = GUICompareNetworks(self.root)
         app.run()
     def __runTrainNeuralNetwork(self):
-        self.guiUtil.removeWindow(root=self.root)
+        pass
 
+    def __runProcessData(self):
+        self.guiUtil.removeWindow(root=self.root)
         # Create the new GUI in the same root window
-        app = GUITrainNeuralNetwork(self.root)
+        app = GUIProcessData(self.root)
         app.run()
 
     def run(self):
