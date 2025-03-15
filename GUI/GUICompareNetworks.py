@@ -1,5 +1,5 @@
 import os
-from tkinter import filedialog
+from tkinter import filedialog, IntVar
 import customtkinter as ctk
 import pandas as pd
 from GUI.GUIUtil import GUIUtil
@@ -29,20 +29,20 @@ class GUICompareNetworks:
         hs = root.winfo_screenheight()
 
         w = 400
-        h = 550
+        h = 600
 
         x = (ws / 2) - (w / 2)
         y = (hs / 2) - (h / 2)
 
         # TODO: odkomentovat
-        root.geometry('400x550')
-        # root.geometry('%dx%d+%d+%d' % (w, h, x, y))
+        # root.geometry('400x550')
+        root.geometry('%dx%d+%d+%d' % (w, h, x, y))
 
         ctk.set_appearance_mode("light")
         ctk.set_default_color_theme("blue")
 
         # Create a main frame to hold all components
-        self.process_data_frame = ctk.CTkFrame(self.root, width=320, height=400)
+        self.process_data_frame = ctk.CTkFrame(self.root, width=320, height=450)
         self.process_data_frame.grid(row=2, column=0, padx=40, pady=20, sticky="ns")  # No horizontal expansion
         self.process_data_frame.grid_propagate(False)  # Prevent the frame from resizing based on its content
 
@@ -107,16 +107,88 @@ class GUICompareNetworks:
         print("optionmenu dropdown clicked:", self.selected_model)
 
     def __handleComparison(self):
-        self.input_graphlet_df = pd.read_csv(self.input_entry.get())
-
         if self.selected_model is None:
             return
 
-        self.result_df = self.neuralNetworkPredictor.predict(self.input_graphlet_df, self.selected_model)
+        if bool(self.compare_between_two_graphlets_val.get()):
+            self.input_graphlet_df = pd.read_csv(self.input_entry.get())
+            self.input_graphlet_df2 = pd.read_csv(self.input_entry_second.get())
+            self.result_df = self.neuralNetworkPredictor.predict_two_graphlet_distributions(
+                self.input_graphlet_df,
+                self.input_graphlet_df2,
+                self.selected_model)
+        else:
+            self.input_graphlet_df = pd.read_csv(self.input_entry.get())
+            self.result_df = self.neuralNetworkPredictor.predict(self.input_graphlet_df, self.selected_model)
 
         self.guiUtil.setComponentNormalState(self.download_button)
         self.guiUtil.setComponentNormalState(self.display_button)
 
+    def toggle_second_graphlet_distribution(self):
+
+        self.guiUtil.toggle_component(
+            self.compare_between_two_graphlets_val,
+            self.second_label,
+            row=5,
+            column=0,
+            columnspan=2,
+            sticky="n"
+        )
+
+        self.guiUtil.toggle_component(
+            self.compare_between_two_graphlets_val,
+            self.input_entry_second,
+            row=6,
+            column=0,
+            columnspan=2,
+            sticky="we",
+            padx=30,
+            pady=10
+        )
+
+        self.guiUtil.toggle_component(
+            self.compare_between_two_graphlets_val,
+            self.select_input_button_second,
+            row=7,
+            column=0,
+            columnspan=2,
+            sticky="we",
+            padx=50,
+            pady=10
+        )
+
+        if bool(self.compare_between_two_graphlets_val.get()):
+            # Increase window and frame height
+            new_root_height = 700
+            new_frame_height = 570
+
+            # Resize the root window
+            ws = self.root.winfo_screenwidth()
+            hs = self.root.winfo_screenheight()
+            w = 400
+            h = new_root_height
+            x = (ws / 2) - (w / 2)
+            y = (hs / 2) - (h / 2)
+            self.root.geometry('%dx%d+%d+%d' % (w, h, x, y))
+
+            # Resize the frame
+            self.process_data_frame.configure(height=new_frame_height)
+        else:
+            # Decrease window and frame height back to original
+            original_root_height = 600
+            original_frame_height = 450
+
+            # Resize the root window
+            ws = self.root.winfo_screenwidth()
+            hs = self.root.winfo_screenheight()
+            w = 400
+            h = original_root_height
+            x = (ws / 2) - (w / 2)
+            y = (hs / 2) - (h / 2)
+            self.root.geometry('%dx%d+%d+%d' % (w, h, x, y))
+
+            # Resize the frame
+            self.process_data_frame.configure(height=original_frame_height)
 
     def __handleDownload(self):
         if self.result_df is None:
@@ -171,8 +243,63 @@ class GUICompareNetworks:
             command=lambda: self.__handleSelectDirectory(self.input_entry)
         )
 
-        self.guiUtil.create_horizontal_line(self.process_data_frame, width=300, column=0, row=5, columnspan=2, padx=5,
-                                            pady=15, sticky="n")
+        self.second_label = self.guiUtil.add_component(
+            self,
+            component_type="Label",
+            frame=self.process_data_frame,
+            text="Select second graphlet distributions (.csv):",
+            grid_options={"row": 5, "column": 0, "columnspan": 2, "sticky": "n"},
+            font=self.root.font
+        )
+
+        self.input_entry_second = self.guiUtil.add_component(
+            self,
+            component_type="Entry",
+            frame=self.process_data_frame,
+            grid_options={"row": 6, "column": 0, "columnspan": 2, "sticky": "we", "padx": 30, "pady": 10},
+            font=self.root.font,
+            height=20,
+            state="normal"
+        )
+
+        self.select_input_button_second = self.guiUtil.add_component(
+            self,
+            component_type="Button",
+            frame=self.process_data_frame,
+            text="Select second input file",
+            grid_options={"row": 7, "column": 0, "columnspan": 2, "sticky": "we", "padx": 50, "pady": (5, 10)},
+            font=self.root.font,
+            width=30,
+            height=25,
+            fg_color=guiconst.COLOR_GREY,
+            hover_color=guiconst.COLOR_GREY_HOVER,
+            state="normal",
+            command=lambda: self.__handleSelectDirectory(self.input_entry_second)
+        )
+
+        self.second_label.grid_remove()
+        self.input_entry_second.grid_remove()
+        self.select_input_button_second.grid_remove()
+
+        self.compare_between_two_graphlets_val = IntVar()
+        self.compare_between_two_graphlets = self.guiUtil.add_component(
+            self,
+            component_type="Checkbutton",
+            frame=self.process_data_frame,
+            grid_options={"row": 8, "column": 0, "columnspan": 2, "sticky": "we", "padx": 30, "pady": 10},
+            font=self.root.font,
+            text="Compare between two graphlets",
+            checkbox_width=15,
+            checkbox_height=15,
+            corner_radius=7,
+            fg_color=guiconst.COLOR_GREEN,
+            hover_color=guiconst.COLOR_GREEN_HOVER,
+            border_width=2,
+            variable=self.compare_between_two_graphlets_val,
+            command=lambda: self.toggle_second_graphlet_distribution()
+        )
+
+        self.guiUtil.create_horizontal_line(self.process_data_frame, width=300, column=0, row=9, columnspan=2, padx=5, pady=15, sticky="n")
 
     def __createChoosingModel(self):
         self.guiUtil.add_component(
@@ -180,15 +307,14 @@ class GUICompareNetworks:
             component_type="Label",
             frame=self.process_data_frame,
             text="Select model:",
-            grid_options={"row": 6, "column": 0, "columnspan": 2, "sticky": "n"},
+            grid_options={"row": 10, "column": 0, "columnspan": 2, "sticky": "n"},
             font=self.root.font
         )
-
         self.modelOptionMenu = self.guiUtil.add_component(
             self,
             component_type="OptionMenu",
             frame=self.process_data_frame,
-            grid_options={"row": 7, "column": 0, "columnspan": 2, "sticky": "we", "padx": 30, "pady": 10},
+            grid_options={"row": 11, "column": 0, "columnspan": 2, "sticky": "we", "padx": 30, "pady": 10},
             font=self.root.font,
             width=20,
             height=25,
@@ -196,13 +322,12 @@ class GUICompareNetworks:
             state="disabled",
             command=self.__handle_optionMenu_callback,
         )
-
         self.compare_button = self.guiUtil.add_component(
             self,
             component_type="Button",
             frame=self.process_data_frame,
             text="Compare",
-            grid_options={"row": 8, "column": 0, "columnspan": 2, "sticky": "we", "padx": 50, "pady": 10},
+            grid_options={"row": 12, "column": 0, "columnspan": 2, "sticky": "we", "padx": 50, "pady": 10},
             font=self.root.font,
             width=30,
             height=30,
@@ -211,9 +336,7 @@ class GUICompareNetworks:
             state="disabled",
             command=lambda: self.__handleComparison()
         )
-
-        self.guiUtil.create_horizontal_line(self.process_data_frame, width=300, column=0, row=9, columnspan=2, padx=5,
-                                            pady=15, sticky="n")
+        self.guiUtil.create_horizontal_line(self.process_data_frame, width=300, column=0, row=13, columnspan=2, padx=5, pady=15, sticky="n")
 
     def __displayResults(self):
         self.guiUtil.add_component(
@@ -221,16 +344,15 @@ class GUICompareNetworks:
             component_type="Label",
             frame=self.process_data_frame,
             text="Results",
-            grid_options={"row": 10, "column": 0, "columnspan": 2, "sticky": "n"},
+            grid_options={"row": 14, "column": 0, "columnspan": 2, "sticky": "n"},
             font=self.root.font
         )
-
         self.download_button = self.guiUtil.add_component(
             self,
             component_type="Button",
             frame=self.process_data_frame,
             text="Download results",
-            grid_options={"row": 11, "column": 0, "sticky": "we", "padx": 10, "pady": 10},
+            grid_options={"row": 15, "column": 0, "sticky": "we", "padx": 10, "pady": 10},
             font=self.root.font,
             width=30,
             height=30,
@@ -239,13 +361,12 @@ class GUICompareNetworks:
             state="disabled",
             command=lambda: self.__handleDownload()
         )
-
         self.display_button = self.guiUtil.add_component(
             self,
             component_type="Button",
             frame=self.process_data_frame,
             text="Display results",
-            grid_options={"row": 11, "column": 1, "sticky": "we", "padx": 10, "pady": 10},
+            grid_options={"row": 15, "column": 1, "sticky": "we", "padx": 10, "pady": 10},
             font=self.root.font,
             width=30,
             height=30,
@@ -254,13 +375,12 @@ class GUICompareNetworks:
             state="disabled",
             command=lambda: self.neuralNetworkPredictor.display_predictions(self.result_df)
         )
-
         self.download_complete_label = self.guiUtil.add_component(
             self,
             component_type="Label",
             frame=self.process_data_frame,
             text="",
-            grid_options={"row": 12, "column": 0, "columnspan": 2, "sticky": "n"},
+            grid_options={"row": 16, "column": 0, "columnspan": 2, "sticky": "n"},
             font=self.root.font,
             text_color=guiconst.COLOR_GREEN,
         )
