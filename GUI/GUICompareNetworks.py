@@ -42,12 +42,12 @@ class GUICompareNetworks:
         ctk.set_default_color_theme("blue")
 
         # Create a main frame to hold all components
-        self.process_data_frame = ctk.CTkFrame(self.root, width=320, height=450)
-        self.process_data_frame.grid(row=2, column=0, padx=40, pady=20, sticky="ns")  # No horizontal expansion
-        self.process_data_frame.grid_propagate(False)  # Prevent the frame from resizing based on its content
+        self.compare_networks_frame = ctk.CTkFrame(self.root, width=320, height=450)
+        self.compare_networks_frame.grid(row=2, column=0, padx=40, pady=20, sticky="ns")  # No horizontal expansion
+        self.compare_networks_frame.grid_propagate(False)  # Prevent the frame from resizing based on its content
 
-        self.process_data_frame.grid_columnconfigure(0, weight=1)  # Center content horizontally
-        self.process_data_frame.grid_columnconfigure(1, weight=1)  # Center content horizontally
+        self.compare_networks_frame.grid_columnconfigure(0, weight=1)  # Center content horizontally
+        self.compare_networks_frame.grid_columnconfigure(1, weight=1)  # Center content horizontally
 
     def __goBackToOptions(self):
         self.guiUtil.removeWindow(root=self.root)
@@ -172,7 +172,7 @@ class GUICompareNetworks:
             self.root.geometry('%dx%d+%d+%d' % (w, h, x, y))
 
             # Resize the frame
-            self.process_data_frame.configure(height=new_frame_height)
+            self.compare_networks_frame.configure(height=new_frame_height)
         else:
             # Decrease window and frame height back to original
             original_root_height = 600
@@ -188,7 +188,7 @@ class GUICompareNetworks:
             self.root.geometry('%dx%d+%d+%d' % (w, h, x, y))
 
             # Resize the frame
-            self.process_data_frame.configure(height=original_frame_height)
+            self.compare_networks_frame.configure(height=original_frame_height)
 
     def __handleDownload(self):
         if self.result_df is None:
@@ -196,7 +196,7 @@ class GUICompareNetworks:
         self.neuralNetworkPredictor.download_predictions(self.result_df)
 
         self.download_complete_label.configure(text="Download complete!")
-        self.process_data_frame.after(2000, lambda: self.guiUtil.resetDownloadLabel(self.download_complete_label))
+        self.compare_networks_frame.after(2000, lambda: self.guiUtil.resetDownloadLabel(self.download_complete_label))
 
     def __getSavedModels(self):
         self.model_dir_path = "../training_neural_network/saved_models"
@@ -213,7 +213,7 @@ class GUICompareNetworks:
         self.guiUtil.add_component(
             self,
             component_type="Label",
-            frame=self.process_data_frame,
+            frame=self.compare_networks_frame,
             text="Select graphlet distributions (.csv):",
             grid_options={"row": 2, "column": 0, "columnspan": 2, "sticky": "n"},
             font=self.root.font
@@ -222,7 +222,7 @@ class GUICompareNetworks:
         self.input_entry = self.guiUtil.add_component(
             self,
             component_type="Entry",
-            frame=self.process_data_frame,
+            frame=self.compare_networks_frame,
             grid_options={"row": 3, "column": 0, "columnspan": 2, "sticky": "we", "padx": 30, "pady": 10},
             font=self.root.font,
             height=20
@@ -231,7 +231,7 @@ class GUICompareNetworks:
         self.guiUtil.add_component(
             self,
             component_type="Button",
-            frame=self.process_data_frame,
+            frame=self.compare_networks_frame,
             text="Select input file",
             grid_options={"row": 4, "column": 0, "columnspan": 2, "sticky": "we", "padx": 50, "pady": 5},
             font=self.root.font,
@@ -246,7 +246,7 @@ class GUICompareNetworks:
         self.second_label = self.guiUtil.add_component(
             self,
             component_type="Label",
-            frame=self.process_data_frame,
+            frame=self.compare_networks_frame,
             text="Select second graphlet distributions (.csv):",
             grid_options={"row": 5, "column": 0, "columnspan": 2, "sticky": "n"},
             font=self.root.font
@@ -255,7 +255,7 @@ class GUICompareNetworks:
         self.input_entry_second = self.guiUtil.add_component(
             self,
             component_type="Entry",
-            frame=self.process_data_frame,
+            frame=self.compare_networks_frame,
             grid_options={"row": 6, "column": 0, "columnspan": 2, "sticky": "we", "padx": 30, "pady": 10},
             font=self.root.font,
             height=20,
@@ -265,7 +265,7 @@ class GUICompareNetworks:
         self.select_input_button_second = self.guiUtil.add_component(
             self,
             component_type="Button",
-            frame=self.process_data_frame,
+            frame=self.compare_networks_frame,
             text="Select second input file",
             grid_options={"row": 7, "column": 0, "columnspan": 2, "sticky": "we", "padx": 50, "pady": (5, 10)},
             font=self.root.font,
@@ -285,7 +285,7 @@ class GUICompareNetworks:
         self.compare_between_two_graphlets = self.guiUtil.add_component(
             self,
             component_type="Checkbutton",
-            frame=self.process_data_frame,
+            frame=self.compare_networks_frame,
             grid_options={"row": 8, "column": 0, "columnspan": 2, "sticky": "we", "padx": 30, "pady": 10},
             font=self.root.font,
             text="Compare between two graphlets",
@@ -299,13 +299,13 @@ class GUICompareNetworks:
             command=lambda: self.toggle_second_graphlet_distribution()
         )
 
-        self.guiUtil.create_horizontal_line(self.process_data_frame, width=300, column=0, row=9, columnspan=2, padx=5, pady=15, sticky="n")
+        self.guiUtil.create_horizontal_line(self.compare_networks_frame, width=300, column=0, row=9, columnspan=2, padx=5, pady=15, sticky="n")
 
     def __createChoosingModel(self):
         self.guiUtil.add_component(
             self,
             component_type="Label",
-            frame=self.process_data_frame,
+            frame=self.compare_networks_frame,
             text="Select model:",
             grid_options={"row": 10, "column": 0, "columnspan": 2, "sticky": "n"},
             font=self.root.font
@@ -313,7 +313,7 @@ class GUICompareNetworks:
         self.modelOptionMenu = self.guiUtil.add_component(
             self,
             component_type="OptionMenu",
-            frame=self.process_data_frame,
+            frame=self.compare_networks_frame,
             grid_options={"row": 11, "column": 0, "columnspan": 2, "sticky": "we", "padx": 30, "pady": 10},
             font=self.root.font,
             width=20,
@@ -325,7 +325,7 @@ class GUICompareNetworks:
         self.compare_button = self.guiUtil.add_component(
             self,
             component_type="Button",
-            frame=self.process_data_frame,
+            frame=self.compare_networks_frame,
             text="Compare",
             grid_options={"row": 12, "column": 0, "columnspan": 2, "sticky": "we", "padx": 50, "pady": 10},
             font=self.root.font,
@@ -336,13 +336,13 @@ class GUICompareNetworks:
             state="disabled",
             command=lambda: self.__handleComparison()
         )
-        self.guiUtil.create_horizontal_line(self.process_data_frame, width=300, column=0, row=13, columnspan=2, padx=5, pady=15, sticky="n")
+        self.guiUtil.create_horizontal_line(self.compare_networks_frame, width=300, column=0, row=13, columnspan=2, padx=5, pady=15, sticky="n")
 
     def __displayResults(self):
         self.guiUtil.add_component(
             self,
             component_type="Label",
-            frame=self.process_data_frame,
+            frame=self.compare_networks_frame,
             text="Results",
             grid_options={"row": 14, "column": 0, "columnspan": 2, "sticky": "n"},
             font=self.root.font
@@ -350,7 +350,7 @@ class GUICompareNetworks:
         self.download_button = self.guiUtil.add_component(
             self,
             component_type="Button",
-            frame=self.process_data_frame,
+            frame=self.compare_networks_frame,
             text="Download results",
             grid_options={"row": 15, "column": 0, "sticky": "we", "padx": 10, "pady": 10},
             font=self.root.font,
@@ -364,7 +364,7 @@ class GUICompareNetworks:
         self.display_button = self.guiUtil.add_component(
             self,
             component_type="Button",
-            frame=self.process_data_frame,
+            frame=self.compare_networks_frame,
             text="Display results",
             grid_options={"row": 15, "column": 1, "sticky": "we", "padx": 10, "pady": 10},
             font=self.root.font,
@@ -378,7 +378,7 @@ class GUICompareNetworks:
         self.download_complete_label = self.guiUtil.add_component(
             self,
             component_type="Label",
-            frame=self.process_data_frame,
+            frame=self.compare_networks_frame,
             text="",
             grid_options={"row": 16, "column": 0, "columnspan": 2, "sticky": "n"},
             font=self.root.font,
