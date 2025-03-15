@@ -91,7 +91,7 @@ class GUIProcessData:
             self,
             component_type="Label",
             frame=self.root,
-            text="Train Neural Network",
+            text="Process Data",
             grid_options={"row": 1, "column": 0, "columnspan": 7, "sticky": "ew", "pady": 5},
             font=self.root.fontTitle
         )
