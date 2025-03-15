@@ -20,8 +20,8 @@ class SimilarityLabeling:
 
         silhouette_avg = silhouette_score(scores, clusters)
 
-        print(f"Threshold based on clustering: {threshold:.2f}")
-        print(f"Silhouette Score: {silhouette_avg:.2f}")
+        print(f"Threshold based on clustering: {threshold}")
+        print(f"Silhouette Score: {silhouette_avg}")
         print(f"Percentile {np.percentile(similarity_measures_df[similarity_type], 90)}")
 
         # TODO: maybe saving threshold somewhere
@@ -29,17 +29,18 @@ class SimilarityLabeling:
 
     def labelSimilarity(self, similarity_type):
         similarity_measures_df = self.network_similarities.getSimilarityMeasures()
+        threshold = self.__getThresholdBasedOnClustering(similarity_type)
 
         # Check if similarity type is 'Hellinger' or 'NetSimile'
         if similarity_type in ['Hellinger', 'NetSimile']:
             # Invert the comparison: True for values below the threshold, False for values above
-            similarity_measures_df["Label " + similarity_type] = similarity_measures_df[
-                                                                     similarity_type] < self.__getThresholdBasedOnClustering(
-                similarity_type)
+            similarity_measures_df["Label " + similarity_type + f" ({threshold})"] = similarity_measures_df[
+                                                                     similarity_type] < threshold
         else:
             # Default behavior: True for values above the threshold
-            similarity_measures_df["Label " + similarity_type] = similarity_measures_df[
-                                                                     similarity_type] >= self.__getThresholdBasedOnClustering(
-                similarity_type)
+            similarity_measures_df["Label " + similarity_type + f" ({threshold})"] = similarity_measures_df[
+                                                                     similarity_type] >= threshold
+
+        self.network_similarities.similarity_measures_df = similarity_measures_df
 
         return self.network_similarities
