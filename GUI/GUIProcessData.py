@@ -1,5 +1,5 @@
 import os
-from tkinter import filedialog, IntVar
+from tkinter import filedialog, IntVar, DoubleVar
 import customtkinter as ctk
 
 from BusinessLogic.DataVisualiser.DataVisualiser import DataVisualiser
@@ -28,8 +28,8 @@ class GUIProcessData:
         ws = root.winfo_screenwidth()
         hs = root.winfo_screenheight()
 
-        w = 400
-        h = 600
+        w = 470
+        h = 650
         x = (ws / 2) - (w / 2)
         y = (hs / 2) - (h / 2)
 
@@ -47,9 +47,11 @@ class GUIProcessData:
         ctk.set_appearance_mode("light")
         ctk.set_default_color_theme("blue")  # Options: "blue", "green", "dark-blue"
 
-        # Create a main frame to hold all components
-        self.process_data_frame = ctk.CTkFrame(self.root, width=320, height=300)
-        self.process_data_frame.grid(row=2, column=0, padx=40, pady=20, sticky="ns")  # No horizontal expansion
+        self.process_data_frame_width = w - 2 * 40
+        self.process_data_frame_height = h - 2 * 10
+
+        self.process_data_frame = ctk.CTkFrame(self.root, width=self.process_data_frame_width, height=self.process_data_frame_height)
+        self.process_data_frame.grid(row=2, column=0, padx=40, pady=10, sticky="ns")  # No horizontal expansion
 
     def __goBackToOptions(self):
         self.guiUtil.removeWindow(root=self.root)
@@ -195,7 +197,7 @@ class GUIProcessData:
             component_type="Label",
             frame=self.process_data_frame,
             text="Input directory",
-            grid_options={"row": 2, "column": 0},
+            grid_options={"row": 2, "column": 0, "sticky": "w", "padx": 35},
             font=self.root.font,
             anchor="center"
         )
@@ -321,9 +323,9 @@ class GUIProcessData:
             component_type="Button",
             frame=self.process_data_frame,
             text="Process files",
-            grid_options={"row": 7, "column": 0, "sticky": "ew", "padx": 10, "pady": (15, 0)},
+            grid_options={"row": 7, "column": 0, "sticky": "w", "padx": 10, "pady": (15, 0)},
             font=self.root.font,
-            width=50,
+            width=120,
             height=25,
             fg_color=guiconst.COLOR_GREY,
             hover_color=guiconst.COLOR_GREY_HOVER,
@@ -364,7 +366,7 @@ class GUIProcessData:
             self,
             component_type="Label",
             frame=self.process_data_frame,
-            text="Choose labeling methods",
+            text="Choose labeling methods (with label weight)",
             grid_options={"row": 9, "column": 0, "columnspan": 2, "sticky": "n"},  # Updated row
             font=self.root.font
         )
@@ -387,13 +389,21 @@ class GUIProcessData:
             state="disabled"
         )
 
+        self.hellinger_weight = self.guiUtil.add_component(
+            self,
+            component_type="NumberInput",
+            frame=self.process_data_frame,
+            grid_options={"row": 10, "column": 1, "sticky": "e", "padx": (0, 10)},  # Updated row
+        )
+
+
         self.netsimile_val = IntVar()
         self.netsimile_checkbox = self.guiUtil.add_component(
             self,
             component_type="Checkbutton",
             frame=self.process_data_frame,
             text="NetSimile (input data must be graphs)",
-            grid_options={"row": 11, "column": 0, "columnspan": 2, "sticky": "w", "padx": (10, 0)},  # Updated row
+            grid_options={"row": 11, "column": 0, "sticky": "w", "padx": (10, 0), "pady": (0, 5)},  # Updated row
             variable=self.netsimile_val,
             font=self.root.font,
             checkbox_width=15,
@@ -405,13 +415,20 @@ class GUIProcessData:
             state="normal"
         )
 
+        self.netsimile_weight = self.guiUtil.add_component(
+            self,
+            component_type="NumberInput",
+            frame=self.process_data_frame,
+            grid_options={"row": 11, "column": 1, "sticky": "e", "padx": (0, 10), "pady": (0, 5)},  # Updated row
+        )
+
         self.resnet_val = IntVar()
         self.resnet_checkbox = self.guiUtil.add_component(
             self,
             component_type="Checkbutton",
             frame=self.process_data_frame,
             text="Resnet (images has to be created)",
-            grid_options={"row": 12, "column": 0, "columnspan": 2, "sticky": "w", "padx": 10},  # Updated row
+            grid_options={"row": 12, "column": 0, "columnspan": 2, "sticky": "w", "padx": 10, "pady": (0, 5)},  # Updated row
             variable=self.resnet_val,
             font=self.root.font,
             checkbox_width=15,
@@ -423,13 +440,20 @@ class GUIProcessData:
             state="disabled"
         )
 
+        self.resnet_weight = self.guiUtil.add_component(
+            self,
+            component_type="NumberInput",
+            frame=self.process_data_frame,
+            grid_options={"row": 12, "column": 1, "sticky": "e", "padx": (0, 10), "pady": (0, 5)},  # Updated row
+        )
+
         self.kstest_val = IntVar()
         self.kstest_checkbox = self.guiUtil.add_component(
             self,
             component_type="Checkbutton",
             frame=self.process_data_frame,
             text="Kolmogorov-Smirnov test",
-            grid_options={"row": 13, "column": 0, "columnspan": 2, "sticky": "w", "padx": 10},  # Updated row
+            grid_options={"row": 13, "column": 0, "columnspan": 2, "sticky": "w", "padx": 10, "pady": (0, 5)},  # Updated row
             variable=self.kstest_val,
             font=self.root.font,
             checkbox_width=15,
@@ -439,6 +463,13 @@ class GUIProcessData:
             hover_color=guiconst.COLOR_GREEN_HOVER,
             border_width=2,
             state="disabled"
+        )
+
+        self.kstest_weight = self.guiUtil.add_component(
+            self,
+            component_type="NumberInput",
+            frame=self.process_data_frame,
+            grid_options={"row": 13, "column": 1, "sticky": "e", "padx": (0, 10)},  # Updated row
         )
 
         self.count_similarities_button = self.guiUtil.add_component(
@@ -478,7 +509,7 @@ class GUIProcessData:
         self.__createProcessingDataFrame()
         self.guiUtil.create_horizontal_line(
             self.process_data_frame,
-            width=300,
+            width=self.process_data_frame_width - 20,
             row=8,
             column=0,
             columnspan=3,
