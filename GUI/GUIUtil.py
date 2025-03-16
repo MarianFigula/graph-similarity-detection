@@ -1,5 +1,7 @@
 import customtkinter as ctk
 
+from GUI.NumberInput import NumberInput
+
 
 class GUIUtil:
     fontTitle = ("Lato", 16)
@@ -37,6 +39,8 @@ class GUIUtil:
             component = ctk.CTkProgressBar(frame, **kwargs)
         elif component_type == "OptionMenu":
             component = ctk.CTkOptionMenu(frame, **kwargs)
+        elif component_type == "NumberInput":
+            component = NumberInput(frame, **kwargs)
         else:
             raise ValueError(f"Unsupported component type: {component_type}")
 
