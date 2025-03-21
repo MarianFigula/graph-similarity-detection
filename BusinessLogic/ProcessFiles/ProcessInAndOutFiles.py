@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import subprocess
+from BusinessLogic.Exception.EmptyDataException import EmptyDataException
 
 PATH = "C:/Users/majof/PycharmProjects/diplomovka/orca/orca.exe"
 GRAPHLETS_COUNTS_FILE_NAME = "graphlet_counts.csv"
@@ -26,7 +27,7 @@ class ProcessInAndOutFiles:
                         file_paths.append(file_path)
 
         except Exception as e:
-            print(f"An error occurred: {e}")
+            raise e
 
         print("file_paths:", file_paths)
         return file_paths
@@ -68,7 +69,7 @@ class ProcessInAndOutFiles:
 
     def __sum_orbits(self, file_name, column_name):
         print(file_name)
-        df = pd.read_csv(file_name, sep=" ", header=None)
+        df = pd.read_csv(file_name, sep=" ", header=None,  encoding="utf-8")
         column_sums = df.sum(axis=0)
         final_sums = pd.DataFrame({f"{column_name}": [0] * 30})
 
@@ -109,9 +110,11 @@ class ProcessInAndOutFiles:
         # print(self.is_out_files)
         self.__input_files = self.__read_folder()
 
-        # TODO: mozno check ci su prazdne alebo nie ? na input je checker
-        if not self.input_folder_path:
-            return False
+        if not self.__input_files or not self.input_folder_path:
+            raise EmptyDataException("No graph files or orca files found in the input folder.")
+
+        if not self.output_folder_path:
+            self.output_folder_path = self.input_folder_path
 
         if not self.is_out_files:
             self.__orbit_counts_df = self.__process_in_files_using_orca()
@@ -126,4 +129,5 @@ class ProcessInAndOutFiles:
         return True
 
     def get_orbit_counts_df(self):
+        # return pd.read_csv("C:/Users/majof/PycharmProjects/networks_similarity_comparator/neuralNetwork/train_data/graphlet_counts.csv")
         return self.__orbit_counts_df
