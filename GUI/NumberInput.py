@@ -44,3 +44,8 @@ class NumberInput(ctk.CTkFrame):
 
     def set_value(self, value):
         self.value.set(value)
+
+    def setDisabled(self, state):
+        self.entry.configure(state="disabled" if state else "normal")
+        self.up_button.configure(state="disabled" if state else "normal")
+        self.down_button.configure(state="disabled" if state else "normal")
