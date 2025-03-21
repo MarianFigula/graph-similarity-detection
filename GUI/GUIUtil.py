@@ -1,7 +1,7 @@
 import customtkinter as ctk
 
 from GUI.NumberInput import NumberInput
-
+import GUIConstants as guiconst
 
 class GUIUtil:
     fontTitle = ("Lato", 16)
@@ -94,6 +94,15 @@ class GUIUtil:
         info_window.focus_force()
 
         return info_window
+
+    @staticmethod
+    def displayError(frame, text, duration=2000, **kwargs):
+        label = ctk.CTkLabel(frame, text=text, text_color=guiconst.COLOR_RED)
+        label.grid(**kwargs)
+
+        frame.after(duration, lambda: label.destroy())
+
+        return label
 
     def openTopLevel(self, text=''):
         if self.info_window is None or not self.info_window.winfo_exists():
