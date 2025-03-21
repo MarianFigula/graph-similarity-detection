@@ -2,6 +2,9 @@ import os
 from tkinter import filedialog, IntVar
 import customtkinter as ctk
 import pandas as pd
+
+from BusinessLogic.Exception.CustomException import CustomException
+from BusinessLogic.Exception.EmptyDataException import EmptyDataException
 from GUI.GUIUtil import GUIUtil
 import GUI.GUIConstants as guiconst
 from training_neural_network.NeuralNetworkPredictor import NeuralNetworkPredictor
@@ -95,34 +98,59 @@ class GUICompareNetworks:
 
     def __handleSelectDirectory(self, entry):
         path = filedialog.askopenfilename(filetypes=[("CSV Files", "*.csv")])
-        if path:
-            entry.delete(0, ctk.END)
-            entry.insert(ctk.END, path)
 
-            self.guiUtil.setComponentNormalState(self.compare_button)
-            self.guiUtil.setComponentNormalState(self.modelOptionMenu)
+        if not path:
+            return
+
+        entry.delete(0, ctk.END)
+        entry.insert(ctk.END, path)
+
+        self.guiUtil.setComponentNormalState(self.compare_button)
+        self.guiUtil.setComponentNormalState(self.modelOptionMenu)
 
     def __handle_optionMenu_callback(self, choice):
         self.selected_model = choice
-        print("optionmenu dropdown clicked:", self.selected_model)
 
     def __handleComparison(self):
         if self.selected_model is None:
+            self.guiUtil.displayError(self.compare_networks_frame, "Please select a model")
             return
 
         if bool(self.compare_between_two_graphlets_val.get()):
-            self.input_graphlet_df = pd.read_csv(self.input_entry.get())
-            self.input_graphlet_df2 = pd.read_csv(self.input_entry_second.get())
-            self.result_df = self.neuralNetworkPredictor.predict_two_graphlet_distributions(
-                self.input_graphlet_df,
-                self.input_graphlet_df2,
-                self.selected_model)
-        else:
-            self.input_graphlet_df = pd.read_csv(self.input_entry.get())
-            self.result_df = self.neuralNetworkPredictor.predict(self.input_graphlet_df, self.selected_model)
+            try:
+                self.input_graphlet_df = pd.read_csv(self.input_entry.get())
+                self.input_graphlet_df2 = pd.read_csv(self.input_entry_second.get())
+                self.result_df = self.neuralNetworkPredictor.predict_two_graphlet_distributions(
+                    self.input_graphlet_df,
+                    self.input_graphlet_df2,
+                    self.selected_model)
 
-        self.guiUtil.setComponentNormalState(self.download_button)
-        self.guiUtil.setComponentNormalState(self.display_button)
+                self.guiUtil.setComponentNormalState(self.download_button)
+                self.guiUtil.setComponentNormalState(self.display_button)
+            except EmptyDataException as e:
+                self.guiUtil.displayError(self.compare_networks_frame, str(e), row=16, column=0, columnspan=2)
+            except CustomException as e:
+                self.guiUtil.displayError(self.compare_networks_frame, str(e), row=16, column=0, columnspan=2)
+            except FileNotFoundError:
+                self.guiUtil.displayError(self.compare_networks_frame, "File not found", row=16, column=0, columnspan=2)
+            except Exception as e:
+                self.guiUtil.displayError(self.compare_networks_frame, "Error " + str(e), row=16, column=0, columnspan=2)
+
+        else:
+            try:
+                self.input_graphlet_df = pd.read_csv(self.input_entry.get())
+                self.result_df = self.neuralNetworkPredictor.predict(self.input_graphlet_df, self.selected_model)
+
+                self.guiUtil.setComponentNormalState(self.download_button)
+                self.guiUtil.setComponentNormalState(self.display_button)
+            except EmptyDataException as e:
+                self.guiUtil.displayError(self.compare_networks_frame, str(e), row=16, column=0, columnspan=2)
+            except CustomException as e:
+                self.guiUtil.displayError(self.compare_networks_frame, str(e), row=16, column=0, columnspan=2)
+            except FileNotFoundError:
+                self.guiUtil.displayError(self.compare_networks_frame, "File not found", row=16, column=0, columnspan=2)
+            except Exception as e:
+                self.guiUtil.displayError(self.compare_networks_frame,  "Error " + str(e), row=16, column=0, columnspan=2)
 
     def toggle_second_graphlet_distribution(self):
 
