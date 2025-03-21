@@ -112,6 +112,7 @@ class GUICompareNetworks:
         self.selected_model = choice
 
     def __handleComparison(self):
+        error_msg = ""
         if self.selected_model is None:
             self.guiUtil.displayError(self.compare_networks_frame, "Please select a model")
             return
@@ -128,29 +129,37 @@ class GUICompareNetworks:
                 self.guiUtil.setComponentNormalState(self.download_button)
                 self.guiUtil.setComponentNormalState(self.display_button)
             except EmptyDataException as e:
-                self.guiUtil.displayError(self.compare_networks_frame, str(e), row=16, column=0, columnspan=2)
+                error_msg = str(e)
             except CustomException as e:
-                self.guiUtil.displayError(self.compare_networks_frame, str(e), row=16, column=0, columnspan=2)
+                error_msg = str(e)
             except FileNotFoundError:
-                self.guiUtil.displayError(self.compare_networks_frame, "File not found", row=16, column=0, columnspan=2)
+                error_msg = "File not found"
             except Exception as e:
-                self.guiUtil.displayError(self.compare_networks_frame, "Error " + str(e), row=16, column=0, columnspan=2)
+                error_msg = "Error " + str(e)
+            finally:
+                if error_msg != "":
+                    self.guiUtil.displayError(self.compare_networks_frame, error_msg, row=16, column=0, columnspan=2)
 
         else:
             try:
                 self.input_graphlet_df = pd.read_csv(self.input_entry.get())
                 self.result_df = self.neuralNetworkPredictor.predict(self.input_graphlet_df, self.selected_model)
+                # self.result_df = self.neuralNetworkPredictor.random_forest_predict(self.input_graphlet_df, self.selected_model)
 
                 self.guiUtil.setComponentNormalState(self.download_button)
                 self.guiUtil.setComponentNormalState(self.display_button)
             except EmptyDataException as e:
-                self.guiUtil.displayError(self.compare_networks_frame, str(e), row=16, column=0, columnspan=2)
+                error_msg = str(e)
             except CustomException as e:
-                self.guiUtil.displayError(self.compare_networks_frame, str(e), row=16, column=0, columnspan=2)
+                error_msg = str(e)
             except FileNotFoundError:
-                self.guiUtil.displayError(self.compare_networks_frame, "File not found", row=16, column=0, columnspan=2)
+                error_msg = "File not found"
             except Exception as e:
-                self.guiUtil.displayError(self.compare_networks_frame,  "Error " + str(e), row=16, column=0, columnspan=2)
+                error_msg = "Error " + str(e)
+            finally:
+                if error_msg != "":
+                    self.guiUtil.displayError(self.compare_networks_frame, error_msg, row=16, column=0, columnspan=2)
+
 
     def toggle_second_graphlet_distribution(self):
 
