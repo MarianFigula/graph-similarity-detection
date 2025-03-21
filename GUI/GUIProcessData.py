@@ -1,14 +1,14 @@
 import os
-from tkinter import filedialog, IntVar, DoubleVar
+from tkinter import filedialog, IntVar
 import customtkinter as ctk
 
 from BusinessLogic.DataVisualiser.DataVisualiser import DataVisualiser
+from BusinessLogic.Exception.EmptyDataException import EmptyDataException
 from BusinessLogic.ProcessFiles.SimilarityHandler import SimilarityHandler
 from BusinessLogic.ProcessFiles.SnapShotOfGraphletsAsGraph import SnapShotOfGraphletsAsGraph
 from GUI.GUIUtil import GUIUtil
 from BusinessLogic.ProcessFiles.ProcessInAndOutFiles import ProcessInAndOutFiles
 import GUI.GUIConstants as guiconst
-
 
 
 class GUIProcessData:
@@ -29,7 +29,7 @@ class GUIProcessData:
         hs = root.winfo_screenheight()
 
         w = 470
-        h = 650
+        h = 700
         x = (ws / 2) - (w / 2)
         y = (hs / 2) - (h / 2)
 
@@ -48,9 +48,8 @@ class GUIProcessData:
         ctk.set_default_color_theme("blue")  # Options: "blue", "green", "dark-blue"
 
         self.process_data_frame_width = w - 2 * 40
-        self.process_data_frame_height = h - 2 * 10
 
-        self.process_data_frame = ctk.CTkFrame(self.root, width=self.process_data_frame_width, height=self.process_data_frame_height)
+        self.process_data_frame = ctk.CTkFrame(self.root, width=self.process_data_frame_width, height=1200)
         self.process_data_frame.grid(row=2, column=0, padx=40, pady=10, sticky="ns")  # No horizontal expansion
 
     def __goBackToOptions(self):
@@ -113,28 +112,37 @@ class GUIProcessData:
             button.configure(state="disabled")
 
     def __handleProcessFiles(self, input_folder_path, output_folder_path, is_out_files=False, should_create_images=False):
-        # self.progress_bar.start()
+        error = ""
         print("input_folder_path:", input_folder_path)
         print("output_folder_path:", output_folder_path)
         print("is_out_files:", is_out_files)
         print("Current working directory:", os.getcwd())
+        try:
+            self.process_files = ProcessInAndOutFiles(
+                input_folder_path=input_folder_path,
+                output_folder_path=output_folder_path,
+                is_out_files=is_out_files)
 
-        self.process_files = ProcessInAndOutFiles(
-            input_folder_path=input_folder_path,
-            output_folder_path=output_folder_path,
-            is_out_files=is_out_files)
+            if not self.process_files.process():
+                self.guiUtil.displayError(self.process_data_frame, "Error processing files")
+                return
 
-        if not self.process_files.process():
-            return
+            if should_create_images:
+                self.create_snapshots = SnapShotOfGraphletsAsGraph(self.process_files.get_orbit_counts_df())
+                self.create_snapshots.create_images()
 
-        if should_create_images:
-            self.create_snapshots = SnapShotOfGraphletsAsGraph(self.process_files.get_orbit_counts_df())
-            self.create_snapshots.create_images()
+            self.show_graphs_button.configure(state="normal")
 
-        self.show_graphs_button.configure(state="normal")
+            self.__handleCheckboxLabelingMethodStates()
+            self.count_similarities_button.configure(state="normal")
 
-        self.__handleCheckboxLabelingMethodStates()
-        self.count_similarities_button.configure(state="normal")
+        except EmptyDataException as e:
+            error = str(e)
+        except Exception as e:
+            error = str(e)
+        finally:
+            if error != "":
+                self.guiUtil.displayError(self.process_data_frame, error, row=16, column=0, columnspan=2)
 
     def disableCheckboxWithValue(self, checkbox, checkbox_val):
         checkbox.configure(state="disabled")
@@ -148,14 +156,20 @@ class GUIProcessData:
         checkbox.configure(state="normal" if bool(checkbox_val.get()) else "disabled")
         checkbox_val.set(1 if not bool(checkbox_val.get()) else 0)
 
+    # TODO: pridat netsimile
     def __handleCheckboxLabelingMethodStates(self):
         if bool(self.create_images_val.get()):
             self.enableCheckboxWithValue(self.resnet_checkbox, self.resnet_val)
+            self.resnet_weight.setDisabled(False)
         else:
             self.disableCheckboxWithValue(self.resnet_checkbox, self.resnet_val)
+            self.resnet_weight.setDisabled(True)
 
         self.enableCheckboxWithValue(self.hellinger_checkbox, self.hellinger_val)
+        self.hellinger_weight.setDisabled(not self.hellinger_val.get())
+
         self.enableCheckboxWithValue(self.kstest_checkbox, self.kstest_val)
+        self.kstest_weight.setDisabled(not self.kstest_val.get())
 
     def __handleComputeSimilarity(self):
         orbit_counts_df = self.process_files.get_orbit_counts_df()
@@ -353,13 +367,6 @@ class GUIProcessData:
             command=lambda: DataVisualiser(self.process_files.get_orbit_counts_df()).visualize()
         )
 
-        # self.progress_bar = self.guiUtil.add_component(
-        #     self,
-        #     component_type="Progressbar",
-        #     frame=self.process_data_frame,
-        #     grid_options={"row": 7, "column": 0, "columnspan": 2, "sticky": "ew", "padx": 10, "pady": (15, 0)}
-        # )
-        # self.progress_bar.set(0)
 
     def __createChooseLabelingMethods(self):
         self.guiUtil.add_component(
@@ -386,7 +393,8 @@ class GUIProcessData:
             fg_color=guiconst.COLOR_GREEN,
             hover_color=guiconst.COLOR_GREEN_HOVER,
             border_width=2,
-            state="disabled"
+            state="disabled",
+            command=lambda: self.hellinger_weight.setDisabled(not self.hellinger_val.get())
         )
 
         self.hellinger_weight = self.guiUtil.add_component(
@@ -395,6 +403,7 @@ class GUIProcessData:
             frame=self.process_data_frame,
             grid_options={"row": 10, "column": 1, "sticky": "e", "padx": (0, 10)},  # Updated row
         )
+        self.hellinger_weight.setDisabled(True)
 
 
         self.netsimile_val = IntVar()
@@ -412,7 +421,8 @@ class GUIProcessData:
             fg_color=guiconst.COLOR_GREEN,
             hover_color=guiconst.COLOR_GREEN_HOVER,
             border_width=2,
-            state="normal"
+            state="normal",
+            command=lambda: self.netsimile_weight.setDisabled(not self.netsimile_val.get())
         )
 
         self.netsimile_weight = self.guiUtil.add_component(
@@ -421,6 +431,7 @@ class GUIProcessData:
             frame=self.process_data_frame,
             grid_options={"row": 11, "column": 1, "sticky": "e", "padx": (0, 10), "pady": (0, 5)},  # Updated row
         )
+        self.netsimile_weight.setDisabled(True)
 
         self.resnet_val = IntVar()
         self.resnet_checkbox = self.guiUtil.add_component(
@@ -437,7 +448,8 @@ class GUIProcessData:
             fg_color=guiconst.COLOR_GREEN,
             hover_color=guiconst.COLOR_GREEN_HOVER,
             border_width=2,
-            state="disabled"
+            state="disabled",
+            command=lambda: self.resnet_weight.setDisabled(not self.resnet_val.get())
         )
 
         self.resnet_weight = self.guiUtil.add_component(
@@ -446,6 +458,7 @@ class GUIProcessData:
             frame=self.process_data_frame,
             grid_options={"row": 12, "column": 1, "sticky": "e", "padx": (0, 10), "pady": (0, 5)},  # Updated row
         )
+        self.resnet_weight.setDisabled(True)
 
         self.kstest_val = IntVar()
         self.kstest_checkbox = self.guiUtil.add_component(
@@ -462,7 +475,8 @@ class GUIProcessData:
             fg_color=guiconst.COLOR_GREEN,
             hover_color=guiconst.COLOR_GREEN_HOVER,
             border_width=2,
-            state="disabled"
+            state="disabled",
+            command=lambda: self.kstest_weight.setDisabled(not self.kstest_val.get())
         )
 
         self.kstest_weight = self.guiUtil.add_component(
@@ -471,6 +485,7 @@ class GUIProcessData:
             frame=self.process_data_frame,
             grid_options={"row": 13, "column": 1, "sticky": "e", "padx": (0, 10)},  # Updated row
         )
+        self.kstest_weight.setDisabled(True)
 
         self.count_similarities_button = self.guiUtil.add_component(
             self,
