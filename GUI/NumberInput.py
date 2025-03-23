@@ -49,3 +49,4 @@ class NumberInput(ctk.CTkFrame):
         self.entry.configure(state="disabled" if state else "normal")
         self.up_button.configure(state="disabled" if state else "normal")
         self.down_button.configure(state="disabled" if state else "normal")
+        self.set_value(0.0 if state else 0.25)
