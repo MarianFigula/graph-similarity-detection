@@ -2,7 +2,7 @@ import customtkinter as ctk
 
 from GUI.GUIProcessData import GUIProcessData
 from GUI.GUICompareNetworks import GUICompareNetworks
-from GUI.GUITrainNeuralNetwork import GUITrainNeuralNetwork
+from GUI.GUITrainModel import GUITrainModel
 from GUI.GUIUtil import GUIUtil
 
 
@@ -49,8 +49,8 @@ class GUIChooseOptions:
             self.root,
             component_type="Button",
             grid_options={"row": 2, "column": 0, "padx": 20, "pady": (0, 15)},
-            text="Train Neural Network",
-            command=lambda: self.__runTrainNeuralNetwork()
+            text="Train Model",
+            command=lambda: self.__runTrainModel()
         )
 
         self.guiUtil.add_component(
@@ -66,9 +66,9 @@ class GUIChooseOptions:
         app = GUICompareNetworks(self.root)
         app.run()
 
-    def __runTrainNeuralNetwork(self):
+    def __runTrainModel(self):
         self.guiUtil.removeWindow(root=self.root)
-        app = GUITrainNeuralNetwork(self.root)
+        app = GUITrainModel(self.root)
         app.run()
 
     def __runProcessData(self):

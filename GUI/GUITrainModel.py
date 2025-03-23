@@ -10,15 +10,16 @@ from BusinessLogic.ProcessFiles.ProcessInAndOutFiles import ProcessInAndOutFiles
 import GUI.GUIConstants as guiconst
 
 
-class GUITrainNeuralNetwork:
+class GUITrainModel:
     def __init__(self, root):
         self.root = root
-        self.root.title("Train neural network")
+        self.root.title("Train model")
         self.root.fontTitle = ("Lato", 16)
         self.root.font = ("Lato", 12)
         self.root.smallFont = ("Lato", 10)
         self.guiUtil = GUIUtil()
 
+        root.resizable(True, True)
         ws = root.winfo_screenwidth()  # width of the screen
         hs = root.winfo_screenheight()  # height of the screen
 
@@ -81,7 +82,7 @@ class GUITrainNeuralNetwork:
             self,
             component_type="Label",
             frame=self.root,
-            text="Train Neural Network",
+            text="Train Model",
             grid_options={"row": 1, "column": 0, "columnspan": 7, "sticky": "ew", "pady": 5},
             font=self.root.fontTitle
         )
@@ -92,5 +93,5 @@ class GUITrainNeuralNetwork:
 
 if __name__ == "__main__":
     root = ctk.CTk()  # Use CTk instead of Tk for the main window
-    app = GUITrainNeuralNetwork(root)
+    app = GUITrainModel(root)
     app.run()
