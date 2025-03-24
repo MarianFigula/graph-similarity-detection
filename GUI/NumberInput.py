@@ -22,7 +22,7 @@ class NumberInput(ctk.CTkFrame):
 
         self.value = ctk.DoubleVar(value=self.default_value)
 
-        self.entry = ctk.CTkEntry(self, textvariable=self.value, width=40, justify="center", font=("Lato", 11), state="readonly")
+        self.entry = ctk.CTkEntry(self, textvariable=self.value, width=50, justify="center", font=("Lato", 11))
         self.entry.grid(row=0, column=1, padx=0, pady=0)
 
         self.entry.configure(validate="key", validatecommand=(self.register(self.validate_input), "%P"))
