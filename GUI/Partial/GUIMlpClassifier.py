@@ -1,11 +1,5 @@
-import tkinter as tk
 from tkinter import IntVar
 import customtkinter as ctk
-from BusinessLogic.DataVisualiser.DataVisualiser import DataVisualiser
-from BusinessLogic.ProcessFiles.SimilarityHandler import SimilarityHandler
-from BusinessLogic.ProcessFiles.SnapShotOfGraphletsAsGraph import SnapShotOfGraphletsAsGraph
-from GUI.Partial.GUIRandomForestClassifier import GUIRandomForestClassifier
-from GUI.GUIUtil import GUIUtil
 import GUI.GUIConstants as guiconst
 
 
@@ -16,9 +10,9 @@ class GUIMlpClassifier:
     configuring hidden layers, designed to be placed side by side in the parent container.
     """
 
-    def __init__(self, parent, gui_util, root, max_hidden_layers=10):
+    def __init__(self, parent, gui_util, root, max_hidden_layers=6):
         """
-        Initialize the hyperparameters frame
+        Initialize the hyperparameter frame
 
         Parameters:
         -----------
@@ -37,7 +31,7 @@ class GUIMlpClassifier:
         self.max_hidden_layers = max_hidden_layers
 
         self.main_frame = ctk.CTkFrame(parent, width=600, height=400)
-        self.main_frame.grid(row=7, column=0,columnspan=2, padx=(40, 20), pady=10, sticky="nsew")
+        self.main_frame.grid(row=7, column=0, columnspan=2, padx=(40, 20), pady=10, sticky="nsew")
 
         self.main_frame.grid_columnconfigure(0, weight=1)
         self.main_frame.grid_columnconfigure(1, weight=1)
@@ -46,14 +40,11 @@ class GUIMlpClassifier:
         self.hidden_layers_frame = ctk.CTkFrame(self.root, width=150, height=350)
         self.hidden_layers_frame.grid(row=2, column=1, padx=(0, 40), pady=240, sticky="nsew")
 
-        # Initialize hyperparameter components and controls
         self._create_hyperparameters()
         self._create_hidden_layer_inputs()
 
-        # Store references to important components
         self.hidden_layer_inputs = []
 
-        # Configure frames to expand properly
         self.main_frame.grid_columnconfigure(0, weight=1)
         self.main_frame.grid_columnconfigure(1, weight=1)
         self.hidden_layers_frame.grid_columnconfigure(0, weight=1)
@@ -73,34 +64,6 @@ class GUIMlpClassifier:
         """
         self.main_frame.grid(**main_grid_options)
         self.hidden_layers_frame.grid(**hidden_grid_options)
-
-    def pack(self, main_pack_options, hidden_pack_options):
-        """
-        Position both frames in the parent container using pack
-
-        Parameters:
-        -----------
-        main_pack_options : dict
-            Pack options for the main hyperparameters frame
-        hidden_pack_options : dict
-            Pack options for the hidden layers frame
-        """
-        self.main_frame.pack(**main_pack_options)
-        self.hidden_layers_frame.pack(**hidden_pack_options)
-
-    def place(self, main_place_options, hidden_place_options):
-        """
-        Position both frames in the parent container using place
-
-        Parameters:
-        -----------
-        main_place_options : dict
-            Place options for the main hyperparameters frame
-        hidden_place_options : dict
-            Place options for the hidden layers frame
-        """
-        self.main_frame.place(**main_place_options)
-        self.hidden_layers_frame.place(**hidden_place_options)
 
     def _create_hyperparameters(self):
         """
@@ -126,7 +89,6 @@ class GUIMlpClassifier:
             font=self.root.fontMiddle
         )
 
-        # Number of hidden layers
         self.guiUtil.add_component(
             self,
             component_type="Label",
@@ -146,10 +108,9 @@ class GUIMlpClassifier:
             default_value=1,
             step=1,
             data_type=int,
-            # command=self._update_hidden_layers
+            command=lambda: self._update_hidden_layers()
         )
 
-        # Number of epochs
         self.guiUtil.add_component(
             self,
             component_type="Label",
@@ -171,7 +132,6 @@ class GUIMlpClassifier:
             data_type=int
         )
 
-        # Batch size
         self.guiUtil.add_component(
             self,
             component_type="Label",
@@ -193,7 +153,6 @@ class GUIMlpClassifier:
             data_type=int
         )
 
-        # Learning rate
         self.guiUtil.add_component(
             self,
             component_type="Label",
@@ -215,7 +174,6 @@ class GUIMlpClassifier:
             data_type=float
         )
 
-        # Early stopping option
         self.early_stopping_var = IntVar()
         self.early_stopping = self.guiUtil.add_component(
             self,
@@ -234,7 +192,6 @@ class GUIMlpClassifier:
             command=self._toggle_patience
         )
 
-        # Patience for early stopping (initially hidden)
         self.patience_label = self.guiUtil.add_component(
             self,
             component_type="Label",
@@ -243,7 +200,7 @@ class GUIMlpClassifier:
             grid_options={"row": 4, "column": 1, "sticky": "w", "padx": 30, "pady": 5},
             font=self.root.font
         )
-        self.patience_label.grid_remove()  # Hide initially
+        self.patience_label.grid_remove()
 
         self.patience = self.guiUtil.add_component(
             self,
@@ -256,9 +213,8 @@ class GUIMlpClassifier:
             step=1,
             data_type=int
         )
-        self.patience.grid_remove()  # Hide initially
+        self.patience.grid_remove()
 
-        # Action buttons
         self.train_button = self.guiUtil.add_component(
             self,
             component_type="Button",
@@ -363,8 +319,6 @@ class GUIMlpClassifier:
             border_width=2
         )
 
-
-
         self.visualize_button = self.guiUtil.add_component(
             self,
             component_type="Button",
@@ -416,10 +370,8 @@ class GUIMlpClassifier:
             except:
                 num_layers = 1
 
-        # Create input fields for each layer
+        print(num_layers)
         for i in range(num_layers):
-
-            # Neurons input
             neuron_label = self.guiUtil.add_component(
                 self,
                 component_type="Label",
@@ -441,7 +393,6 @@ class GUIMlpClassifier:
                 data_type=int
             )
 
-            # Dropout input
             dropout_label = self.guiUtil.add_component(
                 self,
                 component_type="Label",
@@ -463,7 +414,6 @@ class GUIMlpClassifier:
                 data_type=float
             )
 
-            # Store references to the widgets
             self.hidden_layer_inputs.append({
                 'neuron_label': neuron_label,
                 'neurons': neurons,
@@ -471,7 +421,7 @@ class GUIMlpClassifier:
                 'dropout': dropout
             })
 
-    def _update_hidden_layers(self, *args):
+    def _update_hidden_layers(self):
         """
         Update the hidden layers frame based on the selected number of layers
         This function is called when the number of hidden layers is changed
