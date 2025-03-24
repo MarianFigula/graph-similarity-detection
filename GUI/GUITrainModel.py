@@ -143,7 +143,8 @@ class GUITrainModel:
             grid_options={"row": 1, "column": 0, "sticky": "n"},
             font=self.root.font,
             width=200,
-            height=20
+            height=20,
+            state="readonly",
         )
 
         self.guiUtil.add_component(
@@ -175,7 +176,8 @@ class GUITrainModel:
             grid_options={"row": 1, "column": 1, "sticky": "n"},
             font=self.root.font,
             width=200,
-            height=20
+            height=20,
+            state="readonly",
         )
 
         self.guiUtil.add_component(
