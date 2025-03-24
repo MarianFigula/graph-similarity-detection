@@ -45,20 +45,21 @@ class GUITrainModel:
         self.train_model_frame.grid_columnconfigure(1, weight=1)
         self.train_model_frame.grid_propagate(False)
 
-        self.hidden_layers_frame = ctk.CTkFrame(self.root, width=150, height=350)
-        self.hidden_layers_frame.grid(row=2, column=1, padx=(0,40), pady=240, sticky="nsew")
-        self.guiUtil.add_component(
-            self,
-            component_type="Label",
-            frame=self.hidden_layers_frame,
-            text="Hidden layers",
-            grid_options={"row": 0, "column": 0, "columnspan": 2, "sticky": "ew"},
-            font=self.root.font
-        )
-        self.hidden_layers_frame.grid_propagate(False)
-        self.hidden_layers_frame.grid_columnconfigure(0, weight=1)
-        self.hidden_layers_frame.grid_columnconfigure(1, weight=1)
+        # self.hidden_layers_frame = ctk.CTkFrame(self.root, width=150, height=350)
+        # self.hidden_layers_frame.grid(row=2, column=1, padx=(0,40), pady=240, sticky="nsew")
+        # self.guiUtil.add_component(
+        #     self,
+        #     component_type="Label",
+        #     frame=self.hidden_layers_frame,
+        #     text="Hidden layers",
+        #     grid_options={"row": 0, "column": 0, "columnspan": 2, "sticky": "ew"},
+        #     font=self.root.font
+        # )
+        # self.hidden_layers_frame.grid_propagate(False)
+        # self.hidden_layers_frame.grid_columnconfigure(0, weight=1)
+        # self.hidden_layers_frame.grid_columnconfigure(1, weight=1)
 
+        self.mlp_hyperparameters = None
 
     def __goBackToOptions(self):
         self.guiUtil.removeWindow(root=self.root)
@@ -216,22 +217,24 @@ class GUITrainModel:
             if widget.grid_info().get('row', 0) >= 7:
                 widget.destroy()
 
+        # Clean up MLP hidden layers frame if it exists
+        if hasattr(self, 'mlp_hyperparameters') and self.mlp_hyperparameters is not None:
+            if hasattr(self.mlp_hyperparameters,
+                       'hidden_layers_frame') and self.mlp_hyperparameters.hidden_layers_frame is not None:
+                self.mlp_hyperparameters.hidden_layers_frame.destroy()
+                self.mlp_hyperparameters.hidden_layers_frame = None
+
         if self.modelOptionMenu.get() == "Random Forest Classifier":
-            # self.hyperparameters_rf = GUIRandomForestClassifier(self.train_model_frame, self.guiUtil, self.root)
-            pass
+            self.hyperparameters_rf = GUIRandomForestClassifier(self.train_model_frame, self.guiUtil, self.root)
+            self.mlp_hyperparameters = None
+
         elif self.modelOptionMenu.get() == "MLP Classifier":
             self.mlp_hyperparameters = GUIMlpClassifier(
-                parent=self.train_model_frame,  # Set the parent to train_model_frame
+                parent=self.train_model_frame,
                 gui_util=self.guiUtil,
                 root=self.root,
                 max_hidden_layers=10
             )
-
-            # Connect the hidden_layers_frame
-            self.mlp_hyperparameters.hidden_layers_frame = self.hidden_layers_frame
-            # Update hidden layers UI
-            # self.mlp_hyperparameters._create_hidden_layer_inputs()
-
 
     def run(self):
         self.__addHeader()
@@ -242,7 +245,7 @@ class GUITrainModel:
         self.modelOptionMenu.configure(state="normal")
 
         # Set a default model selection
-        self.modelOptionMenu.set("MLP Classifier")
+        # self.modelOptionMenu.set("MLP Classifier")
         # Initialize the hyperparameters based on default selection
         self.__createHyperparametersBasedOnModel()
 
