@@ -1,10 +1,4 @@
-import os
-from tkinter import filedialog, IntVar
 import customtkinter as ctk
-
-from BusinessLogic.DataVisualiser.DataVisualiser import DataVisualiser
-from BusinessLogic.ProcessFiles.SimilarityHandler import SimilarityHandler
-from BusinessLogic.ProcessFiles.SnapShotOfGraphletsAsGraph import SnapShotOfGraphletsAsGraph
 from GUI.Partial.GUIMlpClassifier import GUIMlpClassifier
 from GUI.Partial.GUIRandomForestClassifier import GUIRandomForestClassifier
 from GUI.GUIUtil import GUIUtil
@@ -25,8 +19,8 @@ class GUITrainModel:
         ws = root.winfo_screenwidth()
         hs = root.winfo_screenheight()
 
-        w = 1200  # width for the Tk root
-        h = 700  # height for the Tk root
+        w = 1200
+        h = 750
         x = (ws / 2) - (w / 2)
         y = (hs / 2) - (h / 2)
         root.geometry('%dx%d+%d+%d' % (w, h, x, y))
@@ -38,28 +32,30 @@ class GUITrainModel:
         self.root.grid_columnconfigure(1, weight=1)
 
         self.train_model_width = w - 2 * 40
-        self.train_model_frame = ctk.CTkFrame(self.root, width=400, height=650)
-        self.train_model_frame.grid(row=2, column=0, padx=(40, 20), pady=10, sticky="nsew")
+        self.train_model_frame = ctk.CTkFrame(self.root, width=self.train_model_width, height=600)
+        self.train_model_frame.grid(row=2, column=0, padx=40, pady=10, sticky="nsew")
 
         self.train_model_frame.grid_columnconfigure(0, weight=1)
         self.train_model_frame.grid_columnconfigure(1, weight=1)
         self.train_model_frame.grid_propagate(False)
 
-        # self.hidden_layers_frame = ctk.CTkFrame(self.root, width=150, height=350)
-        # self.hidden_layers_frame.grid(row=2, column=1, padx=(0,40), pady=240, sticky="nsew")
-        # self.guiUtil.add_component(
-        #     self,
-        #     component_type="Label",
-        #     frame=self.hidden_layers_frame,
-        #     text="Hidden layers",
-        #     grid_options={"row": 0, "column": 0, "columnspan": 2, "sticky": "ew"},
-        #     font=self.root.font
-        # )
-        # self.hidden_layers_frame.grid_propagate(False)
-        # self.hidden_layers_frame.grid_columnconfigure(0, weight=1)
-        # self.hidden_layers_frame.grid_columnconfigure(1, weight=1)
-
         self.mlp_hyperparameters = None
+
+    def resize_window(self, width, height, train_model_width=400):
+        """
+        Resize the root window while maintaining center position
+        """
+        # Get screen dimensions
+        ws = self.root.winfo_screenwidth()
+        hs = self.root.winfo_screenheight()
+        x = (ws / 2) - (width / 2)
+        y = (hs / 2) - (height / 2)
+
+        self.root.geometry('%dx%d+%d+%d' % (width, height, x, y))
+
+        self.train_model_frame.configure(width=train_model_width, height=600)
+
+        self.root.update_idletasks()
 
     def __goBackToOptions(self):
         self.guiUtil.removeWindow(root=self.root)
@@ -70,7 +66,6 @@ class GUITrainModel:
     def __handle_optionMenu_callback(self, choice):
         self.selected_model = choice
         self.__createHyperparametersBasedOnModel()
-
 
     def __addHeader(self):
         self.guiUtil.add_component(
@@ -87,7 +82,7 @@ class GUITrainModel:
             height=25
         )
 
-        self.guiUtil.add_component(
+        self.info_button = self.guiUtil.add_component(
             self,
             component_type="Button",
             text="?",
@@ -175,7 +170,6 @@ class GUITrainModel:
         self.guiUtil.create_horizontal_line(self.train_model_frame, width=self.train_model_width - 20, row=3, column=0,
                                             padx=15, pady=5, columnspan=2, sticky="ew")
 
-
     def __createChooseModel(self):
         self.guiUtil.add_component(
             self,
@@ -204,12 +198,25 @@ class GUITrainModel:
             component_type="Label",
             frame=self.train_model_frame,
             text="Hyperparameters",
-            grid_options={"row": 7, "column": 0, "sticky": "w", "padx": 30,  "pady": 5},
+            grid_options={"row": 7, "column": 0, "sticky": "w", "padx": 30, "pady": 5},
             font=self.root.fontMiddle
         )
 
-        # self.hyperparameters_frame = ctk.CTkFrame(self.train_model, width=self.train_model_width - 40, height=200)
-        # self.hyperparameters_frame.grid(row=8, column=0, columnspan=2, padx=30, pady=10, sticky="nsew")
+    def __setRandomForestGui(self):
+        self.resize_window(800, 700, self.train_model_width)
+        self.hyperparameters_rf = GUIRandomForestClassifier(self.train_model_frame, self.guiUtil, self.root)
+        self.info_button.grid(row=0, column=0)
+        self.mlp_hyperparameters = None
+
+    def __setMlpGui(self):
+        self.resize_window(1200, 700)
+        self.info_button.grid(row=0, column=1)
+        self.mlp_hyperparameters = GUIMlpClassifier(
+            parent=self.train_model_frame,
+            gui_util=self.guiUtil,
+            root=self.root,
+            max_hidden_layers=10
+        )
 
     def __createHyperparametersBasedOnModel(self):
         # Clear any existing hyperparameter widgets
@@ -225,16 +232,9 @@ class GUITrainModel:
                 self.mlp_hyperparameters.hidden_layers_frame = None
 
         if self.modelOptionMenu.get() == "Random Forest Classifier":
-            self.hyperparameters_rf = GUIRandomForestClassifier(self.train_model_frame, self.guiUtil, self.root)
-            self.mlp_hyperparameters = None
-
+            self.__setRandomForestGui()
         elif self.modelOptionMenu.get() == "MLP Classifier":
-            self.mlp_hyperparameters = GUIMlpClassifier(
-                parent=self.train_model_frame,
-                gui_util=self.guiUtil,
-                root=self.root,
-                max_hidden_layers=10
-            )
+            self.__setMlpGui()
 
     def run(self):
         self.__addHeader()
@@ -251,6 +251,7 @@ class GUITrainModel:
 
         self.root.mainloop()
         self.root.mainloop()
+
 
 if __name__ == "__main__":
     root = ctk.CTk()
