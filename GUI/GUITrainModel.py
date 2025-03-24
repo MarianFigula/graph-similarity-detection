@@ -1,3 +1,5 @@
+from tkinter import filedialog
+
 import customtkinter as ctk
 from GUI.Partial.GUIMlpClassifier import GUIMlpClassifier
 from GUI.Partial.GUIRandomForestClassifier import GUIRandomForestClassifier
@@ -38,6 +40,8 @@ class GUITrainModel:
         self.train_model_frame.grid_columnconfigure(0, weight=1)
         self.train_model_frame.grid_columnconfigure(1, weight=1)
         self.train_model_frame.grid_propagate(False)
+
+        self.should_enable_random_forest = False
 
         self.mlp_hyperparameters = None
 
@@ -104,6 +108,24 @@ class GUITrainModel:
             font=self.root.fontTitle
         )
 
+    def __handleSelectDirectory(self, main_entry: ctk.CTkEntry, second_entry: ctk.CTkEntry = None, component=None):
+        path = filedialog.askopenfilename(filetypes=[("CSV Files", "*.csv")])
+
+        if not path:
+            return
+
+        main_entry.delete(0, ctk.END)
+        main_entry.insert(ctk.END, path)
+
+        if second_entry is None or second_entry.get() == "" or component is None:
+            return
+
+        component.configure(state="normal")
+
+        if self.hyperparameters_rf is not None:
+            self.hyperparameters_rf.enable_all_components()
+            self.should_enable_random_forest = True
+
     def __createInputData(self):
         self.guiUtil.add_component(
             self,
@@ -133,7 +155,8 @@ class GUITrainModel:
             font=self.root.font,
             width=150,
             height=25,
-            command=lambda: print("Button Clicked")
+            command=lambda: self.__handleSelectDirectory(self.graphlet_distribution_entry, self.similarities_entry,
+                                                         self.modelOptionMenu)
         )
 
         self.guiUtil.add_component(
@@ -164,7 +187,8 @@ class GUITrainModel:
             font=self.root.font,
             width=150,
             height=25,
-            command=lambda: print("Button Clicked")
+            command=lambda: self.__handleSelectDirectory(self.similarities_entry, self.graphlet_distribution_entry,
+                                                         self.modelOptionMenu)
         )
 
         self.guiUtil.create_horizontal_line(self.train_model_frame, width=self.train_model_width - 20, row=3, column=0,
@@ -206,6 +230,10 @@ class GUITrainModel:
         self.resize_window(800, 700, self.train_model_width)
         self.hyperparameters_rf = GUIRandomForestClassifier(self.train_model_frame, self.guiUtil, self.root)
         self.info_button.grid(row=0, column=0)
+
+        if self.should_enable_random_forest:
+            self.hyperparameters_rf.enable_all_components()
+
         self.mlp_hyperparameters = None
 
     def __setMlpGui(self):
@@ -219,12 +247,10 @@ class GUITrainModel:
         )
 
     def __createHyperparametersBasedOnModel(self):
-        # Clear any existing hyperparameter widgets
         for widget in self.train_model_frame.winfo_children():
             if widget.grid_info().get('row', 0) >= 7:
                 widget.destroy()
 
-        # Clean up MLP hidden layers frame if it exists
         if hasattr(self, 'mlp_hyperparameters') and self.mlp_hyperparameters is not None:
             if hasattr(self.mlp_hyperparameters,
                        'hidden_layers_frame') and self.mlp_hyperparameters.hidden_layers_frame is not None:
@@ -241,15 +267,6 @@ class GUITrainModel:
         self.__createInputData()
         self.__createChooseModel()
         self.__createHyperparametersBasedOnModel()
-        # Enable the model selection dropdown
-        self.modelOptionMenu.configure(state="normal")
-
-        # Set a default model selection
-        # self.modelOptionMenu.set("MLP Classifier")
-        # Initialize the hyperparameters based on default selection
-        self.__createHyperparametersBasedOnModel()
-
-        self.root.mainloop()
         self.root.mainloop()
 
 

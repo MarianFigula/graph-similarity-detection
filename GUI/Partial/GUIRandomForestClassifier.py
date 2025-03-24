@@ -17,6 +17,8 @@ class GUIRandomForestClassifier:
         self.guiUtil = gui_util
         self.root = root
         self.controls = {}
+        self.checkboxes = {}
+        self.buttons = {}
 
         self.main_frame = ctk.CTkFrame(parent, width=600, height=400)
         self.main_frame.grid(row=7, column=0, columnspan=2, padx=(40, 20), pady=10, sticky="nsew")
@@ -24,8 +26,18 @@ class GUIRandomForestClassifier:
         self.main_frame.grid_columnconfigure(1, weight=1)
         self.main_frame.grid_propagate(False)
 
-        # Create and organize all hyperparameter controls
         self._create_hyperparameter_controls()
+        self.disable_all_components()
+
+    def disable_all_components(self):
+        self.set_components_disabled(True)
+        self.set_checkboxes_disabled(True)
+        self.set_buttons_disabled(True)
+
+    def enable_all_components(self):
+        self.set_components_disabled(False)
+        self.set_checkboxes_disabled(False)
+        self.set_buttons_disabled(False)
 
     def _create_hyperparameter_controls(self):
         # Number of trees
@@ -46,6 +58,7 @@ class GUIRandomForestClassifier:
             min_value=50,
             max_value=500,
             default_value=100,
+            disabled_value=100,
             step=30,
             data_type=int
         )
@@ -68,6 +81,7 @@ class GUIRandomForestClassifier:
             min_value=1,
             max_value=50,
             default_value=10,
+            disabled_value=10,
             step=1,
             data_type=int
         )
@@ -90,6 +104,7 @@ class GUIRandomForestClassifier:
             min_value=2,
             max_value=20,
             default_value=2,
+            disabled_value=2,
             step=1,
             data_type=int
         )
@@ -112,6 +127,7 @@ class GUIRandomForestClassifier:
             min_value=1,
             max_value=15,
             default_value=1,
+            disabled_value=1,
             step=1,
             data_type=int
         )
@@ -134,11 +150,12 @@ class GUIRandomForestClassifier:
             min_value=8,
             max_value=256,
             default_value=32,
+            disabled_value=32,
             step=8,
             data_type=int
         )
 
-        self.guiUtil.add_component(
+        self.buttons["train_model"] = self.guiUtil.add_component(
             self,
             component_type="Button",
             frame=self.main_frame,
@@ -174,7 +191,7 @@ class GUIRandomForestClassifier:
 
 
         self.important_features_var = IntVar()
-        self.guiUtil.add_component(
+        self.checkboxes["important_features"] = self.guiUtil.add_component(
             self,
             component_type="Checkbutton",
             frame=self.main_frame,
@@ -191,7 +208,7 @@ class GUIRandomForestClassifier:
         )
 
         self.confusion_matrix_var = IntVar()
-        self.guiUtil.add_component(
+        self.checkboxes["confusion_matrix"] = self.guiUtil.add_component(
             self,
             component_type="Checkbutton",
             frame=self.main_frame,
@@ -208,7 +225,7 @@ class GUIRandomForestClassifier:
         )
 
         self.roc_curve_var = IntVar()
-        self.guiUtil.add_component(
+        self.checkboxes["roc_curve"] = self.guiUtil.add_component(
             self,
             component_type="Checkbutton",
             frame=self.main_frame,
@@ -225,7 +242,7 @@ class GUIRandomForestClassifier:
         )
 
         self.classification_report_var = IntVar()
-        self.guiUtil.add_component(
+        self.checkboxes["classification_report"] = self.guiUtil.add_component(
             self,
             component_type="Checkbutton",
             frame=self.main_frame,
@@ -241,7 +258,7 @@ class GUIRandomForestClassifier:
             border_width=2
         )
 
-        self.visualize_button = self.guiUtil.add_component(
+        self.buttons["visualize"] = self.guiUtil.add_component(
             self,
             component_type="Button",
             frame=self.main_frame,
@@ -254,7 +271,7 @@ class GUIRandomForestClassifier:
             command=lambda: print("Visualizing...")
         )
 
-        self.save_button = self.guiUtil.add_component(
+        self.buttons["save_model"] = self.guiUtil.add_component(
             self,
             component_type="Button",
             frame=self.main_frame,
@@ -267,6 +284,14 @@ class GUIRandomForestClassifier:
 
     def __trainModel(self):
         print("Training model...")
+
+    def get_components(self):
+        return self.controls
+
+    def set_components_disabled(self, disabled):
+        for control in self.controls.values():
+            print(control)
+            control.setDisabled(disabled)
 
     def get_hyperparameters(self):
         """
@@ -282,6 +307,22 @@ class GUIRandomForestClassifier:
             "min_samples_leaf": self.controls["min_samples_leaf"].get_value(),
             "batch_size": self.controls["batch_size"].get_value(),
         }
+
+    def get_checkbox_values(self):
+        return {
+            "important_features": bool(self.important_features_var.get()),
+            "confusion_matrix": bool(self.confusion_matrix_var.get()),
+            "roc_curve": bool(self.roc_curve_var.get()),
+            "classification_report": bool(self.classification_report_var.get())
+        }
+
+    def set_checkboxes_disabled(self, disabled):
+        for checkbox in self.checkboxes.values():
+            checkbox.configure(state="disabled" if disabled else "normal")
+
+    def set_buttons_disabled(self, disabled):
+        for button in self.buttons.values():
+            button.configure(state="disabled" if disabled else "normal")
 
     def set_hyperparameters(self, params):
         """
