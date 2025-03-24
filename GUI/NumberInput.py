@@ -3,7 +3,8 @@ import customtkinter as ctk
 
 class NumberInput(ctk.CTkFrame):
     def __init__(self, master, min_value=0.0, max_value=1.0, step=0.1,
-                 default_value=0.25, disabled_value=0.0, data_type=float, **kwargs):
+                 default_value=0.25, disabled_value=0.0, data_type=float,
+                 command=None, **kwargs):
 
         super().__init__(master, **kwargs)
 
@@ -13,6 +14,7 @@ class NumberInput(ctk.CTkFrame):
         self.default_value = default_value
         self.disabled_value = disabled_value
         self.data_type = data_type
+        self.command = command
 
         self.min_value = self.data_type(self.min_value)
         self.max_value = self.data_type(self.max_value)
@@ -21,6 +23,7 @@ class NumberInput(ctk.CTkFrame):
         self.disabled_value = self.data_type(self.disabled_value)
 
         self.value = ctk.DoubleVar(value=self.default_value)
+        self.value.trace_add("write", self._on_value_change)  # Add trace to detect changes
 
         self.entry = ctk.CTkEntry(self, textvariable=self.value, width=50, justify="center", font=("Lato", 11))
         self.entry.grid(row=0, column=1, padx=0, pady=0)
@@ -35,6 +38,11 @@ class NumberInput(ctk.CTkFrame):
 
         self.down_button = ctk.CTkButton(self.button_frame, text="▼", width=10, height=10, command=self.decrement, font=("Lato", 8))
         self.down_button.pack(pady=(0, 0))
+
+    def _on_value_change(self, *args):
+        """Called when the value changes"""
+        if self.command is not None:
+            self.command()
 
     def validate_input(self, new_value):
         """Validate the input to ensure it's a number between min_value and max_value."""
@@ -57,12 +65,20 @@ class NumberInput(ctk.CTkFrame):
     def get_value(self):
         return self.data_type(self.value.get())
 
+    def get(self):
+        """Alias for get_value to make it more Tkinter-like"""
+        return self.get_value()
+
     def set_value(self, value):
         value = self.data_type(value)
         if self.min_value <= value <= self.max_value:
             self.value.set(value)
         else:
             raise ValueError(f"Value must be between {self.min_value} and {self.max_value}")
+
+    def set(self, value):
+        """Alias for set_value to make it more Tkinter-like"""
+        self.set_value(value)
 
     def setDisabled(self, state):
         self.entry.configure(state="disabled" if state else "normal")
