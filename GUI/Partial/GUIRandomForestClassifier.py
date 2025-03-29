@@ -2,10 +2,13 @@ from tkinter import IntVar
 
 import customtkinter as ctk
 import GUI.GUIConstants as guiconst
+from BusinessLogic.GraphSimilarityML.Models.RandomForestClassifierGraphSimilarity import \
+    RandomForestClassifierGraphSimilarity
+from BusinessLogic.GraphSimilarityML.Visualization.RandomForestVisualizer import RandomForestVisualizer
 
 
 class GUIRandomForestClassifier:
-    def __init__(self, parent, gui_util, root):
+    def __init__(self, parent, gui_util, root, graphlet_counts, similarity_measures):
         """
         Creates a self-contained frame with Random Forest hyperparameter controls
 
@@ -20,6 +23,12 @@ class GUIRandomForestClassifier:
         self.checkboxes = {}
         self.buttons = {}
 
+        self.rf_model = None
+        self.rf_visualizer = None
+
+        self.graphlet_counts = graphlet_counts
+        self.similarity_measures = similarity_measures
+
         self.main_frame = ctk.CTkFrame(parent, width=600, height=400)
         self.main_frame.grid(row=7, column=0, columnspan=2, padx=(40, 20), pady=10, sticky="nsew")
         self.main_frame.grid_columnconfigure(0, weight=1)
@@ -29,24 +38,39 @@ class GUIRandomForestClassifier:
         self._create_hyperparameter_controls()
         self.disable_all_components()
 
+        print(self.graphlet_counts)
+        print(self.similarity_measures)
+
     def disable_all_components(self):
         self.set_components_disabled(True)
         self.set_checkboxes_disabled(True)
         self.set_buttons_disabled(True)
 
-    def enable_all_components(self):
+    def enable_train_model_components(self):
         self.set_components_disabled(False)
+        self.buttons["train_model"].configure(state="normal")
+
+    def enable_visualize_model_components(self):
         self.set_checkboxes_disabled(False)
         self.set_buttons_disabled(False)
 
     def _create_hyperparameter_controls(self):
+        self.guiUtil.add_component(
+            self,
+            component_type="Label",
+            frame=self.main_frame,
+            text="Model Hyperparameters",
+            grid_options={"row": 0, "column": 0, "columnspan": 2, "sticky": "w", "padx": 30, "pady": (5, 0)},
+            font=self.root.fontMiddle
+        )
+
         # Number of trees
         self.guiUtil.add_component(
             self,
             component_type="Label",
             frame=self.main_frame,
             text="Number of trees",
-            grid_options={"row": 0, "column": 0, "sticky": "w", "padx": 30, "pady": 5},
+            grid_options={"row": 1, "column": 0, "sticky": "w", "padx": 30, "pady": 5},
             font=self.root.font
         )
 
@@ -54,7 +78,7 @@ class GUIRandomForestClassifier:
             self,
             component_type="NumberInput",
             frame=self.main_frame,
-            grid_options={"row": 0, "column": 0, "sticky": "e", "padx": 30, "pady": 5},
+            grid_options={"row": 1, "column": 0, "sticky": "e", "padx": 30, "pady": 5},
             min_value=50,
             max_value=500,
             default_value=100,
@@ -69,7 +93,7 @@ class GUIRandomForestClassifier:
             component_type="Label",
             frame=self.main_frame,
             text="Max depth",
-            grid_options={"row": 0, "column": 1, "sticky": "w", "padx": 30, "pady": 5},
+            grid_options={"row": 1, "column": 1, "sticky": "w", "padx": 30, "pady": 5},
             font=self.root.font
         )
 
@@ -77,7 +101,7 @@ class GUIRandomForestClassifier:
             self,
             component_type="NumberInput",
             frame=self.main_frame,
-            grid_options={"row": 0, "column": 1, "sticky": "e", "padx": 30, "pady": 5},
+            grid_options={"row": 1, "column": 1, "sticky": "e", "padx": 30, "pady": 5},
             min_value=1,
             max_value=50,
             default_value=10,
@@ -92,7 +116,7 @@ class GUIRandomForestClassifier:
             component_type="Label",
             frame=self.main_frame,
             text="Min samples split",
-            grid_options={"row": 1, "column": 0, "sticky": "w", "padx": 30, "pady": 5},
+            grid_options={"row": 2, "column": 0, "sticky": "w", "padx": 30, "pady": 5},
             font=self.root.font
         )
 
@@ -100,7 +124,7 @@ class GUIRandomForestClassifier:
             self,
             component_type="NumberInput",
             frame=self.main_frame,
-            grid_options={"row": 1, "column": 0, "sticky": "e", "padx": 30, "pady": 5},
+            grid_options={"row": 2, "column": 0, "sticky": "e", "padx": 30, "pady": 5},
             min_value=2,
             max_value=20,
             default_value=2,
@@ -115,7 +139,7 @@ class GUIRandomForestClassifier:
             component_type="Label",
             frame=self.main_frame,
             text="Min samples leaf",
-            grid_options={"row": 1, "column": 1, "sticky": "w", "padx": 30, "pady": 5},
+            grid_options={"row": 2, "column": 1, "sticky": "w", "padx": 30, "pady": 5},
             font=self.root.font
         )
 
@@ -123,7 +147,7 @@ class GUIRandomForestClassifier:
             self,
             component_type="NumberInput",
             frame=self.main_frame,
-            grid_options={"row": 1, "column": 1, "sticky": "e", "padx": 30, "pady": 5},
+            grid_options={"row": 2, "column": 1, "sticky": "e", "padx": 30, "pady": 5},
             min_value=1,
             max_value=15,
             default_value=1,
@@ -132,40 +156,18 @@ class GUIRandomForestClassifier:
             data_type=int
         )
 
-        # Batch size
-        self.guiUtil.add_component(
-            self,
-            component_type="Label",
-            frame=self.main_frame,
-            text="Batch size",
-            grid_options={"row": 2, "column": 0, "sticky": "w", "padx": 30, "pady": 5},
-            font=self.root.font
-        )
-
-        self.controls["batch_size"] = self.guiUtil.add_component(
-            self,
-            component_type="NumberInput",
-            frame=self.main_frame,
-            grid_options={"row": 2, "column": 0, "sticky": "e", "padx": 30, "pady": 5},
-            min_value=8,
-            max_value=256,
-            default_value=32,
-            disabled_value=32,
-            step=8,
-            data_type=int
-        )
 
         self.buttons["train_model"] = self.guiUtil.add_component(
             self,
             component_type="Button",
             frame=self.main_frame,
             text="Train Model",
-            grid_options={"row": 3, "column": 0, "columnspan": 2, "sticky": "n", "padx": 30, "pady": 5},
+            grid_options={"row": 3, "column": 0, "columnspan": 2, "sticky": "n", "padx": 30, "pady": 10},
             fg_color=guiconst.COLOR_GREEN,
             hover_color=guiconst.COLOR_GREEN_HOVER,
             width=30,
             height=25,
-            command=lambda: self.__trainModel()
+            command=lambda: self.__train_model()
         )
 
         self.guiUtil.create_horizontal_line(
@@ -268,7 +270,7 @@ class GUIRandomForestClassifier:
             hover_color=guiconst.COLOR_GREEN_HOVER,
             width=180,
             height=25,
-            command=lambda: print("Visualizing...")
+            command=lambda: self.__visualize()
         )
 
         self.buttons["save_model"] = self.guiUtil.add_component(
@@ -279,18 +281,15 @@ class GUIRandomForestClassifier:
             grid_options={"row": 7, "column": 1, "sticky": "n", "padx": 10, "pady": 20},
             width=180,
             height=25,
-            command=lambda: print("Saving model...")
+            command=lambda: self.__save_model()
         )
-
-    def __trainModel(self):
-        print("Training model...")
 
     def get_components(self):
         return self.controls
 
     def set_components_disabled(self, disabled):
         for control in self.controls.values():
-            print(control)
+            # print(control)
             control.setDisabled(disabled)
 
     def get_hyperparameters(self):
@@ -305,7 +304,6 @@ class GUIRandomForestClassifier:
             "max_depth": self.controls["max_depth"].get_value(),
             "min_samples_split": self.controls["min_samples_split"].get_value(),
             "min_samples_leaf": self.controls["min_samples_leaf"].get_value(),
-            "batch_size": self.controls["batch_size"].get_value(),
         }
 
     def get_checkbox_values(self):
@@ -339,5 +337,37 @@ class GUIRandomForestClassifier:
             self.controls["min_samples_split"].set_value(params["min_samples_split"])
         if "min_samples_leaf" in params:
             self.controls["min_samples_leaf"].set_value(params["min_samples_leaf"])
-        if "batch_size" in params:
-            self.controls["batch_size"].set_value(params["batch_size"])
+
+
+    def __train_model(self):
+        print("Training model...")
+        print(self.graphlet_counts)
+        print(self.similarity_measures)
+
+        self.rf_model = RandomForestClassifierGraphSimilarity(
+            graphlet_counts=self.graphlet_counts,
+            similarity_measures=self.similarity_measures,
+            hyperparameters=self.get_hyperparameters()
+        )
+
+        self.rf_model.process_training()
+
+        self.enable_visualize_model_components()
+
+    def __save_model(self):
+        if self.rf_model is None:
+            return
+
+        self.rf_model.save_model()
+
+    def __visualize(self):
+        if self.rf_model is None:
+            return
+
+        self.rf_visualizer = RandomForestVisualizer(self.get_checkbox_values())
+        self.rf_visualizer.visualize_based_on_checkbox(
+            y_pred=self.rf_model.get_y_pred(),
+            y_test=self.rf_model.get_y_test(),
+            y_prob=self.rf_model.get_y_prob(),
+            feature_importances=self.rf_model.model.feature_importances_
+        )

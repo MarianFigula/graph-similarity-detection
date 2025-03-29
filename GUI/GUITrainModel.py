@@ -1,6 +1,8 @@
 from tkinter import filedialog
 
 import customtkinter as ctk
+import pandas as pd
+
 from GUI.Partial.GUIMlpClassifier import GUIMlpClassifier
 from GUI.Partial.GUIRandomForestClassifier import GUIRandomForestClassifier
 from GUI.GUIUtil import GUIUtil
@@ -44,6 +46,8 @@ class GUITrainModel:
         self.should_enable_random_forest = False
 
         self.mlp_hyperparameters = None
+        self.graphlet_counts = None
+        self.similarity_measures = None
 
     def resize_window(self, width, height, train_model_width=400):
         """
@@ -68,6 +72,7 @@ class GUITrainModel:
         app.run()
 
     def __handle_optionMenu_callback(self, choice):
+        print("option here")
         self.selected_model = choice
         self.__createHyperparametersBasedOnModel()
 
@@ -108,7 +113,7 @@ class GUITrainModel:
             font=self.root.fontTitle
         )
 
-    def __handleSelectDirectory(self, main_entry: ctk.CTkEntry, second_entry: ctk.CTkEntry = None, component=None):
+    def __handleSelectCsv(self, main_entry: ctk.CTkEntry, second_entry: ctk.CTkEntry = None, component=None):
         path = filedialog.askopenfilename(filetypes=[("CSV Files", "*.csv")])
 
         if not path:
@@ -123,7 +128,9 @@ class GUITrainModel:
         component.configure(state="normal")
 
         if self.hyperparameters_rf is not None:
-            self.hyperparameters_rf.enable_all_components()
+            self.hyperparameters_rf.enable_train_model_components()
+            self.hyperparameters_rf.graphlet_counts = pd.read_csv(self.graphlet_distribution_entry.get())
+            self.hyperparameters_rf.similarity_measures = pd.read_csv(self.similarities_entry.get())
             self.should_enable_random_forest = True
 
     def __createInputData(self):
@@ -155,8 +162,8 @@ class GUITrainModel:
             font=self.root.font,
             width=150,
             height=25,
-            command=lambda: self.__handleSelectDirectory(self.graphlet_distribution_entry, self.similarities_entry,
-                                                         self.modelOptionMenu)
+            command=lambda: self.__handleSelectCsv(self.graphlet_distribution_entry, self.similarities_entry,
+                                                   self.modelOptionMenu)
         )
 
         self.guiUtil.add_component(
@@ -187,8 +194,8 @@ class GUITrainModel:
             font=self.root.font,
             width=150,
             height=25,
-            command=lambda: self.__handleSelectDirectory(self.similarities_entry, self.graphlet_distribution_entry,
-                                                         self.modelOptionMenu)
+            command=lambda: self.__handleSelectCsv(self.similarities_entry, self.graphlet_distribution_entry,
+                                                   self.modelOptionMenu)
         )
 
         self.guiUtil.create_horizontal_line(self.train_model_frame, width=self.train_model_width - 20, row=3, column=0,
@@ -228,11 +235,13 @@ class GUITrainModel:
 
     def __setRandomForestGui(self):
         self.resize_window(800, 700, self.train_model_width)
-        self.hyperparameters_rf = GUIRandomForestClassifier(self.train_model_frame, self.guiUtil, self.root)
+        self.hyperparameters_rf = GUIRandomForestClassifier(self.train_model_frame, self.guiUtil, self.root, None, None)
         self.info_button.grid(row=0, column=0)
 
         if self.should_enable_random_forest:
-            self.hyperparameters_rf.enable_all_components()
+            self.hyperparameters_rf.enable_train_model_components()
+            self.hyperparameters_rf.graphlet_counts = pd.read_csv(self.graphlet_distribution_entry.get())
+            self.hyperparameters_rf.similarity_measures = pd.read_csv(self.similarities_entry.get())
 
         self.mlp_hyperparameters = None
 
@@ -270,7 +279,7 @@ class GUITrainModel:
         self.root.mainloop()
 
 
-if __name__ == "__main__":
-    root = ctk.CTk()
-    app = GUITrainModel(root)
-    app.run()
+# if __name__ == "__main__":
+#     root = ctk.CTk()
+#     app = GUITrainModel(root)
+#     app.run()
