@@ -252,7 +252,9 @@ class GUITrainModel:
             parent=self.train_model_frame,
             gui_util=self.guiUtil,
             root=self.root,
-            max_hidden_layers=10
+            max_hidden_layers=10,
+            graphlet_counts=pd.read_csv(self.graphlet_distribution_entry.get()),
+            similarity_measures=pd.read_csv(self.similarities_entry.get())
         )
 
     def __createHyperparametersBasedOnModel(self):
