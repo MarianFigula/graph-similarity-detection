@@ -79,7 +79,7 @@ class GUIRandomForestClassifier:
             component_type="NumberInput",
             frame=self.main_frame,
             grid_options={"row": 1, "column": 0, "sticky": "e", "padx": 30, "pady": 5},
-            min_value=50,
+            min_value=1,
             max_value=500,
             default_value=100,
             disabled_value=100,
