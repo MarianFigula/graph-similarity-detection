@@ -1,7 +1,7 @@
 import customtkinter as ctk
-
 from GUI.NumberInput import NumberInput
-import GUIConstants as guiconst
+from GUI import GUIConstants as guiconst
+
 
 class GUIUtil:
     fontTitle = ("Lato", 16)
@@ -9,6 +9,10 @@ class GUIUtil:
     def __init__(self):
         self.info_window = None  # Class-level variable to store the reference to the open window
 
+    @staticmethod
+    def initialize_window(root):
+        for widget in root.winfo_children():
+            widget.destroy()
 
     @staticmethod
     def add_component(self, component_type, frame=None, grid_options=None, **kwargs):
@@ -71,7 +75,7 @@ class GUIUtil:
         component.configure(state="normal")
 
     @staticmethod
-    def resetDownloadLabel(label_component):
+    def reset_label(label_component):
         label_component.configure(text="")
 
     @staticmethod
