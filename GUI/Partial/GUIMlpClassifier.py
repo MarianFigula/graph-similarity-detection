@@ -260,7 +260,7 @@ class GUIMlpClassifier:
             component_type="Label",
             frame=self.main_frame,
             text="Visualization and Saving",
-            grid_options={"row": 7, "column": 0, "sticky": "w", "padx": (30, 0), "pady": 5},
+            grid_options={"row": 7, "column": 0, "sticky": "w", "padx": (30, 0), "pady": 0},
             font=self.root.fontMiddle
         )
 
@@ -288,7 +288,7 @@ class GUIMlpClassifier:
             frame=self.main_frame,
             text="Confusion Matrix",
             variable=self.confusion_matrix_var,
-            grid_options={"row": 8, "column": 0, "sticky": "e", "padx": (30, 0), "pady": 5},
+            grid_options={"row": 8, "column": 0, "sticky": "e", "padx": (0, 40), "pady": 5},
             checkbox_width=15,
             checkbox_height=15,
             corner_radius=7,
@@ -305,7 +305,7 @@ class GUIMlpClassifier:
             frame=self.main_frame,
             text="ROC Curve",
             variable=self.roc_curve_var,
-            grid_options={"row": 8, "column": 1, "sticky": "w", "padx": (30, 0), "pady": 5},
+            grid_options={"row": 8, "column": 1, "sticky": "w", "padx": (0, 50), "pady": 5},
             checkbox_width=15,
             checkbox_height=15,
             corner_radius=7,
@@ -322,7 +322,7 @@ class GUIMlpClassifier:
             frame=self.main_frame,
             text="Classification Report",
             variable=self.classification_report_var,
-            grid_options={"row": 8, "column": 1, "sticky": "e", "padx": 30, "pady": 5},
+            grid_options={"row": 8, "column": 1, "sticky": "e", "padx": (0, 10), "pady": 5},
             checkbox_width=15,
             checkbox_height=15,
             corner_radius=7,
@@ -337,7 +337,7 @@ class GUIMlpClassifier:
             component_type="Button",
             frame=self.main_frame,
             text="Visualize",
-            grid_options={"row": 9, "column": 0, "sticky": "n", "padx": 10, "pady": (5, 10)},
+            grid_options={"row": 9, "column": 0, "sticky": "n", "padx": 10, "pady": 5},
             fg_color=guiconst.COLOR_GREEN,
             hover_color=guiconst.COLOR_GREEN_HOVER,
             width=180,
@@ -350,7 +350,7 @@ class GUIMlpClassifier:
             component_type="Button",
             frame=self.main_frame,
             text="Save Model",
-            grid_options={"row": 9, "column": 1, "sticky": "n", "padx": 10, "pady": (5, 10)},
+            grid_options={"row": 9, "column": 1, "sticky": "n", "padx": 10, "pady": 5},
             width=180,
             height=25,
             command=lambda: self.__save_model()
@@ -469,62 +469,90 @@ class GUIMlpClassifier:
         return params
 
     def set_hyperparameters(self, params):
-        if 'num_hidden_layers' in params:
-            self.num_hidden_layers.set(params['num_hidden_layers'])
-            self._update_hidden_layers()
+        error_message = ""
+        try:
+            if 'num_hidden_layers' in params:
+                self.num_hidden_layers.set(params['num_hidden_layers'])
+                self._update_hidden_layers()
 
-            if 'hidden_layers' in params:
-                for i, layer in enumerate(params['hidden_layers']):
-                    if i < len(self.hidden_layer_inputs):
-                        if 'neurons' in layer:
-                            self.hidden_layer_inputs[i]['neurons'].set_value(layer['neurons'])
-                        if 'dropout' in layer:
-                            self.hidden_layer_inputs[i]['dropout'].set_value(layer['dropout'])
+                if 'hidden_layers' in params:
+                    for i, layer in enumerate(params['hidden_layers']):
+                        if i < len(self.hidden_layer_inputs):
+                            if 'neurons' in layer:
+                                self.hidden_layer_inputs[i]['neurons'].set_value(layer['neurons'])
+                            if 'dropout' in layer:
+                                self.hidden_layer_inputs[i]['dropout'].set_value(layer['dropout'])
 
-        if 'num_epochs' in params:
-            self.num_epochs.set_value(params['num_epochs'])
+            if 'num_epochs' in params:
+                self.num_epochs.set_value(params['num_epochs'])
 
-        if 'batch_size' in params:
-            self.batch_size.set_value(params['batch_size'])
+            if 'batch_size' in params:
+                self.batch_size.set_value(params['batch_size'])
 
-        if 'learning_rate' in params:
-            self.learning_rate.set_value(params['learning_rate'])
+            if 'learning_rate' in params:
+                self.learning_rate.set_value(params['learning_rate'])
 
-        if 'early_stopping' in params:
-            self.early_stopping_var.set(1 if params['early_stopping'] else 0)
-            self._toggle_patience()
+            if 'early_stopping' in params:
+                self.early_stopping_var.set(1 if params['early_stopping'] else 0)
+                self._toggle_patience()
 
-            if params['early_stopping'] and 'patience' in params:
-                self.patience.set_value(params['patience'])
+                if params['early_stopping'] and 'patience' in params:
+                    self.patience.set_value(params['patience'])
+        except Exception as e:
+            error_message = "Failed to set hyperparameters: " + str(e)
+        finally:
+            if error_message != "":
+                self.guiUtil.displayError(self.main_frame, error_message, row=10, column=0, columnspan=2)
 
     def __train_model(self):
-        print("Training model...")
-        print(self.graphlet_counts)
-        print(self.similarity_measures)
+        error_message = ""
+        try:
+            print("Training model...")
+            print(self.graphlet_counts)
+            print(self.similarity_measures)
 
-        self.mlp_model = MLPClassifierGraphSimilarity(
-            graphlet_counts=self.graphlet_counts,
-            similarity_measures=self.similarity_measures,
-            hyperparameters=self.get_hyperparameters()
-        )
+            self.mlp_model = MLPClassifierGraphSimilarity(
+                graphlet_counts=self.graphlet_counts,
+                similarity_measures=self.similarity_measures,
+                hyperparameters=self.get_hyperparameters()
+            )
 
-        self.mlp_model.process_training()
-        self.enable_visualize_model_components()
+            self.mlp_model.process_training()
+            self.enable_visualize_model_components()
+        except Exception as e:
+            error_message = "Something failed, check your inputs: " + str(e)
+        finally:
+            if error_message != "":
+                self.guiUtil.displayError(self.main_frame, error_message, row=10, column=0, columnspan=2)
 
     def __save_model(self):
-        if self.mlp_model is None:
-            return
+        error_message = ""
+        try:
+            if self.mlp_model is None:
+                return
 
-        self.mlp_model.save_model()
+            self.mlp_model.save_model()
+        except Exception as e:
+            error_message = "Failed to save model: " + str(e)
+        finally:
+            if error_message != "":
+                self.guiUtil.displayError(self.main_frame, error_message, row=10, column=0, columnspan=2)
 
     def __visualize(self):
-        if self.mlp_model is None:
-            return
+        error_message = ""
+        try:
+            if self.mlp_model is None:
+                return
 
-        self.mlp_visualizer = MLPVisualizer(self.get_checkbox_values())
-        self.mlp_visualizer.visualize_based_on_checkbox(
-            y_pred=self.mlp_model.get_y_pred(),
-            y_test=self.mlp_model.get_y_test(),
-            y_prob=self.mlp_model.get_y_prob(),
-            history=self.mlp_model.get_history()
-        )
+            self.mlp_visualizer = MLPVisualizer(self.get_checkbox_values(), self.mlp_model.get_uuid())
+            self.mlp_visualizer.visualize_based_on_checkbox(
+                y_pred=self.mlp_model.get_y_pred(),
+                y_test=self.mlp_model.get_y_test(),
+                y_prob=self.mlp_model.get_y_prob(),
+                history=self.mlp_model.get_history()
+            )
+        except Exception as e:
+            error_message = "Failed to visualize model: " + str(e)
+        finally:
+            if error_message != "":
+                self.guiUtil.displayError(self.main_frame, error_message, row=10, column=0, columnspan=2)

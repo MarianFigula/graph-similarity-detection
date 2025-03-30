@@ -340,34 +340,56 @@ class GUIRandomForestClassifier:
 
 
     def __train_model(self):
-        print("Training model...")
-        print(self.graphlet_counts)
-        print(self.similarity_measures)
+        error_message = ""
+        try:
+            print("Training model...")
+            print(self.graphlet_counts)
+            print(self.similarity_measures)
 
-        self.rf_model = RandomForestClassifierGraphSimilarity(
-            graphlet_counts=self.graphlet_counts,
-            similarity_measures=self.similarity_measures,
-            hyperparameters=self.get_hyperparameters()
-        )
+            self.rf_model = RandomForestClassifierGraphSimilarity(
+                graphlet_counts=self.graphlet_counts,
+                similarity_measures=self.similarity_measures,
+                hyperparameters=self.get_hyperparameters()
+            )
 
-        self.rf_model.process_training()
+            self.rf_model.process_training()
 
-        self.enable_visualize_model_components()
+            self.enable_visualize_model_components()
+        except Exception as e:
+            error_message = "Something failed, check your inputs: " + str(e)
+        finally:
+            if error_message != "":
+                self.guiUtil.displayError(self.main_frame, error_message, row=8, column=0, columnspan=2)
 
     def __save_model(self):
-        if self.rf_model is None:
-            return
+        error_message = ""
+        try:
 
-        self.rf_model.save_model()
+            if self.rf_model is None:
+                return
+
+            self.rf_model.save_model()
+        except Exception as e:
+            error_message = "Failed to save model: " + str(e)
+        finally:
+            if error_message != "":
+                self.guiUtil.displayError(self.main_frame, error_message, row=8, column=0, columnspan=2)
 
     def __visualize(self):
-        if self.rf_model is None:
-            return
+        error_message = ""
+        try:
+            if self.rf_model is None:
+                return
 
-        self.rf_visualizer = RandomForestVisualizer(self.get_checkbox_values(), self.rf_model.get_uuid())
-        self.rf_visualizer.visualize_based_on_checkbox(
-            y_pred=self.rf_model.get_y_pred(),
-            y_test=self.rf_model.get_y_test(),
-            y_prob=self.rf_model.get_y_prob(),
-            feature_importances=self.rf_model.model.feature_importances_
-        )
+            self.rf_visualizer = RandomForestVisualizer(self.get_checkbox_values(), self.rf_model.get_uuid())
+            self.rf_visualizer.visualize_based_on_checkbox(
+                y_pred=self.rf_model.get_y_pred(),
+                y_test=self.rf_model.get_y_test(),
+                y_prob=self.rf_model.get_y_prob(),
+                feature_importances=self.rf_model.model.feature_importances_
+            )
+        except Exception as e:
+            error_message = "Failed to visualize model: " + str(e)
+        finally:
+            if error_message != "":
+                self.guiUtil.displayError(self.main_frame, error_message, row=8, column=0, columnspan=2)

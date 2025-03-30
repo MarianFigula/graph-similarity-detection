@@ -258,20 +258,29 @@ class GUITrainModel:
         )
 
     def __createHyperparametersBasedOnModel(self):
-        for widget in self.train_model_frame.winfo_children():
-            if widget.grid_info().get('row', 0) >= 7:
-                widget.destroy()
+        error_message = ""
 
-        if hasattr(self, 'mlp_hyperparameters') and self.mlp_hyperparameters is not None:
-            if hasattr(self.mlp_hyperparameters,
-                       'hidden_layers_frame') and self.mlp_hyperparameters.hidden_layers_frame is not None:
-                self.mlp_hyperparameters.hidden_layers_frame.destroy()
-                self.mlp_hyperparameters.hidden_layers_frame = None
+        try:
+            for widget in self.train_model_frame.winfo_children():
+                if widget.grid_info().get('row', 0) >= 7:
+                    widget.destroy()
 
-        if self.modelOptionMenu.get() == "Random Forest Classifier":
-            self.__setRandomForestGui()
-        elif self.modelOptionMenu.get() == "MLP Classifier":
-            self.__setMlpGui()
+            if hasattr(self, 'mlp_hyperparameters') and self.mlp_hyperparameters is not None:
+                if hasattr(self.mlp_hyperparameters,
+                           'hidden_layers_frame') and self.mlp_hyperparameters.hidden_layers_frame is not None:
+                    self.mlp_hyperparameters.hidden_layers_frame.destroy()
+                    self.mlp_hyperparameters.hidden_layers_frame = None
+
+            if self.modelOptionMenu.get() == "Random Forest Classifier":
+                self.__setRandomForestGui()
+            elif self.modelOptionMenu.get() == "MLP Classifier":
+                self.__setMlpGui()
+        except Exception as e:
+            error_message = "Failed to create hyperparameters based on model"
+            print(e)
+        finally:
+            if error_message != "":
+                self.guiUtil.displayError(self.train_model_frame, error_message, row=10, column=0, columnspan=2)
 
     def run(self):
         self.__addHeader()
