@@ -1,6 +1,8 @@
 from tkinter import IntVar
 import customtkinter as ctk
 import GUI.GUIConstants as guiconst
+from BusinessLogic.GraphSimilarityML.Models.MLPClassifierGraphSimilarity import MLPClassifierGraphSimilarity
+from BusinessLogic.GraphSimilarityML.Visualization.MLPVisualizer import MLPVisualizer
 
 
 class GUIMlpClassifier:
@@ -10,7 +12,9 @@ class GUIMlpClassifier:
     configuring hidden layers, designed to be placed side by side in the parent container.
     """
 
-    def __init__(self, parent, gui_util, root, max_hidden_layers=6):
+    def __init__(self, parent, gui_util, root, max_hidden_layers=6,
+                 graphlet_counts=None,
+                 similarity_measures=None):
         """
         Initialize the hyperparameter frame
 
@@ -40,10 +44,13 @@ class GUIMlpClassifier:
         self.hidden_layers_frame = ctk.CTkFrame(self.root, width=150, height=350)
         self.hidden_layers_frame.grid(row=2, column=1, padx=(0, 40), pady=240, sticky="nsew")
 
-        self._create_hyperparameters()
-        self._create_hidden_layer_inputs()
+        self.checkboxes = {}
+        self.buttons = {}
 
         self.hidden_layer_inputs = []
+
+        self._create_hyperparameters()
+        self._create_hidden_layer_inputs()
 
         self.main_frame.grid_columnconfigure(0, weight=1)
         self.main_frame.grid_columnconfigure(1, weight=1)
@@ -51,35 +58,43 @@ class GUIMlpClassifier:
         self.hidden_layers_frame.grid_columnconfigure(1, weight=1)
         self.hidden_layers_frame.grid_propagate(False)
 
-    def grid(self, main_grid_options, hidden_grid_options):
-        """
-        Position both frames in the parent container
+        self.mlp_model = None
+        self.mlp_visualizer = None
 
-        Parameters:
-        -----------
-        main_grid_options : dict
-            Grid options for the main hyperparameters frame
-        hidden_grid_options : dict
-            Grid options for the hidden layers frame
-        """
+        self.graphlet_counts = graphlet_counts
+        self.similarity_measures = similarity_measures
+
+        self.disable_visualize_model_components()
+
+    def get_checkbox_values(self):
+        return {
+            "accuracy_loss": bool(self.accuracy_loss_curves_var.get()),
+            "confusion_matrix": bool(self.confusion_matrix_var.get()),
+            "roc_curve": bool(self.roc_curve_var.get()),
+            "classification_report": bool(self.classification_report_var.get())
+        }
+
+    def set_checkboxes_disabled(self, disabled):
+        for checkbox in self.checkboxes.values():
+            checkbox.configure(state="disabled" if disabled else "normal")
+
+    def set_buttons_disabled(self, disabled):
+        for button in self.buttons.values():
+            button.configure(state="disabled" if disabled else "normal")
+
+    def enable_visualize_model_components(self):
+        self.set_checkboxes_disabled(False)
+        self.set_buttons_disabled(False)
+
+    def disable_visualize_model_components(self):
+        self.set_checkboxes_disabled(True)
+        self.set_buttons_disabled(True)
+
+    def grid(self, main_grid_options, hidden_grid_options):
         self.main_frame.grid(**main_grid_options)
         self.hidden_layers_frame.grid(**hidden_grid_options)
 
     def _create_hyperparameters(self):
-        """
-        Create all hyperparameter input fields and controls in the main frame
-
-        Hyperparameters:
-        - Number of hidden layers
-        - Number of epochs
-        - Batch size
-        - Learning rate
-        - Early stopping and patience
-        - Training buttons
-        - Visualization options
-        - Save options
-        """
-        # Title for the frame
         self.guiUtil.add_component(
             self,
             component_type="Label",
@@ -93,7 +108,7 @@ class GUIMlpClassifier:
             self,
             component_type="Label",
             frame=self.main_frame,
-            text="Number of hidden layers",
+            text="Number of hidden layers (last layer is output layer)",
             grid_options={"row": 1, "column": 0, "sticky": "w", "padx": 30, "pady": 5},
             font=self.root.font
         )
@@ -104,7 +119,7 @@ class GUIMlpClassifier:
             frame=self.main_frame,
             grid_options={"row": 1, "column": 1, "sticky": "e", "padx": 30, "pady": 5},
             min_value=1,
-            max_value=self.max_hidden_layers,
+            max_value=6,
             default_value=1,
             step=1,
             data_type=int,
@@ -225,13 +240,12 @@ class GUIMlpClassifier:
             hover_color=guiconst.COLOR_GREEN_HOVER,
             width=180,
             height=25,
-            command=self._train_model
+            command=lambda: self.__train_model()
         )
 
-        # Horizontal separator
         self.guiUtil.create_horizontal_line(
             self.main_frame,
-            width=380,  # Slightly smaller than frame width
+            width=380,
             row=6,
             column=0,
             padx=15,
@@ -250,9 +264,8 @@ class GUIMlpClassifier:
             font=self.root.fontMiddle
         )
 
-        # Visualization options checkboxes in a 2x2 grid
         self.accuracy_loss_curves_var = IntVar()
-        self.guiUtil.add_component(
+        self.checkboxes["accuracy_loss"] = self.guiUtil.add_component(
             self,
             component_type="Checkbutton",
             frame=self.main_frame,
@@ -269,7 +282,7 @@ class GUIMlpClassifier:
         )
 
         self.confusion_matrix_var = IntVar()
-        self.guiUtil.add_component(
+        self.checkboxes["confusion_matrix"] = self.guiUtil.add_component(
             self,
             component_type="Checkbutton",
             frame=self.main_frame,
@@ -286,7 +299,7 @@ class GUIMlpClassifier:
         )
 
         self.roc_curve_var = IntVar()
-        self.guiUtil.add_component(
+        self.checkboxes["roc_curve"] = self.guiUtil.add_component(
             self,
             component_type="Checkbutton",
             frame=self.main_frame,
@@ -303,7 +316,7 @@ class GUIMlpClassifier:
         )
 
         self.classification_report_var = IntVar()
-        self.guiUtil.add_component(
+        self.checkboxes["classification_report"] = self.guiUtil.add_component(
             self,
             component_type="Checkbutton",
             frame=self.main_frame,
@@ -319,7 +332,7 @@ class GUIMlpClassifier:
             border_width=2
         )
 
-        self.visualize_button = self.guiUtil.add_component(
+        self.buttons['visualize'] = self.guiUtil.add_component(
             self,
             component_type="Button",
             frame=self.main_frame,
@@ -329,10 +342,10 @@ class GUIMlpClassifier:
             hover_color=guiconst.COLOR_GREEN_HOVER,
             width=180,
             height=25,
-            command=self._visualize_results
+            command=lambda: self.__visualize()
         )
 
-        self.save_button = self.guiUtil.add_component(
+        self.buttons['save_model'] = self.guiUtil.add_component(
             self,
             component_type="Button",
             frame=self.main_frame,
@@ -340,7 +353,7 @@ class GUIMlpClassifier:
             grid_options={"row": 9, "column": 1, "sticky": "n", "padx": 10, "pady": (5, 10)},
             width=180,
             height=25,
-            command=self._save_model
+            command=lambda: self.__save_model()
         )
 
     def _create_hidden_layer_inputs(self):
@@ -422,15 +435,9 @@ class GUIMlpClassifier:
             })
 
     def _update_hidden_layers(self):
-        """
-        Update the hidden layers frame based on the selected number of layers
-        This function is called when the number of hidden layers is changed
-        """
-        # Re-create all hidden layer inputs
         self._create_hidden_layer_inputs()
 
     def _toggle_patience(self):
-        """Show or hide patience input based on early stopping checkbox"""
         if self.early_stopping_var.get() == 1:
             self.patience_label.grid()
             self.patience.grid()
@@ -438,39 +445,7 @@ class GUIMlpClassifier:
             self.patience_label.grid_remove()
             self.patience.grid_remove()
 
-    def _train_model(self):
-        """Collect hyperparameters and train the model"""
-        # Placeholder for model training logic
-        hyperparams = self.get_hyperparameters()
-        print("Training model with hyperparameters:", hyperparams)
-        # Add actual training logic here
-
-    def _visualize_results(self):
-        """Visualize the training results based on selected options"""
-        # Placeholder for visualization logic
-        options = {
-            'accuracy_loss': self.accuracy_loss_curves_var.get() == 1,
-            'confusion_matrix': self.confusion_matrix_var.get() == 1,
-            'roc_curve': self.roc_curve_var.get() == 1,
-            'classification_report': self.classification_report_var.get() == 1
-        }
-        print("Visualizing with options:", options)
-        # Add actual visualization logic here
-
-    def _save_model(self):
-        """Save the trained model to a file"""
-        # Placeholder for model saving logic
-        print("Saving model...")
-        # Add actual saving logic here
-
     def get_hyperparameters(self):
-        """
-        Collect and return all hyperparameters as a dictionary
-
-        Returns:
-        --------
-        dict : Dictionary containing all hyperparameter values
-        """
         hidden_layers = []
         for i, layer in enumerate(self.hidden_layer_inputs):
             if i < self.num_hidden_layers.get():
@@ -494,14 +469,6 @@ class GUIMlpClassifier:
         return params
 
     def set_hyperparameters(self, params):
-        """
-        Set hyperparameter values from a dictionary
-
-        Parameters:
-        -----------
-        hyperparams : dict
-            Dictionary containing hyperparameter values
-        """
         if 'num_hidden_layers' in params:
             self.num_hidden_layers.set(params['num_hidden_layers'])
             self._update_hidden_layers()
@@ -529,3 +496,35 @@ class GUIMlpClassifier:
 
             if params['early_stopping'] and 'patience' in params:
                 self.patience.set_value(params['patience'])
+
+    def __train_model(self):
+        print("Training model...")
+        print(self.graphlet_counts)
+        print(self.similarity_measures)
+
+        self.mlp_model = MLPClassifierGraphSimilarity(
+            graphlet_counts=self.graphlet_counts,
+            similarity_measures=self.similarity_measures,
+            hyperparameters=self.get_hyperparameters()
+        )
+
+        self.mlp_model.process_training()
+        self.enable_visualize_model_components()
+
+    def __save_model(self):
+        if self.mlp_model is None:
+            return
+
+        self.mlp_model.save_model()
+
+    def __visualize(self):
+        if self.mlp_model is None:
+            return
+
+        self.mlp_visualizer = MLPVisualizer(self.get_checkbox_values())
+        self.mlp_visualizer.visualize_based_on_checkbox(
+            y_pred=self.mlp_model.get_y_pred(),
+            y_test=self.mlp_model.get_y_test(),
+            y_prob=self.mlp_model.get_y_prob(),
+            history=self.mlp_model.get_history()
+        )
