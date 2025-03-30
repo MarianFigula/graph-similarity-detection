@@ -41,7 +41,7 @@ class GUIMlpClassifier:
         self.main_frame.grid_columnconfigure(1, weight=1)
         self.main_frame.grid_propagate(False)
 
-        self.hidden_layers_frame = ctk.CTkFrame(self.root, width=150, height=350)
+        self.hidden_layers_frame = ctk.CTkFrame(self.root, width=450, height=350)
         self.hidden_layers_frame.grid(row=2, column=1, padx=(0, 40), pady=240, sticky="nsew")
 
         self.checkboxes = {}
@@ -356,6 +356,16 @@ class GUIMlpClassifier:
             command=lambda: self.__save_model()
         )
 
+        self.saved_complete_label = self.guiUtil.add_component(
+            self,
+            component_type="Label",
+            frame=self.main_frame,
+            text="",
+            grid_options={"row": 10, "column": 0, "columnspan": 2, "sticky": "n"},
+            font=self.root.font,
+            text_color=guiconst.COLOR_GREEN,
+        )
+
     def _create_hidden_layer_inputs(self):
         """Create input fields for hidden layers in the hidden_layers_frame"""
         # Clear any existing widgets in hidden_layers_frame
@@ -532,6 +542,11 @@ class GUIMlpClassifier:
                 return
 
             self.mlp_model.save_model()
+
+            self.saved_complete_label.configure(
+                text=f"Model saved as {self.mlp_model.saved_models_dir}/mlp_{self.mlp_model.uuid}.h5")
+            self.main_frame.after(2000, lambda: self.guiUtil.reset_label(self.saved_complete_label))
+
         except Exception as e:
             error_message = "Failed to save model: " + str(e)
         finally:

@@ -284,6 +284,17 @@ class GUIRandomForestClassifier:
             command=lambda: self.__save_model()
         )
 
+        self.saved_complete_label = self.guiUtil.add_component(
+            self,
+            component_type="Label",
+            frame=self.main_frame,
+            text="",
+            grid_options={"row": 8, "column": 0, "columnspan": 2, "sticky": "n"},
+            font=self.root.font,
+            text_color=guiconst.COLOR_GREEN,
+            wraplength=600
+        )
+
     def get_components(self):
         return self.controls
 
@@ -369,6 +380,10 @@ class GUIRandomForestClassifier:
                 return
 
             self.rf_model.save_model()
+
+            self.saved_complete_label.configure(
+                text=f"Model saved as {self.rf_model.saved_models_dir}/rf_{self.rf_model.uuid}.pkl")
+            self.main_frame.after(2000, lambda: self.guiUtil.reset_label(self.saved_complete_label))
         except Exception as e:
             error_message = "Failed to save model: " + str(e)
         finally:

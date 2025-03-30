@@ -1,8 +1,6 @@
 from tkinter import filedialog
-
 import customtkinter as ctk
 import pandas as pd
-
 from GUI.Partial.GUIMlpClassifier import GUIMlpClassifier
 from GUI.Partial.GUIRandomForestClassifier import GUIRandomForestClassifier
 from GUI.GUIUtil import GUIUtil
@@ -128,6 +126,8 @@ class GUITrainModel:
         component.configure(state="normal")
 
         if self.hyperparameters_rf is not None:
+            print("Enabling random forest")
+            print(self.hyperparameters_rf)
             self.hyperparameters_rf.enable_train_model_components()
             self.hyperparameters_rf.graphlet_counts = pd.read_csv(self.graphlet_distribution_entry.get())
             self.hyperparameters_rf.similarity_measures = pd.read_csv(self.similarities_entry.get())
@@ -235,8 +235,9 @@ class GUITrainModel:
 
     def __setRandomForestGui(self):
         self.resize_window(800, 700, self.train_model_width)
+        self.info_button.grid(row=0, column=0, sticky="ne")
+
         self.hyperparameters_rf = GUIRandomForestClassifier(self.train_model_frame, self.guiUtil, self.root, None, None)
-        self.info_button.grid(row=0, column=0)
 
         if self.should_enable_random_forest:
             self.hyperparameters_rf.enable_train_model_components()
@@ -246,8 +247,8 @@ class GUITrainModel:
         self.mlp_hyperparameters = None
 
     def __setMlpGui(self):
-        self.resize_window(1200, 700)
-        self.info_button.grid(row=0, column=1)
+        self.resize_window(1200, 700, 650)
+        self.info_button.grid(row=0, column=1, sticky="ne")
         self.mlp_hyperparameters = GUIMlpClassifier(
             parent=self.train_model_frame,
             gui_util=self.guiUtil,
@@ -256,6 +257,8 @@ class GUITrainModel:
             graphlet_counts=pd.read_csv(self.graphlet_distribution_entry.get()),
             similarity_measures=pd.read_csv(self.similarities_entry.get())
         )
+
+        self.hyperparameters_rf = None
 
     def __createHyperparametersBasedOnModel(self):
         error_message = ""
