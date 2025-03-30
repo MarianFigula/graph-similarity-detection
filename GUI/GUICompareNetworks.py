@@ -46,8 +46,8 @@ class GUICompareNetworks:
         ctk.set_default_color_theme("blue")
 
         # Create a main frame to hold all components
-        self.compare_networks_frame = ctk.CTkFrame(self.root, width=320, height=450)
-        self.compare_networks_frame.grid(row=2, column=0, padx=40, pady=20, sticky="ns")  # No horizontal expansion
+        self.compare_networks_frame = ctk.CTkFrame(self.root, width=360, height=480)
+        self.compare_networks_frame.grid(row=2, column=0, padx=20, pady=20, sticky="ns")  # No horizontal expansion
         self.compare_networks_frame.grid_propagate(False)  # Prevent the frame from resizing based on its content
 
         self.compare_networks_frame.grid_columnconfigure(0, weight=1)  # Center content horizontally
@@ -248,10 +248,10 @@ class GUICompareNetworks:
     def __handleDownload(self):
         if self.result_df is None:
             return
-        self.neuralNetworkPredictor.download_predictions(self.result_df, self.selected_model)
+        output_file = self.neuralNetworkPredictor.download_predictions(self.result_df, self.selected_model)
 
-        self.download_complete_label.configure(text="Download complete!")
-        self.compare_networks_frame.after(2000, lambda: self.guiUtil.resetDownloadLabel(self.download_complete_label))
+        self.download_complete_label.configure(text=f"Predictions saved in\n{output_file}!")
+        self.compare_networks_frame.after(2000, lambda: self.guiUtil.reset_label(self.download_complete_label))
 
     def __getSavedModels(self):
         self.model_dir_path = "MachineLearningData/saved_models"
@@ -438,6 +438,7 @@ class GUICompareNetworks:
             grid_options={"row": 16, "column": 0, "columnspan": 2, "sticky": "n"},
             font=self.root.font,
             text_color=guiconst.COLOR_GREEN,
+            wraplength=300
         )
 
     def run(self):
