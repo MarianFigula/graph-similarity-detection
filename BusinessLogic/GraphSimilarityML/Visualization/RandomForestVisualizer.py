@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 from matplotlib import pyplot as plt
 from sklearn.metrics import confusion_matrix, classification_report
@@ -5,10 +6,16 @@ import seaborn as sns
 from PIL import Image
 from sklearn.metrics import roc_curve, auc
 
-# TODO metoda pre ukladanie vizualizacii
+
 class RandomForestVisualizer:
-    def __init__(self, checkbox_values):
+    def __init__(self, checkbox_values, rf_uuid):
         self.checkbox_values = checkbox_values
+        self.saved_visualisation_dir = "MachineLearningData/visualization"
+        self.rf_uuid = rf_uuid
+
+        self.save_path = os.path.join(self.saved_visualisation_dir,
+                                      "rf_" + str(rf_uuid))
+        os.makedirs(self.save_path, exist_ok=True)
 
     def visualize_test(self, y_test, y_pred):
         cm = confusion_matrix(y_test, y_pred)
@@ -19,9 +26,19 @@ class RandomForestVisualizer:
         plt.xlabel('Predicted')
         plt.ylabel('True')
         plt.title('Confusion Matrix')
-        plt.show()
 
-    def visualize_feature_importance(self, feature_importances, n_graphlets=30):
+        save_path = os.path.join(self.save_path, 'rf_confusion_matrix.png')
+        plt.savefig(save_path)
+        plt.close()
+
+        img = Image.open(save_path)
+        img.show()
+
+        # plt.show()
+
+    def visualize_feature_importance(self,
+                                     feature_importances,
+                                     n_graphlets=30):
 
         feature_labels = []
         for i in range(n_graphlets):
@@ -40,7 +57,14 @@ class RandomForestVisualizer:
         sns.barplot(x='Importance', y='Feature', data=importance_df.head(15))
         plt.title('Top 15 Most Important Graphlets for Similarity Prediction')
         plt.tight_layout()
-        plt.show()
+
+        save_path = os.path.join(self.save_path, 'rf_feature_importance.png')
+        plt.savefig(save_path)
+        plt.close()
+
+        img = Image.open(save_path)
+        img.show()
+        # plt.show()
 
 
     def visualize_roc_curve(self, y_test, y_prob):
@@ -60,7 +84,15 @@ class RandomForestVisualizer:
         plt.title('Receiver Operating Characteristic (ROC) Curve')
         plt.legend(loc="lower right")
         plt.grid(True, alpha=0.3)
-        plt.show()
+
+        save_path = os.path.join(self.save_path, 'rf_roc_curve.png')
+        plt.savefig(save_path)
+        plt.close()
+
+        img = Image.open(save_path)
+        img.show()
+
+        # plt.show()
 
     def visualize_classification_report(self, y_test, y_pred):
         report_dict = classification_report(y_test, y_pred, output_dict=True)
@@ -73,7 +105,15 @@ class RandomForestVisualizer:
         plt.figure(figsize=(8, 5))
         sns.heatmap(df, annot=True, cmap="coolwarm", fmt=".2f")
         plt.title("Classification Report Heatmap")
-        plt.show()
+
+        save_path = os.path.join(self.save_path, 'rf_classification_report.png')
+        plt.savefig(save_path)
+        plt.close()
+
+        img = Image.open(save_path)
+        img.show()
+
+        # plt.show()
 
 
     def visualize_based_on_checkbox(self, y_test, y_pred, y_prob, feature_importances, n_graphlets=30):

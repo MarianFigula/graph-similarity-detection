@@ -1,12 +1,21 @@
+import os
 import pandas as pd
 from matplotlib import pyplot as plt
 from sklearn.metrics import confusion_matrix, classification_report
 import seaborn as sns
 from sklearn.metrics import roc_curve, auc
+from PIL import Image
+
 
 class MLPVisualizer:
-    def __init__(self, checkbox_values):
+    def __init__(self, checkbox_values, mlp_uuid):
         self.checkbox_values = checkbox_values
+        self.saved_visualisation_dir = "MachineLearningData/visualization"
+        self.mlp_uuid = mlp_uuid
+
+        self.save_path = os.path.join(self.saved_visualisation_dir,
+                                      "mlp_" + str(mlp_uuid))
+        os.makedirs(self.save_path, exist_ok=True)
 
     # accuracy and loss plot
     def visualize_training_history(self, history):
@@ -30,8 +39,14 @@ class MLPVisualizer:
         ax2.grid(True)
 
         plt.tight_layout()
-        # plt.savefig('mlp_training_history.png')
-        plt.show()
+        save_path = os.path.join(self.save_path, 'mlp_training_history.png')
+        plt.savefig(save_path)
+        plt.close()
+
+        img = Image.open(save_path)
+        img.show()
+
+        # plt.show()
 
     def visualize_confusion_matrix(self, y_test, y_pred):
         cm = confusion_matrix(y_test, y_pred)
@@ -40,8 +55,14 @@ class MLPVisualizer:
         plt.title('Confusion Matrix (Test Data)')
         plt.ylabel('True Label')
         plt.xlabel('Predicted Label')
-        plt.savefig('mlp_confusion_matrix.png')
-        plt.show()
+
+        save_path = os.path.join(self.save_path, 'mlp_confusion_matrix.png')
+        plt.savefig(save_path)
+        plt.close()
+
+        img = Image.open(save_path)
+        img.show()
+        # plt.show()
 
     def visualize_roc_curve(self, y_test, y_prob):
         fpr, tpr, _ = roc_curve(y_test, y_prob)
@@ -57,8 +78,15 @@ class MLPVisualizer:
         plt.ylabel('True Positive Rate')
         plt.title('Receiver Operating Characteristic')
         plt.legend(loc="lower right")
-        plt.savefig('mlp_roc_curve.png')
-        plt.show()
+
+        save_path = os.path.join(self.save_path, 'mlp_roc_curve.png')
+        plt.savefig(save_path)
+        plt.close()
+
+        img = Image.open(save_path)
+        img.show()
+
+        # plt.show()
 
     def visualize_classification_report(self, y_test, y_pred):
         report_dict = classification_report(y_test, y_pred, output_dict=True)
@@ -71,7 +99,15 @@ class MLPVisualizer:
         plt.figure(figsize=(8, 5))
         sns.heatmap(df, annot=True, cmap="coolwarm", fmt=".2f")
         plt.title("Classification Report Heatmap")
-        plt.show()
+
+        save_path = os.path.join(self.save_path, 'mlp_classification_report.png')
+        plt.savefig(save_path)
+        plt.close()
+
+        img = Image.open(save_path)
+        img.show()
+
+        # plt.show()
 
     def visualize_based_on_checkbox(self, history, y_test, y_pred, y_prob):
         if self.checkbox_values["accuracy_loss"]:

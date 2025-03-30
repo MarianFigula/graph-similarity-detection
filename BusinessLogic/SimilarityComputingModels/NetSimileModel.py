@@ -8,8 +8,8 @@ from itertools import combinations
 from netrd.distance.netsimile import feature_extraction, graph_signature
 from scipy.spatial.distance import canberra
 
-FEATURES_CACHE_DIR = "../netSimFeaturesCache"
-TARGET_DIRECTORY = "../netSimFiles"
+FEATURES_CACHE_DIR = "netSimFeaturesCache"
+TARGET_DIRECTORY = "netSimFiles"
 
 
 class NetSimileModel:

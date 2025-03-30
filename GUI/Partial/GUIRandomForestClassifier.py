@@ -364,7 +364,7 @@ class GUIRandomForestClassifier:
         if self.rf_model is None:
             return
 
-        self.rf_visualizer = RandomForestVisualizer(self.get_checkbox_values())
+        self.rf_visualizer = RandomForestVisualizer(self.get_checkbox_values(), self.rf_model.get_uuid())
         self.rf_visualizer.visualize_based_on_checkbox(
             y_pred=self.rf_model.get_y_pred(),
             y_test=self.rf_model.get_y_test(),

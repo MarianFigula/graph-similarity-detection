@@ -11,13 +11,15 @@ class RandomForestClassifierGraphSimilarity:
         self.hyperparameters = hyperparameters
         self.graphlet_counts = graphlet_counts
         self.similarity_measures = similarity_measures
-        self.saved_models_dir = 'training_neural_network/saved_models'
+        self.saved_models_dir = 'MachineLearningData/saved_models'
         self.model = None
 
         self.X_test = None
         self.y_test = None
         self.y_pred = None
         self.y_prob = None
+
+        self.uuid = uuid.uuid4().int
 
     def prepare_dateset(self):
         if 'Unnamed: 0' in self.graphlet_counts.columns:
@@ -91,12 +93,19 @@ class RandomForestClassifierGraphSimilarity:
     def get_y_prob(self):
         return self.y_prob
 
-    def save_model(self):
-        i = uuid.uuid4().int
-        joblib.dump(self.model, f'{self.saved_models_dir}/graph_similarity_rf_percentage_{i}.joblib')
+    def get_uuid(self):
+        return self.uuid
 
-        print(f"Model saved as graph_similarity_rf_percentage_{i}.joblib")
+    def save_model(self):
+        if self.model is None:
+            raise ValueError("Model has not been trained yet.")
+
+        joblib.dump(self.model, f'{self.saved_models_dir}/rf_{self.uuid}.joblib')
+
+        print(f"Model saved as {self.saved_models_dir}/rf_{self.uuid}.joblib")
         return True
+
+
 
     def process_training(self):
         X, y = self.prepare_dateset()

@@ -14,7 +14,7 @@ class MLPClassifierGraphSimilarity:
         self.graphlet_counts = graphlet_counts
         self.similarity_measures = similarity_measures
 
-        self.saved_models_dir = 'training_neural_network/saved_models'
+        self.saved_models_dir = 'MachineLearningData/saved_models'
         self.model = None
 
         self.X_test = None
@@ -22,6 +22,8 @@ class MLPClassifierGraphSimilarity:
         self.y_pred = None
         self.y_prob = None
         self.history = None
+
+        self.uuid = uuid.uuid4().int
 
     def load_data(self):
         if 'Unnamed: 0' in self.graphlet_counts.columns:
@@ -222,11 +224,14 @@ class MLPClassifierGraphSimilarity:
     def get_y_prob(self):
         return self.y_prob
 
+    def get_uuid(self):
+        return self.uuid
+
     def save_model(self):
         if self.model is None:
             raise ValueError("Model has not been trained yet.")
 
-        model_filename = f"mlp_{uuid.uuid4()}.h5"
+        model_filename = f"mlp_{self.uuid}.h5"
         model_path = os.path.join(self.saved_models_dir, model_filename)
 
         self.model.save(model_path)
