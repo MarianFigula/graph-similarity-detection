@@ -3,11 +3,12 @@ from tkinter import filedialog, IntVar
 import customtkinter as ctk
 import pandas as pd
 
+from BusinessLogic.DataNormaliser.DataNormaliser import DataNormaliser
 from BusinessLogic.Exception.CustomException import CustomException
 from BusinessLogic.Exception.EmptyDataException import EmptyDataException
 from GUI.GUIUtil import GUIUtil
 import GUI.GUIConstants as guiconst
-from training_neural_network.NeuralNetworkPredictor import NeuralNetworkPredictor
+from BusinessLogic.GraphSimilarityML.NeuralNetworkPredictor import NeuralNetworkPredictor
 
 class GUICompareNetworks:
     def __init__(self, root):
@@ -109,6 +110,7 @@ class GUICompareNetworks:
         self.guiUtil.setComponentNormalState(self.modelOptionMenu)
 
     def __handle_optionMenu_callback(self, choice):
+        print(f"Selected model: {choice}")
         self.selected_model = choice
 
     def __handleComparison(self):
@@ -116,11 +118,16 @@ class GUICompareNetworks:
         if self.selected_model is None:
             self.guiUtil.displayError(self.compare_networks_frame, "Please select a model")
             return
+        print("comp, selected model: ", self.selected_model)
 
         if bool(self.compare_between_two_graphlets_val.get()):
             try:
                 self.input_graphlet_df = pd.read_csv(self.input_entry.get())
                 self.input_graphlet_df2 = pd.read_csv(self.input_entry_second.get())
+
+                self.input_graphlet_df = DataNormaliser(self.input_graphlet_df).percentage_normalisation()
+                self.input_graphlet_df2 = DataNormaliser(self.input_graphlet_df2).percentage_normalisation()
+
                 self.result_df = self.neuralNetworkPredictor.predict_two_graphlet_distributions(
                     self.input_graphlet_df,
                     self.input_graphlet_df2,
@@ -129,32 +136,43 @@ class GUICompareNetworks:
                 self.guiUtil.setComponentNormalState(self.download_button)
                 self.guiUtil.setComponentNormalState(self.display_button)
             except EmptyDataException as e:
+                print(e)
                 error_msg = str(e)
             except CustomException as e:
+                print(e)
                 error_msg = str(e)
-            except FileNotFoundError:
+            except FileNotFoundError as e:
+                print(e)
                 error_msg = "File not found"
             except Exception as e:
+                print(e)
                 error_msg = "Error " + str(e)
             finally:
                 if error_msg != "":
                     self.guiUtil.displayError(self.compare_networks_frame, error_msg, row=16, column=0, columnspan=2)
 
+        # TODO: pre model treba model.save ale pre rfc staci cez joblib
         else:
             try:
                 self.input_graphlet_df = pd.read_csv(self.input_entry.get())
+                print("selected model: " + self.selected_model)
+                self.input_graphlet_df = DataNormaliser(self.input_graphlet_df).percentage_normalisation()
+
                 self.result_df = self.neuralNetworkPredictor.predict(self.input_graphlet_df, self.selected_model)
-                # self.result_df = self.neuralNetworkPredictor.random_forest_predict(self.input_graphlet_df, self.selected_model)
 
                 self.guiUtil.setComponentNormalState(self.download_button)
                 self.guiUtil.setComponentNormalState(self.display_button)
             except EmptyDataException as e:
+                print(e)
                 error_msg = str(e)
             except CustomException as e:
+                print(e)
                 error_msg = str(e)
-            except FileNotFoundError:
+            except FileNotFoundError as e:
                 error_msg = "File not found"
+                print(e)
             except Exception as e:
+                print(e)
                 error_msg = "Error " + str(e)
             finally:
                 if error_msg != "":
@@ -230,18 +248,18 @@ class GUICompareNetworks:
     def __handleDownload(self):
         if self.result_df is None:
             return
-        self.neuralNetworkPredictor.download_predictions(self.result_df)
+        self.neuralNetworkPredictor.download_predictions(self.result_df, self.selected_model)
 
         self.download_complete_label.configure(text="Download complete!")
         self.compare_networks_frame.after(2000, lambda: self.guiUtil.resetDownloadLabel(self.download_complete_label))
 
     def __getSavedModels(self):
-        self.model_dir_path = "../training_neural_network/saved_models"
+        self.model_dir_path = "MachineLearningData/saved_models"
 
         if not os.path.exists(self.model_dir_path):
             os.makedirs(self.model_dir_path)
 
-        files = [f for f in os.listdir(self.model_dir_path) if f.endswith(".pkl") and f.find("scaler") == -1]
+        files = [f for f in os.listdir(self.model_dir_path) if f.endswith(".pkl") or f.endswith(".h5")]
 
         self.selected_model = files[0]
         return files
