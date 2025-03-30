@@ -259,7 +259,9 @@ class GUICompareNetworks:
         if not os.path.exists(self.model_dir_path):
             os.makedirs(self.model_dir_path)
 
-        files = [f for f in os.listdir(self.model_dir_path) if f.endswith(".pkl") or f.endswith(".h5")]
+        files = [f for f in os.listdir(self.model_dir_path) if f.endswith(".pkl") or
+                 f.endswith(".h5") or
+                 f.endswith(".joblib")]
 
         self.selected_model = files[0]
         return files
