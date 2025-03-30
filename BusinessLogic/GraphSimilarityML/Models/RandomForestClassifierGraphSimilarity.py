@@ -100,9 +100,9 @@ class RandomForestClassifierGraphSimilarity:
         if self.model is None:
             raise ValueError("Model has not been trained yet.")
 
-        joblib.dump(self.model, f'{self.saved_models_dir}/rf_{self.uuid}.joblib')
+        joblib.dump(self.model, f'{self.saved_models_dir}/rf_{self.uuid}.pkl')
 
-        print(f"Model saved as {self.saved_models_dir}/rf_{self.uuid}.joblib")
+        print(f"Model saved as {self.saved_models_dir}/rf_{self.uuid}.pkl")
         return True
 
 
