@@ -85,7 +85,7 @@ class GUIProcessData:
             hover_color=guiconst.COLOR_GREY_HOVER,
             width=30,
             height=25,
-            command=lambda: self.guiUtil.openTopLevel("text"),
+            command=lambda: self.guiUtil.create_tutorial("text"),
         )
 
         self.guiUtil.add_component(
@@ -136,6 +136,10 @@ class GUIProcessData:
             self.__handleCheckboxLabelingMethodStates()
             self.count_similarities_button.configure(state="normal")
 
+            self.process_files_complete_label.configure(text=f"Graphlet counts saved in\n{self.process_files.graphlet_counts_filename}!")
+            self.process_data_frame.after(2000, lambda: self.guiUtil.reset_label(self.process_files_complete_label))
+
+
         except EmptyDataException as e:
             error = str(e)
         except Exception as e:
@@ -165,6 +169,9 @@ class GUIProcessData:
             self.disableCheckboxWithValue(self.resnet_checkbox, self.resnet_val)
             self.resnet_weight.setDisabled(True)
 
+        self.enableCheckboxWithValue(self.netsimile_checkbox, self.netsimile_val)
+        self.netsimile_weight.setDisabled(not self.netsimile_val.get())
+
         self.enableCheckboxWithValue(self.hellinger_checkbox, self.hellinger_val)
         self.hellinger_weight.setDisabled(not self.hellinger_val.get())
 
@@ -187,6 +194,8 @@ class GUIProcessData:
 
         # self.exportSimilarityMeasures()
         self.label_similarity_button.configure(state="normal")
+
+        self.exportSimilarityMeasures()
 
     def __handleLabelSimilarities(self):
         self.similarityHandler.labelSimilarities(
@@ -421,7 +430,7 @@ class GUIProcessData:
             fg_color=guiconst.COLOR_GREEN,
             hover_color=guiconst.COLOR_GREEN_HOVER,
             border_width=2,
-            state="normal",
+            state="disabled",
             command=lambda: self.netsimile_weight.setDisabled(not self.netsimile_val.get())
         )
 
@@ -448,7 +457,7 @@ class GUIProcessData:
             fg_color=guiconst.COLOR_GREEN,
             hover_color=guiconst.COLOR_GREEN_HOVER,
             border_width=2,
-            state="disabled",
+            state="normal",
             command=lambda: self.resnet_weight.setDisabled(not self.resnet_val.get())
         )
 
@@ -519,6 +528,17 @@ class GUIProcessData:
             command=lambda: self.__handleLabelSimilarities()
         )
 
+        self.process_files_complete_label = self.guiUtil.add_component(
+            self,
+            component_type="Label",
+            frame=self.process_data_frame,
+            text="",
+            grid_options={"row": 16, "column": 0, "columnspan": 2, "sticky": "ew", "padx": 10, "pady": (15, 10)},
+            font=self.root.font,
+            anchor="center",
+            text_color=guiconst.COLOR_GREEN
+        )
+
     def run(self):
         self.__addHeader()
         self.__createProcessingDataFrame()
@@ -536,7 +556,7 @@ class GUIProcessData:
         self.root.mainloop()
 
 
-if __name__ == "__main__":
-    root = ctk.CTk()  # Use CTk instead of Tk for the main window
-    app = GUIProcessData(root)
-    app.run()
+# if __name__ == "__main__":
+#     root = ctk.CTk()  # Use CTk instead of Tk for the main window
+#     app = GUIProcessData(root)
+#     app.run()

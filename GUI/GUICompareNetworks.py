@@ -85,7 +85,7 @@ class GUICompareNetworks:
             hover_color=guiconst.COLOR_GREY_HOVER,
             width=30,
             height=25,
-            command=lambda: self.guiUtil.openTopLevel("text"),
+            command=lambda: self.guiUtil.create_tutorial("Compare Networks"),
         )
 
         self.guiUtil.add_component(

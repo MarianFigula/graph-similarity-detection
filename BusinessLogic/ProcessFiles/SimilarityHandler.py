@@ -19,8 +19,11 @@ class SimilarityHandler:
         if hellinger_check_val:
             self.network_similarities.computeHellingerSimilarity()
 
+        # "D:/Škola/DP1/project/a_dp/input/group_small_in"
+        # "D:/Škola/DP1/project/a_dp/input/konz/in_files"
+        #D:/Škola/DP1/project/a_dp/input/x_network_corpus/in_files
         if netsimile_check_val:
-            self.network_similarities.computeNetSimileSimilarity(self.path) #"D:/Škola/DP1/project/a_dp/input/test"
+            self.network_similarities.computeNetSimileSimilarity("D:/Škola/DP1/project/a_dp/input/konz/in_files") #"D:/Škola/DP1/project/a_dp/input/test"
 
         if resnet_check_val:
             self.network_similarities.computeResNetSimilarity(self.img_dir)

@@ -15,6 +15,7 @@ class ProcessInAndOutFiles:
         self.is_out_files = is_out_files
         self.__orbit_counts_df = pd.DataFrame()
         self.__input_files = []
+        self.graphlet_counts_filename = GRAPHLETS_COUNTS_FILE_NAME
 
     def __read_folder(self):
         file_paths = []
@@ -123,7 +124,7 @@ class ProcessInAndOutFiles:
 
         if self.output_folder_path is not None:
             self.__orbit_counts_df.to_csv(
-                f"{self.output_folder_path}/{GRAPHLETS_COUNTS_FILE_NAME}",
+                f"{self.output_folder_path}/{self.graphlet_counts_filename}",
                 encoding="utf-8",
             )
         return True

@@ -99,7 +99,7 @@ class GUITrainModel:
             hover_color=guiconst.COLOR_GREY_HOVER,
             width=30,
             height=25,
-            command=lambda: self.guiUtil.openTopLevel("text"),
+            command=lambda: self.guiUtil.create_tutorial("Train Model"),
         )
 
         self.guiUtil.add_component(

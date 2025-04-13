@@ -8,7 +8,7 @@ class SimilarityLabeling:
         self.network_similarities = network_similarities
 
     def __getThresholdBasedOnClustering(self, similarity_type):
-        similarity_measures_df = self.network_similarities.getSimilarityMeasures()
+        similarity_measures_df = self.network_similarities.getSimilarityMeasures(filterTheSameGraphs=False)
 
         scores = similarity_measures_df[similarity_type].values.reshape(-1, 1)
 
@@ -28,16 +28,13 @@ class SimilarityLabeling:
         return threshold
 
     def labelSimilarity(self, similarity_type):
-        similarity_measures_df = self.network_similarities.getSimilarityMeasures()
+        similarity_measures_df = self.network_similarities.getSimilarityMeasures(filterTheSameGraphs=False)
         threshold = self.__getThresholdBasedOnClustering(similarity_type)
 
-        # Check if similarity type is 'Hellinger' or 'NetSimile'
         if similarity_type in ['Hellinger', 'NetSimile']:
-            # Invert the comparison: True for values below the threshold, False for values above
             similarity_measures_df["Label " + similarity_type + f" ({threshold})"] = similarity_measures_df[
                                                                      similarity_type] < threshold
         else:
-            # Default behavior: True for values above the threshold
             similarity_measures_df["Label " + similarity_type + f" ({threshold})"] = similarity_measures_df[
                                                                      similarity_type] >= threshold
 

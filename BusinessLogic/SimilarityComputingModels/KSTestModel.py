@@ -1,17 +1,24 @@
 import pandas as pd
 from scipy.stats import ks_2samp
+from BusinessLogic.DataNormaliser.DataNormaliser import DataNormaliser
 
 
 class KSTestModel:
 
     def __init__(self, orbit_counts_df):
-        self.orbit_counts_df = orbit_counts_df
-        self.num_graphlet = 2
+        self.orbit_counts_percentage_normalisation = DataNormaliser(
+            orbit_counts_df
+        ).percentage_normalisation()
         self.alpha = 0.05
 
+    # TODO: neodratavat nic od nicoho
+    # TODO: zobrat percentulne rozdelenie - prcetage_normalization
+    # rozne ale rovnako velke tak moze dat ze su podobne
+    # TODO: nerobit log pre vypocet
 
+    # preto sa robi percentualne a nie logaritmicke lebo potom by rozne ale rovnako velke grafy mohli ukazat ze su podobne
     def computeKSTestSimilarity(self):
-        graph_names = self.orbit_counts_df.columns
+        graph_names = self.orbit_counts_percentage_normalisation.columns
 
         similarity_list = []
         ktest_p_values = []
@@ -21,16 +28,10 @@ class KSTestModel:
         for i, graph1 in enumerate(graph_names):
             for j, graph2 in enumerate(graph_names):
                 if i >= j:
-                    continue  # Vyhneme sa redundantným porovnaniam
+                    continue
 
-                # Zoberieme len graflet G2 (riadok index 1) a vypočítame rozdiel medzi grafmi
-                diff_g2 = self.orbit_counts_df.loc[self.num_graphlet, graph2] - self.orbit_counts_df.loc[self.num_graphlet, graph1]  # G2 rozdiel
-
-                # Odpočítame tento rozdiel od všetkých grafletov v graph2
-                adjusted_graph = self.orbit_counts_df[graph2] - diff_g2
-
-                # KS test medzi pôvodným a upraveným grafom
-                ks_stat, p_value = ks_2samp(self.orbit_counts_df[graph1], adjusted_graph)
+                ks_stat, p_value = ks_2samp(self.orbit_counts_percentage_normalisation[graph1],
+                                            self.orbit_counts_percentage_normalisation[graph2])
 
                 # Determine similarity label
                 label = p_value > self.alpha
