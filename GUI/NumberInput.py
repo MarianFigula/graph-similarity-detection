@@ -23,7 +23,7 @@ class NumberInput(ctk.CTkFrame):
         self.disabled_value = self.data_type(self.disabled_value)
 
         self.value = ctk.DoubleVar(value=self.default_value)
-        self.value.trace_add("write", self._on_value_change)  # Add trace to detect changes
+        self.value.trace_add("write", self._on_value_change)
 
         self.entry = ctk.CTkEntry(self, textvariable=self.value, width=50, justify="center", font=("Lato", 11))
         self.entry.grid(row=0, column=1, padx=0, pady=0)
@@ -47,13 +47,13 @@ class NumberInput(ctk.CTkFrame):
     def validate_input(self, new_value):
         """Validate the input to ensure it's a number between min_value and max_value."""
         try:
-            value = self.data_type(new_value)  # Convert to the correct data type
+            value = self.data_type(new_value)
             return self.min_value <= value <= self.max_value
         except ValueError:
             return False
 
     def increment(self):
-        current_value = self.data_type(self.value.get())  # Convert to the correct data type
+        current_value = self.data_type(self.value.get())
         new_value = min(current_value + self.step, self.max_value)
         self.value.set(self.data_type(new_value))
 

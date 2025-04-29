@@ -34,8 +34,6 @@ class RandomForestVisualizer:
         img = Image.open(save_path)
         img.show()
 
-        # plt.show()
-
     def visualize_feature_importance(self,
                                      feature_importances,
                                      n_graphlets=30):
@@ -64,8 +62,6 @@ class RandomForestVisualizer:
 
         img = Image.open(save_path)
         img.show()
-        # plt.show()
-
 
     def visualize_roc_curve(self, y_test, y_prob):
         y_prob = y_prob[:, 1]
@@ -92,8 +88,6 @@ class RandomForestVisualizer:
         img = Image.open(save_path)
         img.show()
 
-        # plt.show()
-
     def visualize_classification_report(self, y_test, y_pred):
         report_dict = classification_report(y_test, y_pred, output_dict=True)
 
@@ -101,7 +95,6 @@ class RandomForestVisualizer:
 
         df = df.drop(columns=["support"], errors="ignore")
 
-        # Plot heatmap
         plt.figure(figsize=(8, 5))
         sns.heatmap(df, annot=True, cmap="coolwarm", fmt=".2f")
         plt.title("Classification Report Heatmap")
@@ -112,9 +105,6 @@ class RandomForestVisualizer:
 
         img = Image.open(save_path)
         img.show()
-
-        # plt.show()
-
 
     def visualize_based_on_checkbox(self, y_test, y_pred, y_prob, feature_importances, n_graphlets=30):
         if self.checkbox_values["important_features"]:

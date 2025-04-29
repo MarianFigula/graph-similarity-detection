@@ -38,23 +38,22 @@ class GUIProcessData:
         root.geometry('%dx%d+%d+%d' % (w, h, x, y))
 
 
-        self.root.grid_columnconfigure(1, weight=1)  # Make the column expand to center content
-        self.root.grid_columnconfigure(1, weight=1)  # Make the column expand to center content
-        self.root.grid_columnconfigure(2, weight=1)  # Make the column expand to center content
-        self.root.grid_columnconfigure(3, weight=1)  # Make the column expand to center content
-        self.root.grid_columnconfigure(4, weight=1)  # Make the column expand to center content
+        self.root.grid_columnconfigure(1, weight=1)
+        self.root.grid_columnconfigure(1, weight=1)
+        self.root.grid_columnconfigure(2, weight=1)
+        self.root.grid_columnconfigure(3, weight=1)
+        self.root.grid_columnconfigure(4, weight=1)
 
         ctk.set_appearance_mode("light")
-        ctk.set_default_color_theme("blue")  # Options: "blue", "green", "dark-blue"
+        ctk.set_default_color_theme("blue")
 
         self.process_data_frame_width = w - 2 * 40
 
         self.process_data_frame = ctk.CTkFrame(self.root, width=self.process_data_frame_width, height=1200)
-        self.process_data_frame.grid(row=2, column=0, padx=40, pady=10, sticky="ns")  # No horizontal expansion
+        self.process_data_frame.grid(row=2, column=0, padx=40, pady=10, sticky="ns")
 
     def __goBackToOptions(self):
         self.guiUtil.removeWindow(root=self.root)
-        # Create the new GUI in the same root window
         from GUI.GUIChooseOptions import GUIChooseOptions
         app = GUIChooseOptions(self.root)
         app.run()
@@ -128,7 +127,7 @@ class GUIProcessData:
                 return
 
             if should_create_images:
-                self.create_snapshots = SnapShotOfGraphletsAsGraph(self.process_files.get_orbit_counts_df())
+                self.create_snapshots = SnapShotOfGraphletsAsGraph(self.process_files.get_orbit_counts_df(), input_folder_path, output_folder_path)
                 self.create_snapshots.create_images()
 
             self.show_graphs_button.configure(state="normal")
@@ -160,7 +159,6 @@ class GUIProcessData:
         checkbox.configure(state="normal" if bool(checkbox_val.get()) else "disabled")
         checkbox_val.set(1 if not bool(checkbox_val.get()) else 0)
 
-    # TODO: pridat netsimile
     def __handleCheckboxLabelingMethodStates(self):
         if bool(self.create_images_val.get()):
             self.enableCheckboxWithValue(self.resnet_checkbox, self.resnet_val)
@@ -192,9 +190,7 @@ class GUIProcessData:
             ks_check_val=bool(self.kstest_val.get())
         )
 
-        # self.exportSimilarityMeasures()
         self.label_similarity_button.configure(state="normal")
-
         self.exportSimilarityMeasures()
 
     def __handleLabelSimilarities(self):
@@ -364,7 +360,7 @@ class GUIProcessData:
         self.show_graphs_button = self.guiUtil.add_component(
             self,
             component_type="Button",
-            text="Show graphs",
+            text="Show graph",
             frame=self.process_data_frame,
             grid_options={"row": 7, "column": 1, "sticky": "ew", "padx": (5, 10), "pady": (15, 0)},
             font=self.root.font,
@@ -383,7 +379,7 @@ class GUIProcessData:
             component_type="Label",
             frame=self.process_data_frame,
             text="Choose labeling methods (with label weight)",
-            grid_options={"row": 9, "column": 0, "columnspan": 2, "sticky": "n"},  # Updated row
+            grid_options={"row": 9, "column": 0, "columnspan": 2, "sticky": "n"},
             font=self.root.font
         )
 
@@ -393,7 +389,7 @@ class GUIProcessData:
             component_type="Checkbutton",
             frame=self.process_data_frame,
             text="Hellinger",
-            grid_options={"row": 10, "column": 0, "sticky": "w", "padx": (10, 0)},  # Updated row
+            grid_options={"row": 10, "column": 0, "sticky": "w", "padx": (10, 0)},
             variable=self.hellinger_val,
             font=self.root.font,
             checkbox_width=15,
@@ -410,7 +406,7 @@ class GUIProcessData:
             self,
             component_type="NumberInput",
             frame=self.process_data_frame,
-            grid_options={"row": 10, "column": 1, "sticky": "e", "padx": (0, 10)},  # Updated row
+            grid_options={"row": 10, "column": 1, "sticky": "e", "padx": (0, 10)},
         )
         self.hellinger_weight.setDisabled(True)
 
@@ -421,7 +417,7 @@ class GUIProcessData:
             component_type="Checkbutton",
             frame=self.process_data_frame,
             text="NetSimile (input data must be graphs)",
-            grid_options={"row": 11, "column": 0, "sticky": "w", "padx": (10, 0), "pady": (0, 5)},  # Updated row
+            grid_options={"row": 11, "column": 0, "sticky": "w", "padx": (10, 0), "pady": (0, 5)},
             variable=self.netsimile_val,
             font=self.root.font,
             checkbox_width=15,
@@ -438,7 +434,7 @@ class GUIProcessData:
             self,
             component_type="NumberInput",
             frame=self.process_data_frame,
-            grid_options={"row": 11, "column": 1, "sticky": "e", "padx": (0, 10), "pady": (0, 5)},  # Updated row
+            grid_options={"row": 11, "column": 1, "sticky": "e", "padx": (0, 10), "pady": (0, 5)},
         )
         self.netsimile_weight.setDisabled(True)
 
@@ -448,7 +444,7 @@ class GUIProcessData:
             component_type="Checkbutton",
             frame=self.process_data_frame,
             text="Resnet (images has to be created)",
-            grid_options={"row": 12, "column": 0, "columnspan": 2, "sticky": "w", "padx": 10, "pady": (0, 5)},  # Updated row
+            grid_options={"row": 12, "column": 0, "columnspan": 2, "sticky": "w", "padx": 10, "pady": (0, 5)},
             variable=self.resnet_val,
             font=self.root.font,
             checkbox_width=15,
@@ -457,7 +453,7 @@ class GUIProcessData:
             fg_color=guiconst.COLOR_GREEN,
             hover_color=guiconst.COLOR_GREEN_HOVER,
             border_width=2,
-            state="normal",
+            state="disabled",
             command=lambda: self.resnet_weight.setDisabled(not self.resnet_val.get())
         )
 
@@ -465,7 +461,7 @@ class GUIProcessData:
             self,
             component_type="NumberInput",
             frame=self.process_data_frame,
-            grid_options={"row": 12, "column": 1, "sticky": "e", "padx": (0, 10), "pady": (0, 5)},  # Updated row
+            grid_options={"row": 12, "column": 1, "sticky": "e", "padx": (0, 10), "pady": (0, 5)},
         )
         self.resnet_weight.setDisabled(True)
 
@@ -475,7 +471,7 @@ class GUIProcessData:
             component_type="Checkbutton",
             frame=self.process_data_frame,
             text="Kolmogorov-Smirnov test",
-            grid_options={"row": 13, "column": 0, "columnspan": 2, "sticky": "w", "padx": 10, "pady": (0, 5)},  # Updated row
+            grid_options={"row": 13, "column": 0, "columnspan": 2, "sticky": "w", "padx": 10, "pady": (0, 5)},
             variable=self.kstest_val,
             font=self.root.font,
             checkbox_width=15,
@@ -492,7 +488,7 @@ class GUIProcessData:
             self,
             component_type="NumberInput",
             frame=self.process_data_frame,
-            grid_options={"row": 13, "column": 1, "sticky": "e", "padx": (0, 10)},  # Updated row
+            grid_options={"row": 13, "column": 1, "sticky": "e", "padx": (0, 10)},
         )
         self.kstest_weight.setDisabled(True)
 
@@ -502,7 +498,6 @@ class GUIProcessData:
             text="Count similarities",
             frame=self.process_data_frame,
             grid_options={"row": 14, "column": 0, "columnspan": 2, "sticky": "ew", "padx": 10, "pady": (15, 0)},
-            # Updated row
             font=self.root.font,
             width=50,
             height=25,
@@ -518,7 +513,6 @@ class GUIProcessData:
             text="Label similarities",
             frame=self.process_data_frame,
             grid_options={"row": 15, "column": 0, "columnspan": 2, "sticky": "ew", "padx": 10, "pady": (15, 10)},
-            # Updated row
             font=self.root.font,
             width=50,
             height=25,
@@ -554,9 +548,3 @@ class GUIProcessData:
         )
         self.__createChooseLabelingMethods()
         self.root.mainloop()
-
-
-# if __name__ == "__main__":
-#     root = ctk.CTk()  # Use CTk instead of Tk for the main window
-#     app = GUIProcessData(root)
-#     app.run()

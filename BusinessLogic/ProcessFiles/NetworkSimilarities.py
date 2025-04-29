@@ -12,7 +12,6 @@ class NetworkSimilarities:
 
     def getSimilarityMeasures(self, filterTheSameGraphs=False):
         if filterTheSameGraphs:
-            # Extract graph types and filter out same type comparisons
             self.similarity_measures_df['Type1'] = self.similarity_measures_df['Graph1'].apply(
                 lambda x: x.split('_')[0])
             self.similarity_measures_df['Type2'] = self.similarity_measures_df['Graph2'].apply(
@@ -30,10 +29,8 @@ class NetworkSimilarities:
 
         hellingerSimilarityModel = HellingerDistanceModel(self.orbit_counts_df)
 
-        # Compute similarity
         hellingerSimilarityResults = hellingerSimilarityModel.computeHellingerDistance()
 
-        # Merge with the main similarity DataFrame
         if self.similarity_measures_df.empty:
             self.similarity_measures_df = hellingerSimilarityResults
         else:
@@ -51,7 +48,6 @@ class NetworkSimilarities:
 
         netSimileModel = NetSimileModel(path_of_graphs)
 
-        # Compute similarity
         netSimileResults = netSimileModel.compile_process()
 
         if self.similarity_measures_df.empty:
@@ -70,7 +66,6 @@ class NetworkSimilarities:
         print("computing ResNet")
         resnetModel = ResNetModel(img_dir)
 
-        # Compute similarity
         resnet_similarity = resnetModel.computeSimilarity()
 
         if self.similarity_measures_df.empty:
@@ -88,7 +83,6 @@ class NetworkSimilarities:
     def computeKSTestSimilarity(self):
         ksTestModel = KSTestModel(self.orbit_counts_df)
 
-        # Compute similarity
         ks_test_similarity_df = ksTestModel.computeKSTestSimilarity()
 
         if self.similarity_measures_df.empty:

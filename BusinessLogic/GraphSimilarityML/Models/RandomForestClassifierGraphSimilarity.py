@@ -5,7 +5,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from BusinessLogic.DataNormaliser.DataNormaliser import DataNormaliser
 
-# TODO metoda pre ukladanie modelu aj do vlastneho fodera s vizualizaciami
+
 class RandomForestClassifierGraphSimilarity:
     def __init__(self, graphlet_counts, similarity_measures, hyperparameters):
         self.hyperparameters = hyperparameters
@@ -19,7 +19,7 @@ class RandomForestClassifierGraphSimilarity:
         self.y_pred = None
         self.y_prob = None
 
-        self.uuid = uuid.uuid4().int
+        self.uuid = str(uuid.uuid4())[:8]
 
     def prepare_dateset(self):
         if 'Unnamed: 0' in self.graphlet_counts.columns:
@@ -104,8 +104,6 @@ class RandomForestClassifierGraphSimilarity:
 
         print(f"Model saved as {self.saved_models_dir}/rf_{self.uuid}.pkl")
         return True
-
-
 
     def process_training(self):
         X, y = self.prepare_dateset()

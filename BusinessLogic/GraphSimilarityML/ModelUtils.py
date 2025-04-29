@@ -4,7 +4,7 @@ from tensorflow.keras.models import load_model
 from BusinessLogic.Exception.CustomException import CustomException
 
 
-class NeuralNetworkModelUtils:
+class ModelUtils:
     def __init__(self, model_dir):
         self.model_dir = model_dir
 

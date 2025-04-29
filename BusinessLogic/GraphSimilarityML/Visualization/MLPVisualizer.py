@@ -17,7 +17,6 @@ class MLPVisualizer:
                                       "mlp_" + str(mlp_uuid))
         os.makedirs(self.save_path, exist_ok=True)
 
-    # accuracy and loss plot
     def visualize_training_history(self, history):
 
         fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 5))
@@ -46,8 +45,6 @@ class MLPVisualizer:
         img = Image.open(save_path)
         img.show()
 
-        # plt.show()
-
     def visualize_confusion_matrix(self, y_test, y_pred):
         cm = confusion_matrix(y_test, y_pred)
         plt.figure(figsize=(8, 6))
@@ -62,7 +59,6 @@ class MLPVisualizer:
 
         img = Image.open(save_path)
         img.show()
-        # plt.show()
 
     def visualize_roc_curve(self, y_test, y_prob):
         fpr, tpr, _ = roc_curve(y_test, y_prob)
@@ -86,8 +82,6 @@ class MLPVisualizer:
         img = Image.open(save_path)
         img.show()
 
-        # plt.show()
-
     def visualize_classification_report(self, y_test, y_pred):
         report_dict = classification_report(y_test, y_pred, output_dict=True)
 
@@ -95,7 +89,6 @@ class MLPVisualizer:
 
         df = df.drop(columns=["support"], errors="ignore")
 
-        # Plot heatmap
         plt.figure(figsize=(8, 5))
         sns.heatmap(df, annot=True, cmap="coolwarm", fmt=".2f")
         plt.title("Classification Report Heatmap")
@@ -106,8 +99,6 @@ class MLPVisualizer:
 
         img = Image.open(save_path)
         img.show()
-
-        # plt.show()
 
     def visualize_based_on_checkbox(self, history, y_test, y_pred, y_prob):
         if self.checkbox_values["accuracy_loss"]:

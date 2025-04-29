@@ -51,6 +51,7 @@ class GUIRandomForestClassifier:
         self.buttons["train_model"].configure(state="normal")
 
     def enable_visualize_model_components(self):
+        print("params:", self.get_hyperparameters())
         self.set_checkboxes_disabled(False)
         self.set_buttons_disabled(False)
 
@@ -64,7 +65,6 @@ class GUIRandomForestClassifier:
             font=self.root.fontMiddle
         )
 
-        # Number of trees
         self.guiUtil.add_component(
             self,
             component_type="Label",
@@ -87,7 +87,6 @@ class GUIRandomForestClassifier:
             data_type=int
         )
 
-        # Max depth
         self.guiUtil.add_component(
             self,
             component_type="Label",
@@ -110,7 +109,6 @@ class GUIRandomForestClassifier:
             data_type=int
         )
 
-        # Min samples split
         self.guiUtil.add_component(
             self,
             component_type="Label",
@@ -133,7 +131,6 @@ class GUIRandomForestClassifier:
             data_type=int
         )
 
-        # Min samples leaf
         self.guiUtil.add_component(
             self,
             component_type="Label",
@@ -155,7 +152,6 @@ class GUIRandomForestClassifier:
             step=1,
             data_type=int
         )
-
 
         self.buttons["train_model"] = self.guiUtil.add_component(
             self,
@@ -181,7 +177,6 @@ class GUIRandomForestClassifier:
             sticky="ew"
         )
 
-        # Visualization section
         self.guiUtil.add_component(
             self,
             component_type="Label",
@@ -190,7 +185,6 @@ class GUIRandomForestClassifier:
             grid_options={"row": 5, "column": 0, "sticky": "w", "padx": (30, 0), "pady": 5},
             font=self.root.fontMiddle
         )
-
 
         self.important_features_var = IntVar()
         self.checkboxes["important_features"] = self.guiUtil.add_component(
@@ -300,7 +294,6 @@ class GUIRandomForestClassifier:
 
     def set_components_disabled(self, disabled):
         for control in self.controls.values():
-            # print(control)
             control.setDisabled(disabled)
 
     def get_hyperparameters(self):
@@ -356,6 +349,7 @@ class GUIRandomForestClassifier:
             print("Training model...")
             print(self.graphlet_counts)
             print(self.similarity_measures)
+            print("hyperparameters", self.get_hyperparameters())
 
             self.rf_model = RandomForestClassifierGraphSimilarity(
                 graphlet_counts=self.graphlet_counts,

@@ -20,7 +20,6 @@ class HellingerDistanceModel:
         print("computing Hellinger")
         print(self.orbit_counts_df)
 
-        # Compute Hellinger transformations
         computations = self.orbit_counts_percentage_normalisation.apply(
             lambda col: col.map(lambda val: np.sqrt(val))
         )

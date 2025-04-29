@@ -23,7 +23,7 @@ class MLPClassifierGraphSimilarity:
         self.y_prob = None
         self.history = None
 
-        self.uuid = uuid.uuid4().int
+        self.uuid = str(uuid.uuid4())[:8]
 
     def load_data(self):
         if 'Unnamed: 0' in self.graphlet_counts.columns:
@@ -38,7 +38,6 @@ class MLPClassifierGraphSimilarity:
 
         graphlet_df_transposed = graphlet_df.transpose()
         graphlet_df_transposed.columns = graphlet_df_transposed.iloc[0]
-        # embeddings_df_transposed = graphlet_df_transposed.drop(graphlet_df_transposed.index[0])
 
         embeddings = {graph_name: graphlet_df_transposed.loc[graph_name].values.astype(float)
                       for graph_name in graphlet_df_transposed.index}
@@ -79,22 +78,17 @@ class MLPClassifierGraphSimilarity:
         """
         inputs = layers.Input(shape=input_shape)
 
-        # Initial layer (first layer after input)
         x = inputs
 
-        # Add hidden layers dynamically based on hyperparameters
         for i in range(self.hyperparameters['num_hidden_layers']):
             layer_config = self.hyperparameters['hidden_layers'][i]
             x = layers.Dense(layer_config['neurons'], activation='relu')(x)
 
-            # Apply dropout if specified
             if layer_config['dropout'] > 0:
                 x = layers.Dropout(layer_config['dropout'])(x)
 
-        # Output layer (binary classification)
         outputs = layers.Dense(1, activation='sigmoid')(x)
 
-        # Create and compile the model
         model = Model(inputs=inputs, outputs=outputs)
         model.compile(
             optimizer=optimizers.Adam(learning_rate=self.hyperparameters['learning_rate']),
@@ -110,7 +104,6 @@ class MLPClassifierGraphSimilarity:
         """
         X, y = self.prepare_dataset()
 
-        # Split the data into training, validation, and test sets
         X_train, X_temp, y_train, y_temp = train_test_split(
             X, y, test_size=0.2, random_state=42, stratify=y)
         X_val, X_test, y_val, y_test = train_test_split(
@@ -119,13 +112,10 @@ class MLPClassifierGraphSimilarity:
         self.X_test = X_test
         self.y_test = y_test
 
-        # Create the model
         self.model = self.create_model(input_shape=(X_train.shape[1],))
 
-        # Set up callbacks
         callback_list = []
 
-        # Add early stopping if enabled
         if self.hyperparameters['early_stopping']:
             early_stopping = callbacks.EarlyStopping(
                 monitor='val_loss',
@@ -134,7 +124,6 @@ class MLPClassifierGraphSimilarity:
             )
             callback_list.append(early_stopping)
 
-        # Model checkpoint to save the best model
         model_checkpoint = callbacks.ModelCheckpoint(
             filepath=os.path.join(self.saved_models_dir, 'best_model.h5'),
             monitor='val_loss',
@@ -142,7 +131,6 @@ class MLPClassifierGraphSimilarity:
         )
         callback_list.append(model_checkpoint)
 
-        # Train the model
         history = self.model.fit(
             X_train, y_train,
             epochs=self.hyperparameters['num_epochs'],
@@ -155,7 +143,6 @@ class MLPClassifierGraphSimilarity:
         self.set_history(history)
         self.set_y_test(y_test)
 
-        # Evaluate on test set
         self.evaluate_model()
 
         return history
@@ -167,14 +154,12 @@ class MLPClassifierGraphSimilarity:
         if self.model is None:
             raise ValueError("Model has not been trained yet.")
 
-        # Make predictions
         self.y_prob = self.model.predict(self.X_test)
         self.y_pred = (self.y_prob > 0.5).astype(int).flatten()
 
         self.set_y_pred(self.y_pred)
         self.set_y_prob(self.y_prob)
 
-        # Calculate metrics
         accuracy = accuracy_score(self.y_test, self.y_pred)
         precision = precision_score(self.y_test, self.y_pred)
         recall = recall_score(self.y_test, self.y_pred)
@@ -243,7 +228,6 @@ class MLPClassifierGraphSimilarity:
         if not os.path.exists(model_path):
             raise ValueError(f"Model file {model_path} does not exist")
 
-        # Load the model
         self.model = tf.keras.models.load_model(model_path)
 
         print(f"Model loaded successfully from {model_path}")

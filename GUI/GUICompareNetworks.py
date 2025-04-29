@@ -8,12 +8,12 @@ from BusinessLogic.Exception.CustomException import CustomException
 from BusinessLogic.Exception.EmptyDataException import EmptyDataException
 from GUI.GUIUtil import GUIUtil
 import GUI.GUIConstants as guiconst
-from BusinessLogic.GraphSimilarityML.NeuralNetworkPredictor import NeuralNetworkPredictor
+from BusinessLogic.GraphSimilarityML.ModelPredictor import ModelPredictor
 
 class GUICompareNetworks:
     def __init__(self, root):
         self.root = root
-        self.neuralNetworkPredictor = NeuralNetworkPredictor()
+        self.neuralNetworkPredictor = ModelPredictor()
 
         self.root.title("Compare Networks")
         self.input_graphlet_df = None
@@ -23,10 +23,10 @@ class GUICompareNetworks:
         self.root.smallFont = ("Lato", 10)
 
         self.guiUtil = GUIUtil()
-        self.root.grid_columnconfigure(1, weight=1)  # Make the column expand to center content
-        self.root.grid_columnconfigure(2, weight=1)  # Make the column expand to center content
-        self.root.grid_columnconfigure(3, weight=1)  # Make the column expand to center content
-        self.root.grid_columnconfigure(4, weight=1)  # Make the column expand to center content
+        self.root.grid_columnconfigure(1, weight=1)
+        self.root.grid_columnconfigure(2, weight=1)
+        self.root.grid_columnconfigure(3, weight=1)
+        self.root.grid_columnconfigure(4, weight=1)
 
         root.resizable(False, False)
         ws = root.winfo_screenwidth()
@@ -45,17 +45,15 @@ class GUICompareNetworks:
         ctk.set_appearance_mode("light")
         ctk.set_default_color_theme("blue")
 
-        # Create a main frame to hold all components
         self.compare_networks_frame = ctk.CTkFrame(self.root, width=360, height=480)
-        self.compare_networks_frame.grid(row=2, column=0, padx=20, pady=20, sticky="ns")  # No horizontal expansion
-        self.compare_networks_frame.grid_propagate(False)  # Prevent the frame from resizing based on its content
+        self.compare_networks_frame.grid(row=2, column=0, padx=20, pady=20, sticky="ns")
+        self.compare_networks_frame.grid_propagate(False)
 
-        self.compare_networks_frame.grid_columnconfigure(0, weight=1)  # Center content horizontally
-        self.compare_networks_frame.grid_columnconfigure(1, weight=1)  # Center content horizontally
+        self.compare_networks_frame.grid_columnconfigure(0, weight=1)
+        self.compare_networks_frame.grid_columnconfigure(1, weight=1)
 
     def __goBackToOptions(self):
         self.guiUtil.removeWindow(root=self.root)
-        # Create the new GUI in the same root window
         from GUI.GUIChooseOptions import GUIChooseOptions
         app = GUIChooseOptions(self.root)
         app.run()
@@ -151,7 +149,6 @@ class GUICompareNetworks:
                 if error_msg != "":
                     self.guiUtil.displayError(self.compare_networks_frame, error_msg, row=16, column=0, columnspan=2)
 
-        # TODO: pre model treba model.save ale pre rfc staci cez joblib
         else:
             try:
                 self.input_graphlet_df = pd.read_csv(self.input_entry.get())
@@ -213,11 +210,9 @@ class GUICompareNetworks:
         )
 
         if bool(self.compare_between_two_graphlets_val.get()):
-            # Increase window and frame height
             new_root_height = 700
             new_frame_height = 570
 
-            # Resize the root window
             ws = self.root.winfo_screenwidth()
             hs = self.root.winfo_screenheight()
             w = 400
@@ -226,14 +221,11 @@ class GUICompareNetworks:
             y = (hs / 2) - (h / 2)
             self.root.geometry('%dx%d+%d+%d' % (w, h, x, y))
 
-            # Resize the frame
             self.compare_networks_frame.configure(height=new_frame_height)
         else:
-            # Decrease window and frame height back to original
             original_root_height = 600
             original_frame_height = 450
 
-            # Resize the root window
             ws = self.root.winfo_screenwidth()
             hs = self.root.winfo_screenheight()
             w = 400
@@ -242,7 +234,6 @@ class GUICompareNetworks:
             y = (hs / 2) - (h / 2)
             self.root.geometry('%dx%d+%d+%d' % (w, h, x, y))
 
-            # Resize the frame
             self.compare_networks_frame.configure(height=original_frame_height)
 
     def __handleDownload(self):
@@ -345,7 +336,7 @@ class GUICompareNetworks:
             frame=self.compare_networks_frame,
             grid_options={"row": 8, "column": 0, "columnspan": 2, "sticky": "we", "padx": 30, "pady": 10},
             font=self.root.font,
-            text="Compare between two graphlets",
+            text="Compare between two files",
             checkbox_width=15,
             checkbox_height=15,
             corner_radius=7,

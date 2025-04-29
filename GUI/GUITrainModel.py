@@ -51,7 +51,6 @@ class GUITrainModel:
         """
         Resize the root window while maintaining center position
         """
-        # Get screen dimensions
         ws = self.root.winfo_screenwidth()
         hs = self.root.winfo_screenheight()
         x = (ws / 2) - (width / 2)
@@ -292,8 +291,3 @@ class GUITrainModel:
         self.__createHyperparametersBasedOnModel()
         self.root.mainloop()
 
-
-# if __name__ == "__main__":
-#     root = ctk.CTk()
-#     app = GUITrainModel(root)
-#     app.run()

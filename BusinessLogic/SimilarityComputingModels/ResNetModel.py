@@ -33,30 +33,24 @@ class ResNetModel:
             feature_dict[img_name] = self.extract_features(img_path)
         return feature_dict
 
-    # TODO: pozriet ci rovnaky image s rovnakou cestou je v similarity csv
-    import pandas as pd
-    from sklearn.metrics.pairwise import cosine_similarity
-
     def computeSimilarity(self):
         similarity_list = []
         feature_dict = self.getImageFeatures(self.getListOfImages())
 
         for img1 in feature_dict.keys():
-            img1_clean = os.path.splitext(img1)[0]  # Remove file extension
+            img1_clean = os.path.splitext(img1)[0]
 
             for img2 in feature_dict.keys():
-                img2_clean = os.path.splitext(img2)[0]  # Remove file extension
+                img2_clean = os.path.splitext(img2)[0]
 
                 if img1 < img2:
                     sim_score = cosine_similarity([feature_dict[img1]], [feature_dict[img2]])[0][0]
 
-                    # Append result as a dictionary
                     similarity_list.append({
                         'Graph1': img1_clean,
                         'Graph2': img2_clean,
                         'ResNet': sim_score
                     })
 
-        # Create DataFrame from list of dictionaries
         df = pd.DataFrame(similarity_list)
         return df

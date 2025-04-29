@@ -13,11 +13,11 @@ class GUIChooseOptions:
         self.root.fontTitle = ("Lato", 16)
         self.guiUtil = GUIUtil()
 
-        ws = root.winfo_screenwidth()  # width of the screen
-        hs = root.winfo_screenheight()  # height of the screen
+        ws = root.winfo_screenwidth()
+        hs = root.winfo_screenheight()
 
-        w = 350  # width for the Tk root
-        h = 215  # height for the Tk root
+        w = 350
+        h = 215
         x = (ws / 2) - (w / 2)
         y = (hs / 2) - (h / 2)
 
@@ -73,7 +73,6 @@ class GUIChooseOptions:
 
     def __runProcessData(self):
         self.guiUtil.removeWindow(root=self.root)
-        # Create the new GUI in the same root window
         app = GUIProcessData(self.root)
         app.run()
 
@@ -82,9 +81,3 @@ class GUIChooseOptions:
         self.__createOptions()
         self.root.mainloop()
 
-
-if __name__ == "__main__":
-    # TODO: testnut ci po otvoreni a zvoleny moznost sa pekne zobrazi obrazovka
-    root = ctk.CTk()  # Use CTk instead of Tk for the main window
-    app = GUIChooseOptions(root)
-    app.run()

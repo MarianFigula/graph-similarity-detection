@@ -11,12 +11,6 @@ class KSTestModel:
         ).percentage_normalisation()
         self.alpha = 0.05
 
-    # TODO: neodratavat nic od nicoho
-    # TODO: zobrat percentulne rozdelenie - prcetage_normalization
-    # rozne ale rovnako velke tak moze dat ze su podobne
-    # TODO: nerobit log pre vypocet
-
-    # preto sa robi percentualne a nie logaritmicke lebo potom by rozne ale rovnako velke grafy mohli ukazat ze su podobne
     def computeKSTestSimilarity(self):
         graph_names = self.orbit_counts_percentage_normalisation.columns
 
@@ -24,7 +18,6 @@ class KSTestModel:
         ktest_p_values = []
         ktest_labels = []
 
-        # Porovnanie každého grafu s každým
         for i, graph1 in enumerate(graph_names):
             for j, graph2 in enumerate(graph_names):
                 if i >= j:
@@ -33,7 +26,6 @@ class KSTestModel:
                 ks_stat, p_value = ks_2samp(self.orbit_counts_percentage_normalisation[graph1],
                                             self.orbit_counts_percentage_normalisation[graph2])
 
-                # Determine similarity label
                 label = p_value > self.alpha
 
                 similarity_list.append({

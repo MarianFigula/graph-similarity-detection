@@ -254,7 +254,6 @@ class GUIMlpClassifier:
             sticky="ew"
         )
 
-        # Visualization section
         self.guiUtil.add_component(
             self,
             component_type="Label",
@@ -368,14 +367,11 @@ class GUIMlpClassifier:
 
     def _create_hidden_layer_inputs(self):
         """Create input fields for hidden layers in the hidden_layers_frame"""
-        # Clear any existing widgets in hidden_layers_frame
         for widget in self.hidden_layers_frame.winfo_children():
             widget.destroy()
 
-        # Reset hidden layer inputs list
         self.hidden_layer_inputs = []
 
-        # Title for the frame
         self.guiUtil.add_component(
             self,
             component_type="Label",
@@ -385,7 +381,6 @@ class GUIMlpClassifier:
             font=self.root.fontMiddle
         )
 
-        # Get the number of hidden layers
         num_layers = 1
         if hasattr(self, 'num_hidden_layers'):
             try:

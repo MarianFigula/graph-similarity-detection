@@ -23,7 +23,6 @@ class ProcessInAndOutFiles:
             for root, _, files in os.walk(self.input_folder_path):
                 for file in files:
                     file_path = os.path.join(root, file).replace("\\", "/")
-                    # ak to je orca tak su to .out subory
                     if file_path.endswith(".out" if self.is_out_files else ".in"):
                         file_paths.append(file_path)
 
@@ -108,7 +107,6 @@ class ProcessInAndOutFiles:
         return final_sums
 
     def process(self):
-        # print(self.is_out_files)
         self.__input_files = self.__read_folder()
 
         if not self.__input_files or not self.input_folder_path:
