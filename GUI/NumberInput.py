@@ -53,11 +53,13 @@ class NumberInput(ctk.CTkFrame):
             return False
 
     def increment(self):
+        """Increment the value by step"""
         current_value = self.data_type(self.value.get())
         new_value = min(current_value + self.step, self.max_value)
         self.value.set(self.data_type(new_value))
 
     def decrement(self):
+        """Decrement the value by step"""
         current_value = self.data_type(self.value.get())
         new_value = max(current_value - self.step, self.min_value)
         self.value.set(self.data_type(new_value))
@@ -81,6 +83,7 @@ class NumberInput(ctk.CTkFrame):
         self.set_value(value)
 
     def setDisabled(self, state):
+        """Set the disabled state of the entry and buttons."""
         self.entry.configure(state="disabled" if state else "normal")
         self.up_button.configure(state="disabled" if state else "normal")
         self.down_button.configure(state="disabled" if state else "normal")
