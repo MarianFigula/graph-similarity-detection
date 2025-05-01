@@ -34,7 +34,7 @@ class GUIMlpClassifier:
         self.root = root
         self.max_hidden_layers = max_hidden_layers
 
-        self.main_frame = ctk.CTkFrame(parent, width=600, height=400)
+        self.main_frame = ctk.CTkFrame(parent, width=600, height=420)
         self.main_frame.grid(row=7, column=0, columnspan=2, padx=(40, 20), pady=10, sticky="nsew")
 
         self.main_frame.grid_columnconfigure(0, weight=1)
