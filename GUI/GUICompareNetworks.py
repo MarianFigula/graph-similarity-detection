@@ -243,17 +243,31 @@ class GUICompareNetworks:
         self.compare_networks_frame.after(2000, lambda: self.guiUtil.resetLabel(self.download_complete_label))
 
     def __getSavedModels(self):
-        self.model_dir_path = "MachineLearningData/saved_models"
+        error_msg = ""
+        try:
+            self.model_dir_path = "MachineLearningData/saved_models"
 
-        if not os.path.exists(self.model_dir_path):
-            os.makedirs(self.model_dir_path)
+            if not os.path.exists(self.model_dir_path):
+                os.makedirs(self.model_dir_path)
 
-        files = [f for f in os.listdir(self.model_dir_path) if f.endswith(".pkl") or
-                 f.endswith(".h5") or
-                 f.endswith(".joblib")]
+            files = [f for f in os.listdir(self.model_dir_path) if f.endswith(".pkl") or
+                     f.endswith(".h5") or
+                     f.endswith(".joblib")]
 
-        self.selected_model = files[0]
-        return files
+            if len(files) > 0:
+                self.selected_model = files[0]
+            else:
+                error_msg = ("No saved models found, please train a model or put a "
+                             "\nmodel in the MachineLearningData/saved_models directory.")
+
+            return files
+        except Exception as e:
+            print(e)
+            error_msg = "Error " + str(e)
+        finally:
+            if error_msg != "":
+                self.guiUtil.displayError(self.compare_networks_frame, error_msg, row=16, column=0, columnspan=2)
+
 
     def __createGraphletDistributionInput(self):
         self.guiUtil.addComponent(
