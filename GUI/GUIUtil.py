@@ -98,7 +98,7 @@ class GUIUtil:
         return info_window
 
     @staticmethod
-    def displayError(frame, text, duration=2500, **kwargs):
+    def displayError(frame, text, duration=3000, **kwargs):
         label = ctk.CTkLabel(frame, text=text, text_color=guiconst.COLOR_RED)
         label.grid(**kwargs)
 
