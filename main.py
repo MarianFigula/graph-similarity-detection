@@ -1,8 +1,8 @@
 import customtkinter as ctk
 
-from GUI.GUIProcessData import GUIProcessData
+from GUI.GUIChooseOptions import GUIChooseOptions
 
 if __name__ == "__main__":
     root = ctk.CTk()
-    app = GUIProcessData(root)
+    app = GUIChooseOptions(root)
     app.run()
