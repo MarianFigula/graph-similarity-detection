@@ -56,7 +56,7 @@ class GUIUtil:
 
     @staticmethod
     def createHorizontalLine(frame=None, width=50, height=2, fg_color="gray", **kwargs):
-        line = ctk.CTkFrame(frame,width=width, height=height, fg_color=fg_color)
+        line = ctk.CTkFrame(frame, width=width, height=height, fg_color=fg_color)
         line.grid(**kwargs)
         return line
 
@@ -89,7 +89,7 @@ class GUIUtil:
         info_window.title(title)
         info_window.geometry(f"{width}x{height}")
 
-        info_label = ctk.CTkLabel(info_window,text="", **kwargs)
+        info_label = ctk.CTkLabel(info_window, text="", **kwargs)
         info_label.grid(row=0, column=0, padx=30, pady=10)
 
         info_window.lift()
@@ -146,7 +146,8 @@ class GUIUtil:
         text_box.insert("end",
                         "   - Button 'Download Results' saves the predictions as files in 'MachineLearningData/predictions'.\n",
                         "normal")
-        text_box.insert("end", "   - Button 'Display Results' shows the comparison visually in the application.\n\n", "normal")
+        text_box.insert("end", "   - Button 'Display Results' shows the comparison visually in the application.\n\n",
+                        "normal")
 
         text_box.insert("end", "Tips:\n", "subtitle")
         text_box.insert("end", "- Ensure CSV files follow the correct graphlet format.\n", "tips")
@@ -205,7 +206,8 @@ class GUIUtil:
 
         text_box.insert("end", "5. Visualize and Save Results\n", "subtitle")
         text_box.insert("end", "   - Button 'Visualize' shows model performance metrics.\n", "normal")
-        text_box.insert("end", "   - Button 'Save Model' stores your trained model in 'MachineLearningData/saved_models/'.\n",
+        text_box.insert("end",
+                        "   - Button 'Save Model' stores your trained model in 'MachineLearningData/saved_models/'.\n",
                         "normal")
         text_box.insert("end", "   - Saved models can be used in the 'Compare Networks' section for predictions.\n\n",
                         "normal")
@@ -223,7 +225,73 @@ class GUIUtil:
         return text_box
 
     def createProcessFilesTutorial(self, parent):
-        pass
+        text_box = ctk.CTkTextbox(parent, width=600, height=400)
+        text_box.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+
+        parent.grid_rowconfigure(0, weight=1)
+        parent.grid_columnconfigure(0, weight=1)
+
+        text_box._textbox.tag_configure("title", font=("Arial", 16, "bold"))
+        text_box._textbox.tag_configure("subtitle", font=("Arial", 12, "bold"))
+        text_box._textbox.tag_configure("normal", font=("Arial", 11))
+        text_box._textbox.tag_configure("tips", font=("Arial", 11, "italic"))
+        text_box._textbox.tag_configure("center", justify="center")
+
+        text_box.insert("end", "PROCESS FILES TUTORIAL\n\n", ("title", "center"))
+
+        text_box.insert("end", "1. Select Input and Output Directories\n", "subtitle")
+        text_box.insert("end", "   - Click 'Select input directory' to load your graph or ORCA files.\n", "normal")
+        text_box.insert("end", "   - Click 'Select output directory' to choose where results will be saved.\n\n",
+                        "normal")
+
+        text_box.insert("end", "2. Input File Types\n", "subtitle")
+        text_box.insert("end", "   - .in files: Represent graphs and are used by NetSimile.\n", "normal")
+        text_box.insert("end",
+                        "   - .out files: Are ORCA outputs (graphlet counts). Used when 'Data are Orca files' is selected.\n",
+                        "normal")
+        text_box.insert("end", "   - Both types can be used for ResNet as long as images are created.\n\n", "normal")
+
+        text_box.insert("end", "3. Additional Options\n", "subtitle")
+        text_box.insert("end", "   - Check 'Data are Orca files' if your input files are .out (ORCA format).\n",
+                        "normal")
+        text_box.insert("end", "   - Check 'Create images' if you plan to use the ResNet similarity method.\n\n",
+                        "normal")
+
+        text_box.insert("end", "4. Process Files\n", "subtitle")
+        text_box.insert("end",
+                        "   - Click 'Process files' to extract graphlet distributions or generate images if selected.\n",
+                        "normal")
+        text_box.insert("end", "   - Once processed, click 'Show graph' to visualize the distribution.\n\n", "normal")
+
+        text_box.insert("end", "5. Choose Similarity Methods\n", "subtitle")
+        text_box.insert("end", "   - You can choose from four methods:\n", "normal")
+        text_box.insert("end", "     a) Hellinger\n", "normal")
+        text_box.insert("end", "     b) NetSimile (requires .in files)\n", "normal")
+        text_box.insert("end", "     c) ResNet (requires created images)\n", "normal")
+        text_box.insert("end", "     d) Kolmogorov-Smirnov test\n", "normal")
+        text_box.insert("end", "   - Assign a weight to each method. All selected weights must sum to 1.\n\n", "normal")
+
+        text_box.insert("end", "6. Count and Label Similarities\n", "subtitle")
+        text_box.insert("end", "   - Click 'Count similarities' to compute distances using selected methods.\n",
+                        "normal")
+        text_box.insert("end",
+                        "   - Click 'Label similarities' to label graph pairs using thresholds based on method weights.\n\n",
+                        "normal")
+
+        text_box.insert("end", "7. Output Files\n", "subtitle")
+        text_box.insert("end",
+                        "   - Graphlet distributions, images (if selected), and similarity results are saved in your output directory.\n\n",
+                        "normal")
+
+        text_box.insert("end", "Tips:\n", "subtitle")
+        text_box.insert("end", "- Use .in files if you need to run NetSimile.\n", "tips")
+        text_box.insert("end", "- You can use either .in or .out files for ResNet, as long as images are created.\n",
+                        "tips")
+        text_box.insert("end", "- Ensure image creation is enabled before using ResNet.\n", "tips")
+        text_box.insert("end", "- Weights for selected methods must sum to 1.0.\n", "tips")
+
+        text_box.configure(state="disabled")
+        return text_box
 
     def createTutorial(self, title):
         if self.info_window is None or not self.info_window.winfo_exists():

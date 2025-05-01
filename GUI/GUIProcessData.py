@@ -82,7 +82,7 @@ class GUIProcessData:
             hover_color=guiconst.COLOR_GREY_HOVER,
             width=30,
             height=25,
-            command=lambda: self.guiUtil.createTutorial("text"),
+            command=lambda: self.guiUtil.createTutorial("Process Files"),
         )
 
         self.guiUtil.addComponent(
