@@ -57,7 +57,7 @@ class GUIProcessData:
         app.run()
 
     def __addHeader(self):
-        self.guiUtil.add_component(
+        self.guiUtil.addComponent(
             self,
             component_type="Button",
             frame=self.root,
@@ -72,7 +72,7 @@ class GUIProcessData:
 
         )
 
-        self.guiUtil.add_component(
+        self.guiUtil.addComponent(
             self,
             component_type="Button",
             text="?",
@@ -82,10 +82,10 @@ class GUIProcessData:
             hover_color=guiconst.COLOR_GREY_HOVER,
             width=30,
             height=25,
-            command=lambda: self.guiUtil.create_tutorial("text"),
+            command=lambda: self.guiUtil.createTutorial("text"),
         )
 
-        self.guiUtil.add_component(
+        self.guiUtil.addComponent(
             self,
             component_type="Label",
             frame=self.root,
@@ -137,7 +137,7 @@ class GUIProcessData:
 
             self.process_files_complete_label.configure(
                 text=f"Graphlet counts saved in\n{self.process_files.graphlet_counts_filename}!")
-            self.process_data_frame.after(2000, lambda: self.guiUtil.reset_label(self.process_files_complete_label))
+            self.process_data_frame.after(2000, lambda: self.guiUtil.resetLabel(self.process_files_complete_label))
 
         except EmptyDataException as e:
             error = str(e)
@@ -222,7 +222,7 @@ class GUIProcessData:
     def __createProcessingDataFrame(self):
         """Input"""
 
-        self.guiUtil.add_component(
+        self.guiUtil.addComponent(
             self,
             component_type="Label",
             frame=self.process_data_frame,
@@ -232,7 +232,7 @@ class GUIProcessData:
             anchor="center"
         )
 
-        self.input_entry = self.guiUtil.add_component(
+        self.input_entry = self.guiUtil.addComponent(
             self,
             component_type="Entry",
             frame=self.process_data_frame,
@@ -242,7 +242,7 @@ class GUIProcessData:
             height=20
         )
 
-        self.guiUtil.add_component(
+        self.guiUtil.addComponent(
             self,
             component_type="Button",
             frame=self.process_data_frame,
@@ -253,7 +253,7 @@ class GUIProcessData:
             command=lambda: self.__handleSelectDirectory(self.input_entry, self.process_files_button)
         )
 
-        self.guiUtil.add_component(
+        self.guiUtil.addComponent(
             self,
             component_type="Button",
             frame=self.process_data_frame,
@@ -268,7 +268,7 @@ class GUIProcessData:
 
         """Output"""
 
-        self.guiUtil.add_component(
+        self.guiUtil.addComponent(
             self,
             component_type="Label",
             frame=self.process_data_frame,
@@ -278,7 +278,7 @@ class GUIProcessData:
             anchor="w"
         )
 
-        self.output_entry = self.guiUtil.add_component(
+        self.output_entry = self.guiUtil.addComponent(
             self,
             component_type="Entry",
             frame=self.process_data_frame,
@@ -288,7 +288,7 @@ class GUIProcessData:
             height=20
         )
 
-        self.guiUtil.add_component(
+        self.guiUtil.addComponent(
             self,
             component_type="Button",
             frame=self.process_data_frame,
@@ -299,7 +299,7 @@ class GUIProcessData:
             command=lambda: self.__handleSelectDirectory(self.output_entry)
         )
 
-        self.guiUtil.add_component(
+        self.guiUtil.addComponent(
             self,
             component_type="Button",
             frame=self.process_data_frame,
@@ -315,7 +315,7 @@ class GUIProcessData:
         """Is Orca files checkbox"""
 
         self.out_files_val = IntVar()
-        self.guiUtil.add_component(
+        self.guiUtil.addComponent(
             self,
             component_type="Checkbutton",
             frame=self.process_data_frame,
@@ -332,7 +332,7 @@ class GUIProcessData:
         )
 
         self.create_images_val = IntVar()
-        self.guiUtil.add_component(
+        self.guiUtil.addComponent(
             self,
             component_type="Checkbutton",
             frame=self.process_data_frame,
@@ -348,7 +348,7 @@ class GUIProcessData:
             border_width=2
         )
 
-        self.process_files_button = self.guiUtil.add_component(
+        self.process_files_button = self.guiUtil.addComponent(
             self,
             component_type="Button",
             frame=self.process_data_frame,
@@ -368,7 +368,7 @@ class GUIProcessData:
             )
         )
 
-        self.show_graphs_button = self.guiUtil.add_component(
+        self.show_graphs_button = self.guiUtil.addComponent(
             self,
             component_type="Button",
             text="Show graph",
@@ -384,7 +384,7 @@ class GUIProcessData:
         )
 
     def __createChooseLabelingMethods(self):
-        self.guiUtil.add_component(
+        self.guiUtil.addComponent(
             self,
             component_type="Label",
             frame=self.process_data_frame,
@@ -394,7 +394,7 @@ class GUIProcessData:
         )
 
         self.hellinger_val = IntVar()
-        self.hellinger_checkbox = self.guiUtil.add_component(
+        self.hellinger_checkbox = self.guiUtil.addComponent(
             self,
             component_type="Checkbutton",
             frame=self.process_data_frame,
@@ -412,7 +412,7 @@ class GUIProcessData:
             command=lambda: self.hellinger_weight.setDisabled(not self.hellinger_val.get())
         )
 
-        self.hellinger_weight = self.guiUtil.add_component(
+        self.hellinger_weight = self.guiUtil.addComponent(
             self,
             component_type="NumberInput",
             frame=self.process_data_frame,
@@ -421,7 +421,7 @@ class GUIProcessData:
         self.hellinger_weight.setDisabled(True)
 
         self.netsimile_val = IntVar()
-        self.netsimile_checkbox = self.guiUtil.add_component(
+        self.netsimile_checkbox = self.guiUtil.addComponent(
             self,
             component_type="Checkbutton",
             frame=self.process_data_frame,
@@ -439,7 +439,7 @@ class GUIProcessData:
             command=lambda: self.netsimile_weight.setDisabled(not self.netsimile_val.get())
         )
 
-        self.netsimile_weight = self.guiUtil.add_component(
+        self.netsimile_weight = self.guiUtil.addComponent(
             self,
             component_type="NumberInput",
             frame=self.process_data_frame,
@@ -448,7 +448,7 @@ class GUIProcessData:
         self.netsimile_weight.setDisabled(True)
 
         self.resnet_val = IntVar()
-        self.resnet_checkbox = self.guiUtil.add_component(
+        self.resnet_checkbox = self.guiUtil.addComponent(
             self,
             component_type="Checkbutton",
             frame=self.process_data_frame,
@@ -466,7 +466,7 @@ class GUIProcessData:
             command=lambda: self.resnet_weight.setDisabled(not self.resnet_val.get())
         )
 
-        self.resnet_weight = self.guiUtil.add_component(
+        self.resnet_weight = self.guiUtil.addComponent(
             self,
             component_type="NumberInput",
             frame=self.process_data_frame,
@@ -475,7 +475,7 @@ class GUIProcessData:
         self.resnet_weight.setDisabled(True)
 
         self.kstest_val = IntVar()
-        self.kstest_checkbox = self.guiUtil.add_component(
+        self.kstest_checkbox = self.guiUtil.addComponent(
             self,
             component_type="Checkbutton",
             frame=self.process_data_frame,
@@ -493,7 +493,7 @@ class GUIProcessData:
             command=lambda: self.kstest_weight.setDisabled(not self.kstest_val.get())
         )
 
-        self.kstest_weight = self.guiUtil.add_component(
+        self.kstest_weight = self.guiUtil.addComponent(
             self,
             component_type="NumberInput",
             frame=self.process_data_frame,
@@ -501,7 +501,7 @@ class GUIProcessData:
         )
         self.kstest_weight.setDisabled(True)
 
-        self.count_similarities_button = self.guiUtil.add_component(
+        self.count_similarities_button = self.guiUtil.addComponent(
             self,
             component_type="Button",
             text="Count similarities",
@@ -516,7 +516,7 @@ class GUIProcessData:
             command=lambda: self.__handleComputeSimilarity()
         )
 
-        self.label_similarity_button = self.guiUtil.add_component(
+        self.label_similarity_button = self.guiUtil.addComponent(
             self,
             component_type="Button",
             text="Label similarities",
@@ -531,7 +531,7 @@ class GUIProcessData:
             command=lambda: self.__handleLabelSimilarities()
         )
 
-        self.process_files_complete_label = self.guiUtil.add_component(
+        self.process_files_complete_label = self.guiUtil.addComponent(
             self,
             component_type="Label",
             frame=self.process_data_frame,
@@ -545,7 +545,7 @@ class GUIProcessData:
     def run(self):
         self.__addHeader()
         self.__createProcessingDataFrame()
-        self.guiUtil.create_horizontal_line(
+        self.guiUtil.createHorizontalLine(
             self.process_data_frame,
             width=self.process_data_frame_width - 20,
             row=8,

@@ -27,7 +27,7 @@ class GUIChooseOptions:
         ctk.set_default_color_theme("blue")
 
     def __addTitle(self):
-        self.guiUtil.add_component(
+        self.guiUtil.addComponent(
             self.root,
             component_type="Label",
             grid_options={"row": 0, "column": 0, "sticky": "n", "padx": 30, "pady": (10, 20)},
@@ -37,7 +37,7 @@ class GUIChooseOptions:
         )
 
     def __createOptions(self):
-        self.guiUtil.add_component(
+        self.guiUtil.addComponent(
             self.root,
             component_type="Button",
             grid_options={"row": 1, "column": 0, "padx": 20, "pady": (0, 15)},
@@ -45,7 +45,7 @@ class GUIChooseOptions:
             command=lambda: self.__runProcessData()
         )
 
-        self.guiUtil.add_component(
+        self.guiUtil.addComponent(
             self.root,
             component_type="Button",
             grid_options={"row": 2, "column": 0, "padx": 20, "pady": (0, 15)},
@@ -53,7 +53,7 @@ class GUIChooseOptions:
             command=lambda: self.__runTrainModel()
         )
 
-        self.guiUtil.add_component(
+        self.guiUtil.addComponent(
             self.root,
             component_type="Button",
             grid_options={"row": 3, "column": 0, "padx": 20, "pady": (0, 15)},

@@ -74,7 +74,7 @@ class GUITrainModel:
         self.__createHyperparametersBasedOnModel()
 
     def __addHeader(self):
-        self.guiUtil.add_component(
+        self.guiUtil.addComponent(
             self,
             component_type="Button",
             frame=self.root,
@@ -88,7 +88,7 @@ class GUITrainModel:
             height=25
         )
 
-        self.info_button = self.guiUtil.add_component(
+        self.info_button = self.guiUtil.addComponent(
             self,
             component_type="Button",
             text="?",
@@ -98,10 +98,10 @@ class GUITrainModel:
             hover_color=guiconst.COLOR_GREY_HOVER,
             width=30,
             height=25,
-            command=lambda: self.guiUtil.create_tutorial("Train Model"),
+            command=lambda: self.guiUtil.createTutorial("Train Model"),
         )
 
-        self.guiUtil.add_component(
+        self.guiUtil.addComponent(
             self,
             component_type="Label",
             frame=self.root,
@@ -133,7 +133,7 @@ class GUITrainModel:
             self.should_enable_random_forest = True
 
     def __createInputData(self):
-        self.guiUtil.add_component(
+        self.guiUtil.addComponent(
             self,
             component_type="Label",
             frame=self.train_model_frame,
@@ -142,7 +142,7 @@ class GUITrainModel:
             font=self.root.font
         )
 
-        self.graphlet_distribution_entry = self.guiUtil.add_component(
+        self.graphlet_distribution_entry = self.guiUtil.addComponent(
             self,
             component_type="Entry",
             frame=self.train_model_frame,
@@ -152,7 +152,7 @@ class GUITrainModel:
             height=20
         )
 
-        self.guiUtil.add_component(
+        self.guiUtil.addComponent(
             self,
             component_type="Button",
             frame=self.train_model_frame,
@@ -165,7 +165,7 @@ class GUITrainModel:
                                                    self.modelOptionMenu)
         )
 
-        self.guiUtil.add_component(
+        self.guiUtil.addComponent(
             self,
             component_type="Label",
             frame=self.train_model_frame,
@@ -174,7 +174,7 @@ class GUITrainModel:
             font=self.root.font
         )
 
-        self.similarities_entry = self.guiUtil.add_component(
+        self.similarities_entry = self.guiUtil.addComponent(
             self,
             component_type="Entry",
             frame=self.train_model_frame,
@@ -184,7 +184,7 @@ class GUITrainModel:
             height=20
         )
 
-        self.guiUtil.add_component(
+        self.guiUtil.addComponent(
             self,
             component_type="Button",
             frame=self.train_model_frame,
@@ -197,11 +197,11 @@ class GUITrainModel:
                                                    self.modelOptionMenu)
         )
 
-        self.guiUtil.create_horizontal_line(self.train_model_frame, width=self.train_model_width - 20, row=3, column=0,
-                                            padx=15, pady=5, columnspan=2, sticky="ew")
+        self.guiUtil.createHorizontalLine(self.train_model_frame, width=self.train_model_width - 20, row=3, column=0,
+                                          padx=15, pady=5, columnspan=2, sticky="ew")
 
     def __createChooseModel(self):
-        self.guiUtil.add_component(
+        self.guiUtil.addComponent(
             self,
             component_type="Label",
             frame=self.train_model_frame,
@@ -210,7 +210,7 @@ class GUITrainModel:
             font=self.root.fontMiddle
         )
 
-        self.modelOptionMenu = self.guiUtil.add_component(
+        self.modelOptionMenu = self.guiUtil.addComponent(
             self,
             component_type="OptionMenu",
             frame=self.train_model_frame,
@@ -223,7 +223,7 @@ class GUITrainModel:
             command=self.__handle_optionMenu_callback,
         )
 
-        self.guiUtil.add_component(
+        self.guiUtil.addComponent(
             self,
             component_type="Label",
             frame=self.train_model_frame,

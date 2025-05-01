@@ -15,7 +15,7 @@ class GUIUtil:
             widget.destroy()
 
     @staticmethod
-    def add_component(self, component_type, frame=None, grid_options=None, **kwargs):
+    def addComponent(self, component_type, frame=None, grid_options=None, **kwargs):
         """
         Adds a component to the window.
 
@@ -55,7 +55,7 @@ class GUIUtil:
         return component
 
     @staticmethod
-    def create_horizontal_line(frame=None, width=50, height=2, fg_color="gray", **kwargs):
+    def createHorizontalLine(frame=None, width=50, height=2, fg_color="gray", **kwargs):
         line = ctk.CTkFrame(frame,width=width, height=height, fg_color=fg_color)
         line.grid(**kwargs)
         return line
@@ -73,17 +73,17 @@ class GUIUtil:
         component.configure(state="normal")
 
     @staticmethod
-    def reset_label(label_component):
+    def resetLabel(label_component):
         label_component.configure(text="")
 
     @staticmethod
-    def toggle_component(checkbox_val, component, **kwargs):
+    def toggleComponent(checkbox_val, component, **kwargs):
         if bool(checkbox_val.get()):
             component.grid(**kwargs)
         else:
             component.grid_remove()
 
-    def __create_info_top_level(self, title, width=300, height=100, **kwargs):
+    def __createInfoTopLevel(self, title, width=300, height=100, **kwargs):
         # TODO: nastavit pozicia kde sa to bude zobrazovat
         info_window = ctk.CTkToplevel()
         info_window.title(title)
@@ -106,7 +106,7 @@ class GUIUtil:
 
         return label
 
-    def create_compare_network_tutorial(self, parent):
+    def createCompareNetworkTutorial(self, parent):
         text_box = ctk.CTkTextbox(parent, width=600, height=400)
         text_box.grid(row=0, column=0, padx=20, pady=10, sticky="nsew")
 
@@ -157,7 +157,7 @@ class GUIUtil:
 
         return text_box
 
-    def create_train_model_tutorial(self, parent):
+    def createTrainModelTutorial(self, parent):
         text_box = ctk.CTkTextbox(parent, width=600, height=400)
         text_box.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
 
@@ -222,19 +222,19 @@ class GUIUtil:
 
         return text_box
 
-    def create_process_files_tutorial(self, parent):
+    def createProcessFilesTutorial(self, parent):
         pass
 
-    def create_tutorial(self, title):
+    def createTutorial(self, title):
         if self.info_window is None or not self.info_window.winfo_exists():
-            self.info_window = self.__create_info_top_level(title, 620, 400)
+            self.info_window = self.__createInfoTopLevel(title, 620, 400)
 
             if title == "Compare Networks":
-                self.create_compare_network_tutorial(self.info_window)
+                self.createCompareNetworkTutorial(self.info_window)
             elif title == "Train Model":
-                self.create_train_model_tutorial(self.info_window)
+                self.createTrainModelTutorial(self.info_window)
             elif title == "Process Files":
-                self.create_process_files_tutorial(self.info_window)
+                self.createProcessFilesTutorial(self.info_window)
 
             self.info_window.lift()
             self.info_window.focus_force()
