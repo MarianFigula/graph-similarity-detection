@@ -1,3 +1,4 @@
+from BusinessLogic.Exception.WeightSumException import WeightSumException
 from BusinessLogic.ProcessFiles.NetworkSimilarities import NetworkSimilarities
 from BusinessLogic.ProcessFiles.SimilarityLabeling import SimilarityLabeling
 
@@ -19,11 +20,8 @@ class SimilarityHandler:
         if hellinger_check_val:
             self.network_similarities.computeHellingerSimilarity()
 
-        # "D:/Škola/DP1/project/a_dp/input/group_small_in"
-        # "D:/Škola/DP1/project/a_dp/input/konz/in_files"
-        #D:/Škola/DP1/project/a_dp/input/x_network_corpus/in_files
         if netsimile_check_val:
-            self.network_similarities.computeNetSimileSimilarity("D:/Škola/DP1/project/a_dp/input/konz/in_files") #"D:/Škola/DP1/project/a_dp/input/test"
+            self.network_similarities.computeNetSimileSimilarity(self.path)
 
         if resnet_check_val:
             self.network_similarities.computeResNetSimilarity(self.img_dir)
@@ -40,20 +38,44 @@ class SimilarityHandler:
                           hellinger_check_val=False,
                           netsimile_check_val=False,
                           resnet_check_val=False,
-                          ks_check_val=False):
+                          ks_check_val=False,
+                          hellinger_weight=0.0,
+                          netsimile_weight=0.0,
+                          resnet_weight=0.0,
+                          ks_weight=0.0):
+
+        total_weight = 0.0
+        if hellinger_check_val:
+            total_weight += hellinger_weight
+        if netsimile_check_val:
+            total_weight += netsimile_weight
+        if resnet_check_val:
+            total_weight += resnet_weight
+        if ks_check_val:
+            total_weight += ks_weight
+
+        if total_weight != 1.0:
+            raise WeightSumException(f"The sum of weights must be 1.0. Current sum: {total_weight}")
 
         self.similarity_label_handler = SimilarityLabeling(self.network_similarities)
 
+        method_labels = {}
+
+
         if hellinger_check_val:
-            self.similarity_label_handler.labelSimilarity("Hellinger")
+            method_labels["Hellinger"] = self.similarity_label_handler.labelSimilarity("Hellinger", hellinger_weight)
 
         if netsimile_check_val:
-            self.similarity_label_handler.labelSimilarity("NetSimile")
+            method_labels["NetSimile"] = self.similarity_label_handler.labelSimilarity("NetSimile", netsimile_weight)
 
         if resnet_check_val:
-            self.similarity_label_handler.labelSimilarity("ResNet")
+            method_labels["ResNet"] = self.similarity_label_handler.labelSimilarity("ResNet", resnet_weight)
 
         if ks_check_val:
-            self.similarity_label_handler.labelSimilarity("KSTest")
+            method_labels["KSTest"] = self.similarity_label_handler.labelSimilarity("KSTest", ks_weight)
+
+        # Combine weighted results if there's more than one method enabled
+        if len(method_labels) > 0:
+            self.similarity_label_handler.combineWeightedLabels(method_labels)
 
         return self.network_similarities
