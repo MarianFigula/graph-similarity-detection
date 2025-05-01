@@ -38,6 +38,10 @@ class NetSimileModel:
 
     def get_graph_features(self, graph_file):
         """Get graph features, either from cache or by computing."""
+
+        if not os.path.exists(FEATURES_CACHE_DIR):
+            os.makedirs(FEATURES_CACHE_DIR)
+
         feature_file = os.path.join(FEATURES_CACHE_DIR, f"{graph_file}.npy")
 
         if os.path.exists(feature_file):
