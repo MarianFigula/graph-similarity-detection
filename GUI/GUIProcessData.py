@@ -4,6 +4,7 @@ import customtkinter as ctk
 
 from BusinessLogic.DataVisualiser.DataVisualiser import DataVisualiser
 from BusinessLogic.Exception.EmptyDataException import EmptyDataException
+from BusinessLogic.Exception.WeightSumException import WeightSumException
 from BusinessLogic.ProcessFiles.SimilarityHandler import SimilarityHandler
 from BusinessLogic.ProcessFiles.SnapShotOfGraphletsAsGraph import SnapShotOfGraphletsAsGraph
 from GUI.GUIUtil import GUIUtil
@@ -33,10 +34,7 @@ class GUIProcessData:
         x = (ws / 2) - (w / 2)
         y = (hs / 2) - (h / 2)
 
-        # TODO: zakomentovat 1000x700 a odkomentovat
-        # self.root.geometry("1000x700")
         root.geometry('%dx%d+%d+%d' % (w, h, x, y))
-
 
         self.root.grid_columnconfigure(1, weight=1)
         self.root.grid_columnconfigure(1, weight=1)
@@ -110,7 +108,8 @@ class GUIProcessData:
         if button:
             button.configure(state="disabled")
 
-    def __handleProcessFiles(self, input_folder_path, output_folder_path, is_out_files=False, should_create_images=False):
+    def __handleProcessFiles(self, input_folder_path, output_folder_path, is_out_files=False,
+                             should_create_images=False):
         error = ""
         print("input_folder_path:", input_folder_path)
         print("output_folder_path:", output_folder_path)
@@ -127,7 +126,8 @@ class GUIProcessData:
                 return
 
             if should_create_images:
-                self.create_snapshots = SnapShotOfGraphletsAsGraph(self.process_files.get_orbit_counts_df(), input_folder_path, output_folder_path)
+                self.create_snapshots = SnapShotOfGraphletsAsGraph(self.process_files.get_orbit_counts_df(),
+                                                                   input_folder_path, output_folder_path)
                 self.create_snapshots.create_images()
 
             self.show_graphs_button.configure(state="normal")
@@ -135,9 +135,9 @@ class GUIProcessData:
             self.__handleCheckboxLabelingMethodStates()
             self.count_similarities_button.configure(state="normal")
 
-            self.process_files_complete_label.configure(text=f"Graphlet counts saved in\n{self.process_files.graphlet_counts_filename}!")
+            self.process_files_complete_label.configure(
+                text=f"Graphlet counts saved in\n{self.process_files.graphlet_counts_filename}!")
             self.process_data_frame.after(2000, lambda: self.guiUtil.reset_label(self.process_files_complete_label))
-
 
         except EmptyDataException as e:
             error = str(e)
@@ -147,33 +147,33 @@ class GUIProcessData:
             if error != "":
                 self.guiUtil.displayError(self.process_data_frame, error, row=16, column=0, columnspan=2)
 
-    def disableCheckboxWithValue(self, checkbox, checkbox_val):
+    def __disableCheckboxWithValue(self, checkbox, checkbox_val):
         checkbox.configure(state="disabled")
         checkbox_val.set(0)
 
-    def enableCheckboxWithValue(self, checkbox, checkbox_val):
+    def __enableCheckboxWithValue(self, checkbox, checkbox_val):
         checkbox.configure(state="normal")
         checkbox_val.set(1)
 
-    def toggleCheckboxWithValue(self, checkbox, checkbox_val):
-        checkbox.configure(state="normal" if bool(checkbox_val.get()) else "disabled")
-        checkbox_val.set(1 if not bool(checkbox_val.get()) else 0)
-
     def __handleCheckboxLabelingMethodStates(self):
         if bool(self.create_images_val.get()):
-            self.enableCheckboxWithValue(self.resnet_checkbox, self.resnet_val)
+            self.__enableCheckboxWithValue(self.resnet_checkbox, self.resnet_val)
             self.resnet_weight.setDisabled(False)
         else:
-            self.disableCheckboxWithValue(self.resnet_checkbox, self.resnet_val)
+            self.__disableCheckboxWithValue(self.resnet_checkbox, self.resnet_val)
             self.resnet_weight.setDisabled(True)
 
-        self.enableCheckboxWithValue(self.netsimile_checkbox, self.netsimile_val)
-        self.netsimile_weight.setDisabled(not self.netsimile_val.get())
+        if bool(self.out_files_val.get()):
+            self.__disableCheckboxWithValue(self.netsimile_checkbox, self.netsimile_val)
+            self.netsimile_weight.setDisabled(True)
+        else:
+            self.__enableCheckboxWithValue(self.netsimile_checkbox, self.netsimile_val)
+            self.netsimile_weight.setDisabled(False)
 
-        self.enableCheckboxWithValue(self.hellinger_checkbox, self.hellinger_val)
+        self.__enableCheckboxWithValue(self.hellinger_checkbox, self.hellinger_val)
         self.hellinger_weight.setDisabled(not self.hellinger_val.get())
 
-        self.enableCheckboxWithValue(self.kstest_checkbox, self.kstest_val)
+        self.__enableCheckboxWithValue(self.kstest_checkbox, self.kstest_val)
         self.kstest_weight.setDisabled(not self.kstest_val.get())
 
     def __handleComputeSimilarity(self):
@@ -194,16 +194,27 @@ class GUIProcessData:
         self.exportSimilarityMeasures()
 
     def __handleLabelSimilarities(self):
-        self.similarityHandler.labelSimilarities(
-            hellinger_check_val=bool(self.hellinger_val.get()),
-            netsimile_check_val=bool(self.netsimile_val.get()),
-            resnet_check_val=bool(self.resnet_val.get()),
-            ks_check_val=bool(self.kstest_val.get())
-        )
+        error = ""
+        try:
+            self.similarityHandler.labelSimilarities(
+                hellinger_check_val=bool(self.hellinger_val.get()),
+                netsimile_check_val=bool(self.netsimile_val.get()),
+                resnet_check_val=bool(self.resnet_val.get()),
+                ks_check_val=bool(self.kstest_val.get()),
+                hellinger_weight=float(self.hellinger_weight.get()),
+                netsimile_weight=float(self.netsimile_weight.get()),
+                resnet_weight=float(self.resnet_weight.get()),
+                ks_weight=float(self.kstest_weight.get())
+            )
+            self.exportSimilarityMeasures()
 
-        self.exportSimilarityMeasures()
-
-
+        except WeightSumException as e:
+            error = str(e)
+        except Exception as e:
+            error = str(e)
+        finally:
+            if error != "":
+                self.guiUtil.displayError(self.process_data_frame, error, row=16, column=0, columnspan=2)
 
     def exportSimilarityMeasures(self):
         self.similarityHandler.exportSimilarity(self.output_entry.get() + "/similarity_measures.csv")
@@ -282,7 +293,7 @@ class GUIProcessData:
             component_type="Button",
             frame=self.process_data_frame,
             text="Select output directory",
-            grid_options={"row": 4, "column": 1, "sticky": "w", "padx": 10,"pady": 5},
+            grid_options={"row": 4, "column": 1, "sticky": "w", "padx": 10, "pady": 5},
             font=self.root.font,
             width=50,
             command=lambda: self.__handleSelectDirectory(self.output_entry)
@@ -372,7 +383,6 @@ class GUIProcessData:
             command=lambda: DataVisualiser(self.process_files.get_orbit_counts_df()).visualize()
         )
 
-
     def __createChooseLabelingMethods(self):
         self.guiUtil.add_component(
             self,
@@ -409,7 +419,6 @@ class GUIProcessData:
             grid_options={"row": 10, "column": 1, "sticky": "e", "padx": (0, 10)},
         )
         self.hellinger_weight.setDisabled(True)
-
 
         self.netsimile_val = IntVar()
         self.netsimile_checkbox = self.guiUtil.add_component(
