@@ -10,6 +10,7 @@ from GUI.GUIUtil import GUIUtil
 import GUI.GUIConstants as guiconst
 from BusinessLogic.GraphSimilarityML.ModelPredictor import ModelPredictor
 
+
 class GUICompareNetworks:
     def __init__(self, root):
         self.root = root
@@ -38,8 +39,6 @@ class GUICompareNetworks:
         x = (ws / 2) - (w / 2)
         y = (hs / 2) - (h / 2)
 
-        # TODO: odkomentovat
-        # root.geometry('400x550')
         root.geometry('%dx%d+%d+%d' % (w, h, x, y))
 
         ctk.set_appearance_mode("light")
@@ -174,7 +173,6 @@ class GUICompareNetworks:
             finally:
                 if error_msg != "":
                     self.guiUtil.displayError(self.compare_networks_frame, error_msg, row=16, column=0, columnspan=2)
-
 
     def toggle_second_graphlet_distribution(self):
 
@@ -347,7 +345,8 @@ class GUICompareNetworks:
             command=lambda: self.toggle_second_graphlet_distribution()
         )
 
-        self.guiUtil.create_horizontal_line(self.compare_networks_frame, width=300, column=0, row=9, columnspan=2, padx=5, pady=15, sticky="n")
+        self.guiUtil.create_horizontal_line(self.compare_networks_frame, width=300, column=0, row=9, columnspan=2,
+                                            padx=5, pady=15, sticky="n")
 
     def __createChoosingModel(self):
         self.guiUtil.add_component(
@@ -384,7 +383,8 @@ class GUICompareNetworks:
             state="disabled",
             command=lambda: self.__handleComparison()
         )
-        self.guiUtil.create_horizontal_line(self.compare_networks_frame, width=300, column=0, row=13, columnspan=2, padx=5, pady=15, sticky="n")
+        self.guiUtil.create_horizontal_line(self.compare_networks_frame, width=300, column=0, row=13, columnspan=2,
+                                            padx=5, pady=15, sticky="n")
 
     def __displayResults(self):
         self.guiUtil.add_component(
