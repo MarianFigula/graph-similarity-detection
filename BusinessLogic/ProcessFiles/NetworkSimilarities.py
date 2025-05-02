@@ -10,8 +10,8 @@ class NetworkSimilarities:
         self.orbit_counts_df = orbit_counts_df
         self.similarity_measures_df = pd.DataFrame()
 
-    def getSimilarityMeasures(self, filterTheSameGraphs=False):
-        if filterTheSameGraphs:
+    def get_similarity_measures(self, filter_the_same_graphs=False):
+        if filter_the_same_graphs:
             self.similarity_measures_df['Type1'] = self.similarity_measures_df['Graph1'].apply(
                 lambda x: x.split('_')[0])
             self.similarity_measures_df['Type2'] = self.similarity_measures_df['Graph2'].apply(
@@ -22,51 +22,51 @@ class NetworkSimilarities:
 
         return self.similarity_measures_df
 
-    def setSimilarityMeasures(self, similarity_measures_df):
+    def set_similarity_measures(self, similarity_measures_df):
         self.similarity_measures_df = similarity_measures_df
 
-    def computeHellingerSimilarity(self):
+    def compute_hellinger_similarity(self):
 
-        hellingerSimilarityModel = HellingerDistanceModel(self.orbit_counts_df)
+        hellinger_similarity_model = HellingerDistanceModel(self.orbit_counts_df)
 
-        hellingerSimilarityResults = hellingerSimilarityModel.computeHellingerDistance()
+        hellinger_similarity_results = hellinger_similarity_model.compute_hellinger_distance()
 
         if self.similarity_measures_df.empty:
-            self.similarity_measures_df = hellingerSimilarityResults
+            self.similarity_measures_df = hellinger_similarity_results
         else:
             self.similarity_measures_df = pd.merge(
                 self.similarity_measures_df,
-                hellingerSimilarityResults,
+                hellinger_similarity_results,
                 on=["Graph1", "Graph2"],
                 how="inner"
             )
 
         print("done")
 
-    def computeNetSimileSimilarity(self, path_of_graphs):
+    def compute_net_simile_similarity(self, path_of_graphs):
         print("computing NetSimile")
 
-        netSimileModel = NetSimileModel(path_of_graphs)
+        net_simile_model = NetSimileModel(path_of_graphs)
 
-        netSimileResults = netSimileModel.compile_process()
+        net_simile_results = net_simile_model.compile_process()
 
         if self.similarity_measures_df.empty:
-            self.similarity_measures_df = netSimileResults
+            self.similarity_measures_df = net_simile_results
         else:
             self.similarity_measures_df = pd.merge(
                 self.similarity_measures_df,
-                netSimileResults,
+                net_simile_results,
                 on=['Graph1', 'Graph2'],
                 how='inner'
             )
 
         print("done")
 
-    def computeResNetSimilarity(self, img_dir):
+    def compute_res_net_similarity(self, img_dir):
         print("computing ResNet")
         resnetModel = ResNetModel(img_dir)
 
-        resnet_similarity = resnetModel.computeSimilarity()
+        resnet_similarity = resnetModel.compute_similarity()
 
         if self.similarity_measures_df.empty:
             self.similarity_measures_df = resnet_similarity
@@ -80,10 +80,10 @@ class NetworkSimilarities:
 
         print("done")
 
-    def computeKSTestSimilarity(self):
+    def compute_ks_test_similarity(self):
         ksTestModel = KSTestModel(self.orbit_counts_df)
 
-        ks_test_similarity_df = ksTestModel.computeKSTestSimilarity()
+        ks_test_similarity_df = ksTestModel.compute_ks_test_similarity()
 
         if self.similarity_measures_df.empty:
             self.similarity_measures_df = ks_test_similarity_df

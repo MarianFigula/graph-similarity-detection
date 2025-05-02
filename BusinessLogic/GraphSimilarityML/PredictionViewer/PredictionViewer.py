@@ -1,11 +1,12 @@
 from tkinter import ttk
 import customtkinter as ctk
 
+
 class PredictionViewer:
     def __init__(self, prediction_result_df):
         self.prediction_result_df = prediction_result_df
 
-    def showPredictions(self):
+    def show_predictions(self):
         top_level = ctk.CTkToplevel()
         top_level.title("Prediction Results")
         top_level.geometry("800x400")

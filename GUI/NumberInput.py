@@ -82,7 +82,7 @@ class NumberInput(ctk.CTkFrame):
         """Alias for set_value to make it more Tkinter-like"""
         self.set_value(value)
 
-    def setDisabled(self, state):
+    def set_disabled(self, state):
         """Set the disabled state of the entry and buttons."""
         self.entry.configure(state="disabled" if state else "normal")
         self.up_button.configure(state="disabled" if state else "normal")

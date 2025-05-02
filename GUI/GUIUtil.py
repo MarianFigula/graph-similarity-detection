@@ -4,7 +4,7 @@ from GUI import GUIConstants as guiconst
 
 
 class GUIUtil:
-    fontTitle = ("Lato", 16)
+    font_title = ("Lato", 16)
 
     def __init__(self):
         self.info_window = None
@@ -15,7 +15,7 @@ class GUIUtil:
             widget.destroy()
 
     @staticmethod
-    def addComponent(self, component_type, frame=None, grid_options=None, **kwargs):
+    def add_component(self, component_type, frame=None, grid_options=None, **kwargs):
         """
         Adds a component to the window.
 
@@ -55,35 +55,35 @@ class GUIUtil:
         return component
 
     @staticmethod
-    def createHorizontalLine(frame=None, width=50, height=2, fg_color="gray", **kwargs):
+    def create_horizontal_line(frame=None, width=50, height=2, fg_color="gray", **kwargs):
         line = ctk.CTkFrame(frame, width=width, height=height, fg_color=fg_color)
         line.grid(**kwargs)
         return line
 
     @staticmethod
-    def removeWindow(root):
+    def remove_window(root):
         for widget in root.winfo_children():
             widget.destroy()
 
     @staticmethod
-    def setComponentNormalState(component=None):
+    def set_component_normal_state(component=None):
         if component is None:
             return
 
         component.configure(state="normal")
 
     @staticmethod
-    def resetLabel(label_component):
+    def reset_label(label_component):
         label_component.configure(text="")
 
     @staticmethod
-    def toggleComponent(checkbox_val, component, **kwargs):
+    def toggle_component(checkbox_val, component, **kwargs):
         if bool(checkbox_val.get()):
             component.grid(**kwargs)
         else:
             component.grid_remove()
 
-    def __createInfoTopLevel(self, title, width=300, height=100, **kwargs):
+    def __create_info_top_level(self, title, width=300, height=100, **kwargs):
         # TODO: nastavit pozicia kde sa to bude zobrazovat
         info_window = ctk.CTkToplevel()
         info_window.title(title)
@@ -98,7 +98,7 @@ class GUIUtil:
         return info_window
 
     @staticmethod
-    def displayError(frame, text, duration=3500, **kwargs):
+    def display_error(frame, text, duration=3500, **kwargs):
         label = ctk.CTkLabel(frame, text=text, text_color=guiconst.COLOR_RED)
         label.grid(**kwargs)
 
@@ -106,7 +106,7 @@ class GUIUtil:
 
         return label
 
-    def createCompareNetworkTutorial(self, parent):
+    def create_compare_network_tutorial(self, parent):
         text_box = ctk.CTkTextbox(parent, width=600, height=400)
         text_box.grid(row=0, column=0, padx=20, pady=10, sticky="nsew")
 
@@ -158,7 +158,7 @@ class GUIUtil:
 
         return text_box
 
-    def createTrainModelTutorial(self, parent):
+    def create_train_model_tutorial(self, parent):
         text_box = ctk.CTkTextbox(parent, width=600, height=400)
         text_box.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
 
@@ -224,7 +224,7 @@ class GUIUtil:
 
         return text_box
 
-    def createProcessFilesTutorial(self, parent):
+    def create_process_files_tutorial(self, parent):
         text_box = ctk.CTkTextbox(parent, width=600, height=400)
         text_box.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
 
@@ -293,16 +293,16 @@ class GUIUtil:
         text_box.configure(state="disabled")
         return text_box
 
-    def createTutorial(self, title):
+    def create_tutorial(self, title):
         if self.info_window is None or not self.info_window.winfo_exists():
-            self.info_window = self.__createInfoTopLevel(title, 620, 400)
+            self.info_window = self.__create_info_top_level(title, 620, 400)
 
             if title == "Compare Networks":
-                self.createCompareNetworkTutorial(self.info_window)
+                self.create_compare_network_tutorial(self.info_window)
             elif title == "Train Model":
-                self.createTrainModelTutorial(self.info_window)
+                self.create_train_model_tutorial(self.info_window)
             elif title == "Process Files":
-                self.createProcessFilesTutorial(self.info_window)
+                self.create_process_files_tutorial(self.info_window)
 
             self.info_window.lift()
             self.info_window.focus_force()

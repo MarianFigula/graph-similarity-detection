@@ -11,11 +11,11 @@ class GUITrainModel:
     def __init__(self, root):
         self.root = root
         self.root.title("Train model")
-        self.root.fontTitle = ("Lato", 16)
+        self.root.font_title = ("Lato", 16)
         self.root.font = ("Lato", 12)
         self.root.fontMiddle = ("Lato", 13)
         self.root.smallFont = ("Lato", 10)
-        self.guiUtil = GUIUtil()
+        self.gui_util = GUIUtil()
 
         root.resizable(True, True)
         ws = root.winfo_screenwidth()
@@ -62,8 +62,8 @@ class GUITrainModel:
 
         self.root.update_idletasks()
 
-    def __goBackToOptions(self):
-        self.guiUtil.removeWindow(root=self.root)
+    def __go_back_to_options(self):
+        self.gui_util.remove_window(root=self.root)
         from GUI.GUIChooseOptions import GUIChooseOptions
         app = GUIChooseOptions(self.root)
         app.run()
@@ -71,15 +71,15 @@ class GUITrainModel:
     def __handle_optionMenu_callback(self, choice):
         print("option here")
         self.selected_model = choice
-        self.__createHyperparametersBasedOnModel()
+        self.__create_hyperparameters_based_on_model()
 
-    def __addHeader(self):
-        self.guiUtil.addComponent(
+    def __add_header(self):
+        self.gui_util.add_component(
             self,
             component_type="Button",
             frame=self.root,
             text="< Back to options",
-            command=lambda: self.__goBackToOptions(),
+            command=lambda: self.__go_back_to_options(),
             grid_options={"row": 0, "column": 0, "sticky": "nw", "pady": 10, "padx": 15},
             font=self.root.font,
             fg_color=guiconst.COLOR_GREY,
@@ -88,7 +88,7 @@ class GUITrainModel:
             height=25
         )
 
-        self.info_button = self.guiUtil.addComponent(
+        self.info_button = self.gui_util.add_component(
             self,
             component_type="Button",
             text="?",
@@ -98,19 +98,19 @@ class GUITrainModel:
             hover_color=guiconst.COLOR_GREY_HOVER,
             width=30,
             height=25,
-            command=lambda: self.guiUtil.createTutorial("Train Model"),
+            command=lambda: self.gui_util.create_tutorial("Train Model"),
         )
 
-        self.guiUtil.addComponent(
+        self.gui_util.add_component(
             self,
             component_type="Label",
             frame=self.root,
             text="Train Model",
             grid_options={"row": 1, "column": 0, "columnspan": 2, "sticky": "ew", "pady": 5},
-            font=self.root.fontTitle
+            font=self.root.font_title
         )
 
-    def __handleSelectCsv(self, main_entry: ctk.CTkEntry, second_entry: ctk.CTkEntry = None, component=None):
+    def __handle_select_csv(self, main_entry: ctk.CTkEntry, second_entry: ctk.CTkEntry = None, component=None):
         path = filedialog.askopenfilename(filetypes=[("CSV Files", "*.csv")])
 
         if not path:
@@ -132,8 +132,8 @@ class GUITrainModel:
             self.hyperparameters_rf.similarity_measures = pd.read_csv(self.similarities_entry.get())
             self.should_enable_random_forest = True
 
-    def __createInputData(self):
-        self.guiUtil.addComponent(
+    def __create_input_data(self):
+        self.gui_util.add_component(
             self,
             component_type="Label",
             frame=self.train_model_frame,
@@ -142,7 +142,7 @@ class GUITrainModel:
             font=self.root.font
         )
 
-        self.graphlet_distribution_entry = self.guiUtil.addComponent(
+        self.graphlet_distribution_entry = self.gui_util.add_component(
             self,
             component_type="Entry",
             frame=self.train_model_frame,
@@ -152,7 +152,7 @@ class GUITrainModel:
             height=20
         )
 
-        self.guiUtil.addComponent(
+        self.gui_util.add_component(
             self,
             component_type="Button",
             frame=self.train_model_frame,
@@ -161,11 +161,11 @@ class GUITrainModel:
             font=self.root.font,
             width=150,
             height=25,
-            command=lambda: self.__handleSelectCsv(self.graphlet_distribution_entry, self.similarities_entry,
-                                                   self.modelOptionMenu)
+            command=lambda: self.__handle_select_csv(self.graphlet_distribution_entry, self.similarities_entry,
+                                                     self.model_option_menu)
         )
 
-        self.guiUtil.addComponent(
+        self.gui_util.add_component(
             self,
             component_type="Label",
             frame=self.train_model_frame,
@@ -174,7 +174,7 @@ class GUITrainModel:
             font=self.root.font
         )
 
-        self.similarities_entry = self.guiUtil.addComponent(
+        self.similarities_entry = self.gui_util.add_component(
             self,
             component_type="Entry",
             frame=self.train_model_frame,
@@ -184,7 +184,7 @@ class GUITrainModel:
             height=20
         )
 
-        self.guiUtil.addComponent(
+        self.gui_util.add_component(
             self,
             component_type="Button",
             frame=self.train_model_frame,
@@ -193,15 +193,15 @@ class GUITrainModel:
             font=self.root.font,
             width=150,
             height=25,
-            command=lambda: self.__handleSelectCsv(self.similarities_entry, self.graphlet_distribution_entry,
-                                                   self.modelOptionMenu)
+            command=lambda: self.__handle_select_csv(self.similarities_entry, self.graphlet_distribution_entry,
+                                                     self.model_option_menu)
         )
 
-        self.guiUtil.createHorizontalLine(self.train_model_frame, width=self.train_model_width - 20, row=3, column=0,
-                                          padx=15, pady=5, columnspan=2, sticky="ew")
+        self.gui_util.create_horizontal_line(self.train_model_frame, width=self.train_model_width - 20, row=3, column=0,
+                                             padx=15, pady=5, columnspan=2, sticky="ew")
 
-    def __createChooseModel(self):
-        self.guiUtil.addComponent(
+    def __create_choose_model(self):
+        self.gui_util.add_component(
             self,
             component_type="Label",
             frame=self.train_model_frame,
@@ -210,7 +210,7 @@ class GUITrainModel:
             font=self.root.fontMiddle
         )
 
-        self.modelOptionMenu = self.guiUtil.addComponent(
+        self.model_option_menu = self.gui_util.add_component(
             self,
             component_type="OptionMenu",
             frame=self.train_model_frame,
@@ -223,7 +223,7 @@ class GUITrainModel:
             command=self.__handle_optionMenu_callback,
         )
 
-        self.guiUtil.addComponent(
+        self.gui_util.add_component(
             self,
             component_type="Label",
             frame=self.train_model_frame,
@@ -232,11 +232,11 @@ class GUITrainModel:
             font=self.root.fontMiddle
         )
 
-    def __setRandomForestGui(self):
+    def __set_random_forest_gui(self):
         self.resize_window(800, 700, self.train_model_width)
         self.info_button.grid(row=0, column=0, sticky="ne")
 
-        self.hyperparameters_rf = GUIRandomForestClassifier(self.train_model_frame, self.guiUtil, self.root, None, None)
+        self.hyperparameters_rf = GUIRandomForestClassifier(self.train_model_frame, self.gui_util, self.root, None, None)
 
         if self.should_enable_random_forest:
             self.hyperparameters_rf.enable_train_model_components()
@@ -245,12 +245,12 @@ class GUITrainModel:
 
         self.mlp_hyperparameters = None
 
-    def __setMlpGui(self):
+    def __set_mlp_gui(self):
         self.resize_window(1200, 700, 650)
         self.info_button.grid(row=0, column=1, sticky="ne")
         self.mlp_hyperparameters = GUIMlpClassifier(
             parent=self.train_model_frame,
-            gui_util=self.guiUtil,
+            gui_util=self.gui_util,
             root=self.root,
             max_hidden_layers=10,
             graphlet_counts=pd.read_csv(self.graphlet_distribution_entry.get()),
@@ -259,7 +259,7 @@ class GUITrainModel:
 
         self.hyperparameters_rf = None
 
-    def __createHyperparametersBasedOnModel(self):
+    def __create_hyperparameters_based_on_model(self):
         error_message = ""
 
         try:
@@ -273,21 +273,21 @@ class GUITrainModel:
                     self.mlp_hyperparameters.hidden_layers_frame.destroy()
                     self.mlp_hyperparameters.hidden_layers_frame = None
 
-            if self.modelOptionMenu.get() == "Random Forest Classifier":
-                self.__setRandomForestGui()
-            elif self.modelOptionMenu.get() == "MLP Classifier":
-                self.__setMlpGui()
+            if self.model_option_menu.get() == "Random Forest Classifier":
+                self.__set_random_forest_gui()
+            elif self.model_option_menu.get() == "MLP Classifier":
+                self.__set_mlp_gui()
         except Exception as e:
             error_message = "Failed to create hyperparameters based on model"
             print(e)
         finally:
             if error_message != "":
-                self.guiUtil.displayError(self.train_model_frame, error_message, row=10, column=0, columnspan=2)
+                self.gui_util.display_error(self.train_model_frame, error_message, row=10, column=0, columnspan=2)
 
     def run(self):
-        self.__addHeader()
-        self.__createInputData()
-        self.__createChooseModel()
-        self.__createHyperparametersBasedOnModel()
+        self.__add_header()
+        self.__create_input_data()
+        self.__create_choose_model()
+        self.__create_hyperparameters_based_on_model()
         self.root.mainloop()
 

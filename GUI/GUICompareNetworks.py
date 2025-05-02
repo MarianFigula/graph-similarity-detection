@@ -14,16 +14,16 @@ from BusinessLogic.GraphSimilarityML.ModelPredictor import ModelPredictor
 class GUICompareNetworks:
     def __init__(self, root):
         self.root = root
-        self.neuralNetworkPredictor = ModelPredictor()
+        self.neural_network_predictor = ModelPredictor()
 
         self.root.title("Compare Networks")
         self.input_graphlet_df = None
 
-        self.root.fontTitle = ("Lato", 16)
+        self.root.font_title = ("Lato", 16)
         self.root.font = ("Lato", 12)
         self.root.smallFont = ("Lato", 10)
 
-        self.guiUtil = GUIUtil()
+        self.gui_util = GUIUtil()
         self.root.grid_columnconfigure(1, weight=1)
         self.root.grid_columnconfigure(2, weight=1)
         self.root.grid_columnconfigure(3, weight=1)
@@ -51,19 +51,19 @@ class GUICompareNetworks:
         self.compare_networks_frame.grid_columnconfigure(0, weight=1)
         self.compare_networks_frame.grid_columnconfigure(1, weight=1)
 
-    def __goBackToOptions(self):
-        self.guiUtil.removeWindow(root=self.root)
+    def __go_back_to_options(self):
+        self.gui_util.remove_window(root=self.root)
         from GUI.GUIChooseOptions import GUIChooseOptions
         app = GUIChooseOptions(self.root)
         app.run()
 
-    def __addHeader(self):
-        self.guiUtil.addComponent(
+    def __add_header(self):
+        self.gui_util.add_component(
             self,
             component_type="Button",
             frame=self.root,
             text="< Back to options",
-            command=lambda: self.__goBackToOptions(),
+            command=lambda: self.__go_back_to_options(),
             grid_options={"row": 0, "column": 0, "sticky": "nw", "pady": 10, "padx": 15},
             font=self.root.font,
             fg_color=guiconst.COLOR_GREY,
@@ -72,7 +72,7 @@ class GUICompareNetworks:
             height=25
         )
 
-        self.guiUtil.addComponent(
+        self.gui_util.add_component(
             self,
             component_type="Button",
             text="?",
@@ -82,19 +82,19 @@ class GUICompareNetworks:
             hover_color=guiconst.COLOR_GREY_HOVER,
             width=30,
             height=25,
-            command=lambda: self.guiUtil.createTutorial("Compare Networks"),
+            command=lambda: self.gui_util.create_tutorial("Compare Networks"),
         )
 
-        self.guiUtil.addComponent(
+        self.gui_util.add_component(
             self,
             component_type="Label",
             frame=self.root,
             text="Compare networks",
             grid_options={"row": 1, "column": 0, "columnspan": 1, "sticky": "n", "pady": 5},
-            font=self.root.fontTitle
+            font=self.root.font_title
         )
 
-    def __handleSelectDirectory(self, entry):
+    def __handle_select_directory(self, entry):
         path = filedialog.askopenfilename(filetypes=[("CSV Files", "*.csv")])
 
         if not path:
@@ -103,17 +103,17 @@ class GUICompareNetworks:
         entry.delete(0, ctk.END)
         entry.insert(ctk.END, path)
 
-        self.guiUtil.setComponentNormalState(self.compare_button)
-        self.guiUtil.setComponentNormalState(self.modelOptionMenu)
+        self.gui_util.set_component_normal_state(self.compare_button)
+        self.gui_util.set_component_normal_state(self.modelOptionMenu)
 
     def __handle_optionMenu_callback(self, choice):
         print(f"Selected model: {choice}")
         self.selected_model = choice
 
-    def __handleComparison(self):
+    def __handle_comparison(self):
         error_msg = ""
         if self.selected_model is None:
-            self.guiUtil.displayError(self.compare_networks_frame, "Please select a model")
+            self.gui_util.display_error(self.compare_networks_frame, "Please select a model")
             return
         print("comp, selected model: ", self.selected_model)
 
@@ -125,13 +125,13 @@ class GUICompareNetworks:
                 self.input_graphlet_df = DataNormaliser(self.input_graphlet_df).percentage_normalisation()
                 self.input_graphlet_df2 = DataNormaliser(self.input_graphlet_df2).percentage_normalisation()
 
-                self.result_df = self.neuralNetworkPredictor.predict_two_graphlet_distributions(
+                self.result_df = self.neural_network_predictor.predict_two_graphlet_distributions(
                     self.input_graphlet_df,
                     self.input_graphlet_df2,
                     self.selected_model)
 
-                self.guiUtil.setComponentNormalState(self.download_button)
-                self.guiUtil.setComponentNormalState(self.display_button)
+                self.gui_util.set_component_normal_state(self.download_button)
+                self.gui_util.set_component_normal_state(self.display_button)
             except EmptyDataException as e:
                 print(e)
                 error_msg = str(e)
@@ -146,7 +146,7 @@ class GUICompareNetworks:
                 error_msg = "Error " + str(e)
             finally:
                 if error_msg != "":
-                    self.guiUtil.displayError(self.compare_networks_frame, error_msg, row=16, column=0, columnspan=2)
+                    self.gui_util.display_error(self.compare_networks_frame, error_msg, row=16, column=0, columnspan=2)
 
         else:
             try:
@@ -154,10 +154,10 @@ class GUICompareNetworks:
                 print("selected model: " + self.selected_model)
                 self.input_graphlet_df = DataNormaliser(self.input_graphlet_df).percentage_normalisation()
 
-                self.result_df = self.neuralNetworkPredictor.predict(self.input_graphlet_df, self.selected_model)
+                self.result_df = self.neural_network_predictor.predict(self.input_graphlet_df, self.selected_model)
 
-                self.guiUtil.setComponentNormalState(self.download_button)
-                self.guiUtil.setComponentNormalState(self.display_button)
+                self.gui_util.set_component_normal_state(self.download_button)
+                self.gui_util.set_component_normal_state(self.display_button)
             except EmptyDataException as e:
                 print(e)
                 error_msg = str(e)
@@ -172,11 +172,11 @@ class GUICompareNetworks:
                 error_msg = "Error " + str(e)
             finally:
                 if error_msg != "":
-                    self.guiUtil.displayError(self.compare_networks_frame, error_msg, row=16, column=0, columnspan=2)
+                    self.gui_util.display_error(self.compare_networks_frame, error_msg, row=16, column=0, columnspan=2)
 
     def toggle_second_graphlet_distribution(self):
 
-        self.guiUtil.toggleComponent(
+        self.gui_util.toggle_component(
             self.compare_between_two_graphlets_val,
             self.second_label,
             row=5,
@@ -185,7 +185,7 @@ class GUICompareNetworks:
             sticky="n"
         )
 
-        self.guiUtil.toggleComponent(
+        self.gui_util.toggle_component(
             self.compare_between_two_graphlets_val,
             self.input_entry_second,
             row=6,
@@ -196,7 +196,7 @@ class GUICompareNetworks:
             pady=10
         )
 
-        self.guiUtil.toggleComponent(
+        self.gui_util.toggle_component(
             self.compare_between_two_graphlets_val,
             self.select_input_button_second,
             row=7,
@@ -234,15 +234,15 @@ class GUICompareNetworks:
 
             self.compare_networks_frame.configure(height=original_frame_height)
 
-    def __handleDownload(self):
+    def __handle_download(self):
         if self.result_df is None:
             return
-        output_file = self.neuralNetworkPredictor.download_predictions(self.result_df, self.selected_model)
+        output_file = self.neural_network_predictor.download_predictions(self.result_df, self.selected_model)
 
         self.download_complete_label.configure(text=f"Predictions saved in\n{output_file}!")
-        self.compare_networks_frame.after(2000, lambda: self.guiUtil.resetLabel(self.download_complete_label))
+        self.compare_networks_frame.after(2000, lambda: self.gui_util.reset_label(self.download_complete_label))
 
-    def __getSavedModels(self):
+    def __get_saved_models(self):
         error_msg = ""
         try:
             self.model_dir_path = "MachineLearningData/saved_models"
@@ -266,11 +266,11 @@ class GUICompareNetworks:
             error_msg = "Error " + str(e)
         finally:
             if error_msg != "":
-                self.guiUtil.displayError(self.compare_networks_frame, error_msg, row=16, column=0, columnspan=2)
+                self.gui_util.display_error(self.compare_networks_frame, error_msg, row=16, column=0, columnspan=2)
 
 
-    def __createGraphletDistributionInput(self):
-        self.guiUtil.addComponent(
+    def __create_graphlet_distribution_input(self):
+        self.gui_util.add_component(
             self,
             component_type="Label",
             frame=self.compare_networks_frame,
@@ -279,7 +279,7 @@ class GUICompareNetworks:
             font=self.root.font
         )
 
-        self.input_entry = self.guiUtil.addComponent(
+        self.input_entry = self.gui_util.add_component(
             self,
             component_type="Entry",
             frame=self.compare_networks_frame,
@@ -288,7 +288,7 @@ class GUICompareNetworks:
             height=20
         )
 
-        self.guiUtil.addComponent(
+        self.gui_util.add_component(
             self,
             component_type="Button",
             frame=self.compare_networks_frame,
@@ -300,10 +300,10 @@ class GUICompareNetworks:
             fg_color=guiconst.COLOR_GREY,
             hover_color=guiconst.COLOR_GREY_HOVER,
             state="normal",
-            command=lambda: self.__handleSelectDirectory(self.input_entry)
+            command=lambda: self.__handle_select_directory(self.input_entry)
         )
 
-        self.second_label = self.guiUtil.addComponent(
+        self.second_label = self.gui_util.add_component(
             self,
             component_type="Label",
             frame=self.compare_networks_frame,
@@ -312,7 +312,7 @@ class GUICompareNetworks:
             font=self.root.font
         )
 
-        self.input_entry_second = self.guiUtil.addComponent(
+        self.input_entry_second = self.gui_util.add_component(
             self,
             component_type="Entry",
             frame=self.compare_networks_frame,
@@ -322,7 +322,7 @@ class GUICompareNetworks:
             state="normal"
         )
 
-        self.select_input_button_second = self.guiUtil.addComponent(
+        self.select_input_button_second = self.gui_util.add_component(
             self,
             component_type="Button",
             frame=self.compare_networks_frame,
@@ -334,7 +334,7 @@ class GUICompareNetworks:
             fg_color=guiconst.COLOR_GREY,
             hover_color=guiconst.COLOR_GREY_HOVER,
             state="normal",
-            command=lambda: self.__handleSelectDirectory(self.input_entry_second)
+            command=lambda: self.__handle_select_directory(self.input_entry_second)
         )
 
         self.second_label.grid_remove()
@@ -342,7 +342,7 @@ class GUICompareNetworks:
         self.select_input_button_second.grid_remove()
 
         self.compare_between_two_graphlets_val = IntVar()
-        self.compare_between_two_graphlets = self.guiUtil.addComponent(
+        self.compare_between_two_graphlets = self.gui_util.add_component(
             self,
             component_type="Checkbutton",
             frame=self.compare_networks_frame,
@@ -359,11 +359,11 @@ class GUICompareNetworks:
             command=lambda: self.toggle_second_graphlet_distribution()
         )
 
-        self.guiUtil.createHorizontalLine(self.compare_networks_frame, width=300, column=0, row=9, columnspan=2,
-                                          padx=5, pady=15, sticky="n")
+        self.gui_util.create_horizontal_line(self.compare_networks_frame, width=300, column=0, row=9, columnspan=2,
+                                             padx=5, pady=15, sticky="n")
 
-    def __createChoosingModel(self):
-        self.guiUtil.addComponent(
+    def __create_choosing_model(self):
+        self.gui_util.add_component(
             self,
             component_type="Label",
             frame=self.compare_networks_frame,
@@ -371,7 +371,7 @@ class GUICompareNetworks:
             grid_options={"row": 10, "column": 0, "columnspan": 2, "sticky": "n"},
             font=self.root.font
         )
-        self.modelOptionMenu = self.guiUtil.addComponent(
+        self.modelOptionMenu = self.gui_util.add_component(
             self,
             component_type="OptionMenu",
             frame=self.compare_networks_frame,
@@ -379,11 +379,11 @@ class GUICompareNetworks:
             font=self.root.font,
             width=20,
             height=25,
-            values=self.__getSavedModels(),
+            values=self.__get_saved_models(),
             state="disabled",
             command=self.__handle_optionMenu_callback,
         )
-        self.compare_button = self.guiUtil.addComponent(
+        self.compare_button = self.gui_util.add_component(
             self,
             component_type="Button",
             frame=self.compare_networks_frame,
@@ -395,13 +395,13 @@ class GUICompareNetworks:
             fg_color=guiconst.COLOR_GREEN,
             hover_color=guiconst.COLOR_GREEN_HOVER,
             state="disabled",
-            command=lambda: self.__handleComparison()
+            command=lambda: self.__handle_comparison()
         )
-        self.guiUtil.createHorizontalLine(self.compare_networks_frame, width=300, column=0, row=13, columnspan=2,
-                                          padx=5, pady=15, sticky="n")
+        self.gui_util.create_horizontal_line(self.compare_networks_frame, width=300, column=0, row=13, columnspan=2,
+                                             padx=5, pady=15, sticky="n")
 
-    def __displayResults(self):
-        self.guiUtil.addComponent(
+    def __display_results(self):
+        self.gui_util.add_component(
             self,
             component_type="Label",
             frame=self.compare_networks_frame,
@@ -409,7 +409,7 @@ class GUICompareNetworks:
             grid_options={"row": 14, "column": 0, "columnspan": 2, "sticky": "n"},
             font=self.root.font
         )
-        self.download_button = self.guiUtil.addComponent(
+        self.download_button = self.gui_util.add_component(
             self,
             component_type="Button",
             frame=self.compare_networks_frame,
@@ -421,9 +421,9 @@ class GUICompareNetworks:
             fg_color=guiconst.COLOR_GREY,
             hover_color=guiconst.COLOR_GREY_HOVER,
             state="disabled",
-            command=lambda: self.__handleDownload()
+            command=lambda: self.__handle_download()
         )
-        self.display_button = self.guiUtil.addComponent(
+        self.display_button = self.gui_util.add_component(
             self,
             component_type="Button",
             frame=self.compare_networks_frame,
@@ -435,9 +435,9 @@ class GUICompareNetworks:
             fg_color=guiconst.COLOR_GREY,
             hover_color=guiconst.COLOR_GREY_HOVER,
             state="disabled",
-            command=lambda: self.neuralNetworkPredictor.display_predictions(self.result_df)
+            command=lambda: self.neural_network_predictor.display_predictions(self.result_df)
         )
-        self.download_complete_label = self.guiUtil.addComponent(
+        self.download_complete_label = self.gui_util.add_component(
             self,
             component_type="Label",
             frame=self.compare_networks_frame,
@@ -449,10 +449,10 @@ class GUICompareNetworks:
         )
 
     def run(self):
-        self.__addHeader()
-        self.__createGraphletDistributionInput()
-        self.__createChoosingModel()
-        self.__displayResults()
+        self.__add_header()
+        self.__create_graphlet_distribution_input()
+        self.__create_choosing_model()
+        self.__display_results()
         self.root.mainloop()
 
 

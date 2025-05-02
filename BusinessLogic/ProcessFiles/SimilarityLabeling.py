@@ -11,7 +11,7 @@ class SimilarityLabeling:
         self.network_similarities = network_similarities
         self.thresholds = {}
 
-    def __getThresholdBasedOnClustering(self, similarity_type):
+    def __get_threshold_based_on_clustering(self, similarity_type):
         """
         Calculates the threshold based on clustering for a given similarity type.
 
@@ -25,7 +25,7 @@ class SimilarityLabeling:
         threshold : float
             The calculated threshold value.
         """
-        similarity_measures_df = self.network_similarities.getSimilarityMeasures(filterTheSameGraphs=False)
+        similarity_measures_df = self.network_similarities.get_similarity_measures(filter_the_same_graphs=False)
 
         if similarity_type not in similarity_measures_df.columns:
             raise CustomException(f"Similarity type '{similarity_type}' not found in similarity measures DataFrame.")
@@ -49,7 +49,7 @@ class SimilarityLabeling:
 
         return threshold
 
-    def labelSimilarity(self, similarity_type, weight=0.0):
+    def label_similarity(self, similarity_type, weight=0.0):
         """
         Labels the similarity measures based on the given similarity type and weight.
 
@@ -65,8 +65,8 @@ class SimilarityLabeling:
         col_name : str
             The name of the column containing the labeled similarity measures.
         """
-        similarity_measures_df = self.network_similarities.getSimilarityMeasures(filterTheSameGraphs=False)
-        threshold = self.__getThresholdBasedOnClustering(similarity_type)
+        similarity_measures_df = self.network_similarities.get_similarity_measures(filter_the_same_graphs=False)
+        threshold = self.__get_threshold_based_on_clustering(similarity_type)
 
         col_name = f"Label {similarity_type} ({threshold}, w={weight})"
 
@@ -79,7 +79,7 @@ class SimilarityLabeling:
 
         return col_name
 
-    def combineWeightedLabels(self, method_labels):
+    def combine_weighted_labels(self, method_labels):
         """
         Combine labels from different methods using their weights
 

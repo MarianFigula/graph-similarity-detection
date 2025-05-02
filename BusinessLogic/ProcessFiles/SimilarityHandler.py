@@ -10,7 +10,7 @@ class SimilarityHandler:
         self.path = path
         self.img_dir = img_dir
 
-    def countSimilarities(
+    def count_similarities(
             self,
             hellinger_check_val=False,
             netsimile_check_val=False,
@@ -18,31 +18,31 @@ class SimilarityHandler:
             ks_check_val=False):
 
         if hellinger_check_val:
-            self.network_similarities.computeHellingerSimilarity()
+            self.network_similarities.compute_hellinger_similarity()
 
         if netsimile_check_val:
-            self.network_similarities.computeNetSimileSimilarity(self.path)
+            self.network_similarities.compute_net_simile_similarity(self.path)
 
         if resnet_check_val:
-            self.network_similarities.computeResNetSimilarity(self.img_dir)
+            self.network_similarities.compute_res_net_similarity(self.img_dir)
 
         if ks_check_val:
-            self.network_similarities.computeKSTestSimilarity()
+            self.network_similarities.compute_ks_test_similarity()
 
         return self.network_similarities
 
-    def exportSimilarity(self, path_to_export):
-        self.network_similarities.getSimilarityMeasures().to_csv(path_to_export)
+    def export_similarity(self, path_to_export):
+        self.network_similarities.get_similarity_measures().to_csv(path_to_export)
 
-    def labelSimilarities(self,
-                          hellinger_check_val=False,
-                          netsimile_check_val=False,
-                          resnet_check_val=False,
-                          ks_check_val=False,
-                          hellinger_weight=0.0,
-                          netsimile_weight=0.0,
-                          resnet_weight=0.0,
-                          ks_weight=0.0):
+    def label_similarities(self,
+                           hellinger_check_val=False,
+                           netsimile_check_val=False,
+                           resnet_check_val=False,
+                           ks_check_val=False,
+                           hellinger_weight=0.0,
+                           netsimile_weight=0.0,
+                           resnet_weight=0.0,
+                           ks_weight=0.0):
 
         total_weight = 0.0
         if hellinger_check_val:
@@ -63,19 +63,19 @@ class SimilarityHandler:
 
 
         if hellinger_check_val:
-            method_labels["Hellinger"] = self.similarity_label_handler.labelSimilarity("Hellinger", hellinger_weight)
+            method_labels["Hellinger"] = self.similarity_label_handler.label_similarity("Hellinger", hellinger_weight)
 
         if netsimile_check_val:
-            method_labels["NetSimile"] = self.similarity_label_handler.labelSimilarity("NetSimile", netsimile_weight)
+            method_labels["NetSimile"] = self.similarity_label_handler.label_similarity("NetSimile", netsimile_weight)
 
         if resnet_check_val:
-            method_labels["ResNet"] = self.similarity_label_handler.labelSimilarity("ResNet", resnet_weight)
+            method_labels["ResNet"] = self.similarity_label_handler.label_similarity("ResNet", resnet_weight)
 
         if ks_check_val:
-            method_labels["KSTest"] = self.similarity_label_handler.labelSimilarity("KSTest", ks_weight)
+            method_labels["KSTest"] = self.similarity_label_handler.label_similarity("KSTest", ks_weight)
 
         # Combine weighted results if there's more than one method enabled
         if len(method_labels) > 0:
-            self.similarity_label_handler.combineWeightedLabels(method_labels)
+            self.similarity_label_handler.combine_weighted_labels(method_labels)
 
         return self.network_similarities

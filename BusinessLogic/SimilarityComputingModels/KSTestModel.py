@@ -11,7 +11,7 @@ class KSTestModel:
         ).percentage_normalisation()
         self.alpha = 0.05
 
-    def computeKSTestSimilarity(self):
+    def compute_ks_test_similarity(self):
         graph_names = self.orbit_counts_percentage_normalisation.columns
 
         similarity_list = []

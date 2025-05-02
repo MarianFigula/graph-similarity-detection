@@ -128,5 +128,4 @@ class ProcessInAndOutFiles:
         return True
 
     def get_orbit_counts_df(self):
-        # return pd.read_csv("C:/Users/majof/PycharmProjects/networks_similarity_comparator/neuralNetwork/train_data/graphlet_counts.csv")
         return self.__orbit_counts_df

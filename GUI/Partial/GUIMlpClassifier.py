@@ -30,7 +30,7 @@ class GUIMlpClassifier:
             Maximum number of hidden layers that can be configured
         """
         self.parent = parent
-        self.guiUtil = gui_util
+        self.gui_util = gui_util
         self.root = root
         self.max_hidden_layers = max_hidden_layers
 
@@ -95,7 +95,7 @@ class GUIMlpClassifier:
         self.hidden_layers_frame.grid(**hidden_grid_options)
 
     def _create_hyperparameters(self):
-        self.guiUtil.addComponent(
+        self.gui_util.add_component(
             self,
             component_type="Label",
             frame=self.main_frame,
@@ -104,7 +104,7 @@ class GUIMlpClassifier:
             font=self.root.fontMiddle
         )
 
-        self.guiUtil.addComponent(
+        self.gui_util.add_component(
             self,
             component_type="Label",
             frame=self.main_frame,
@@ -113,7 +113,7 @@ class GUIMlpClassifier:
             font=self.root.font
         )
 
-        self.num_hidden_layers = self.guiUtil.addComponent(
+        self.num_hidden_layers = self.gui_util.add_component(
             self,
             component_type="NumberInput",
             frame=self.main_frame,
@@ -126,7 +126,7 @@ class GUIMlpClassifier:
             command=lambda: self._update_hidden_layers()
         )
 
-        self.guiUtil.addComponent(
+        self.gui_util.add_component(
             self,
             component_type="Label",
             frame=self.main_frame,
@@ -135,7 +135,7 @@ class GUIMlpClassifier:
             font=self.root.font
         )
 
-        self.num_epochs = self.guiUtil.addComponent(
+        self.num_epochs = self.gui_util.add_component(
             self,
             component_type="NumberInput",
             frame=self.main_frame,
@@ -147,7 +147,7 @@ class GUIMlpClassifier:
             data_type=int
         )
 
-        self.guiUtil.addComponent(
+        self.gui_util.add_component(
             self,
             component_type="Label",
             frame=self.main_frame,
@@ -156,7 +156,7 @@ class GUIMlpClassifier:
             font=self.root.font
         )
 
-        self.batch_size = self.guiUtil.addComponent(
+        self.batch_size = self.gui_util.add_component(
             self,
             component_type="NumberInput",
             frame=self.main_frame,
@@ -168,7 +168,7 @@ class GUIMlpClassifier:
             data_type=int
         )
 
-        self.guiUtil.addComponent(
+        self.gui_util.add_component(
             self,
             component_type="Label",
             frame=self.main_frame,
@@ -177,7 +177,7 @@ class GUIMlpClassifier:
             font=self.root.font
         )
 
-        self.learning_rate = self.guiUtil.addComponent(
+        self.learning_rate = self.gui_util.add_component(
             self,
             component_type="NumberInput",
             frame=self.main_frame,
@@ -190,7 +190,7 @@ class GUIMlpClassifier:
         )
 
         self.early_stopping_var = IntVar()
-        self.early_stopping = self.guiUtil.addComponent(
+        self.early_stopping = self.gui_util.add_component(
             self,
             component_type="Checkbutton",
             frame=self.main_frame,
@@ -207,7 +207,7 @@ class GUIMlpClassifier:
             command=self._toggle_patience
         )
 
-        self.patience_label = self.guiUtil.addComponent(
+        self.patience_label = self.gui_util.add_component(
             self,
             component_type="Label",
             frame=self.main_frame,
@@ -217,7 +217,7 @@ class GUIMlpClassifier:
         )
         self.patience_label.grid_remove()
 
-        self.patience = self.guiUtil.addComponent(
+        self.patience = self.gui_util.add_component(
             self,
             component_type="NumberInput",
             frame=self.main_frame,
@@ -230,7 +230,7 @@ class GUIMlpClassifier:
         )
         self.patience.grid_remove()
 
-        self.train_button = self.guiUtil.addComponent(
+        self.train_button = self.gui_util.add_component(
             self,
             component_type="Button",
             frame=self.main_frame,
@@ -243,7 +243,7 @@ class GUIMlpClassifier:
             command=lambda: self.__train_model()
         )
 
-        self.guiUtil.createHorizontalLine(
+        self.gui_util.create_horizontal_line(
             self.main_frame,
             width=380,
             row=6,
@@ -254,7 +254,7 @@ class GUIMlpClassifier:
             sticky="ew"
         )
 
-        self.guiUtil.addComponent(
+        self.gui_util.add_component(
             self,
             component_type="Label",
             frame=self.main_frame,
@@ -264,7 +264,7 @@ class GUIMlpClassifier:
         )
 
         self.accuracy_loss_curves_var = IntVar()
-        self.checkboxes["accuracy_loss"] = self.guiUtil.addComponent(
+        self.checkboxes["accuracy_loss"] = self.gui_util.add_component(
             self,
             component_type="Checkbutton",
             frame=self.main_frame,
@@ -281,7 +281,7 @@ class GUIMlpClassifier:
         )
 
         self.confusion_matrix_var = IntVar()
-        self.checkboxes["confusion_matrix"] = self.guiUtil.addComponent(
+        self.checkboxes["confusion_matrix"] = self.gui_util.add_component(
             self,
             component_type="Checkbutton",
             frame=self.main_frame,
@@ -298,7 +298,7 @@ class GUIMlpClassifier:
         )
 
         self.roc_curve_var = IntVar()
-        self.checkboxes["roc_curve"] = self.guiUtil.addComponent(
+        self.checkboxes["roc_curve"] = self.gui_util.add_component(
             self,
             component_type="Checkbutton",
             frame=self.main_frame,
@@ -315,7 +315,7 @@ class GUIMlpClassifier:
         )
 
         self.classification_report_var = IntVar()
-        self.checkboxes["classification_report"] = self.guiUtil.addComponent(
+        self.checkboxes["classification_report"] = self.gui_util.add_component(
             self,
             component_type="Checkbutton",
             frame=self.main_frame,
@@ -331,7 +331,7 @@ class GUIMlpClassifier:
             border_width=2
         )
 
-        self.buttons['visualize'] = self.guiUtil.addComponent(
+        self.buttons['visualize'] = self.gui_util.add_component(
             self,
             component_type="Button",
             frame=self.main_frame,
@@ -344,7 +344,7 @@ class GUIMlpClassifier:
             command=lambda: self.__visualize()
         )
 
-        self.buttons['save_model'] = self.guiUtil.addComponent(
+        self.buttons['save_model'] = self.gui_util.add_component(
             self,
             component_type="Button",
             frame=self.main_frame,
@@ -355,7 +355,7 @@ class GUIMlpClassifier:
             command=lambda: self.__save_model()
         )
 
-        self.saved_complete_label = self.guiUtil.addComponent(
+        self.saved_complete_label = self.gui_util.add_component(
             self,
             component_type="Label",
             frame=self.main_frame,
@@ -372,7 +372,7 @@ class GUIMlpClassifier:
 
         self.hidden_layer_inputs = []
 
-        self.guiUtil.addComponent(
+        self.gui_util.add_component(
             self,
             component_type="Label",
             frame=self.hidden_layers_frame,
@@ -390,7 +390,7 @@ class GUIMlpClassifier:
 
         print(num_layers)
         for i in range(num_layers):
-            neuron_label = self.guiUtil.addComponent(
+            neuron_label = self.gui_util.add_component(
                 self,
                 component_type="Label",
                 frame=self.hidden_layers_frame,
@@ -399,7 +399,7 @@ class GUIMlpClassifier:
                 font=self.root.font
             )
 
-            neurons = self.guiUtil.addComponent(
+            neurons = self.gui_util.add_component(
                 self,
                 component_type="NumberInput",
                 frame=self.hidden_layers_frame,
@@ -411,7 +411,7 @@ class GUIMlpClassifier:
                 data_type=int
             )
 
-            dropout_label = self.guiUtil.addComponent(
+            dropout_label = self.gui_util.add_component(
                 self,
                 component_type="Label",
                 frame=self.hidden_layers_frame,
@@ -420,7 +420,7 @@ class GUIMlpClassifier:
                 font=self.root.font
             )
 
-            dropout = self.guiUtil.addComponent(
+            dropout = self.gui_util.add_component(
                 self,
                 component_type="NumberInput",
                 frame=self.hidden_layers_frame,
@@ -507,7 +507,7 @@ class GUIMlpClassifier:
             error_message = "Failed to set hyperparameters: " + str(e)
         finally:
             if error_message != "":
-                self.guiUtil.displayError(self.main_frame, error_message, row=10, column=0, columnspan=2)
+                self.gui_util.display_error(self.main_frame, error_message, row=10, column=0, columnspan=2)
 
     def __train_model(self):
         error_message = ""
@@ -528,7 +528,7 @@ class GUIMlpClassifier:
             error_message = "Something failed, check your inputs: " + str(e)
         finally:
             if error_message != "":
-                self.guiUtil.displayError(self.main_frame, error_message, row=10, column=0, columnspan=2)
+                self.gui_util.display_error(self.main_frame, error_message, row=10, column=0, columnspan=2)
 
     def __save_model(self):
         error_message = ""
@@ -540,13 +540,13 @@ class GUIMlpClassifier:
 
             self.saved_complete_label.configure(
                 text=f"Model saved as {self.mlp_model.saved_models_dir}/mlp_{self.mlp_model.uuid}.h5")
-            self.main_frame.after(2000, lambda: self.guiUtil.resetLabel(self.saved_complete_label))
+            self.main_frame.after(2000, lambda: self.gui_util.reset_label(self.saved_complete_label))
 
         except Exception as e:
             error_message = "Failed to save model: " + str(e)
         finally:
             if error_message != "":
-                self.guiUtil.displayError(self.main_frame, error_message, row=10, column=0, columnspan=2)
+                self.gui_util.display_error(self.main_frame, error_message, row=10, column=0, columnspan=2)
 
     def __visualize(self):
         error_message = ""
@@ -565,4 +565,4 @@ class GUIMlpClassifier:
             error_message = "Failed to visualize model: " + str(e)
         finally:
             if error_message != "":
-                self.guiUtil.displayError(self.main_frame, error_message, row=10, column=0, columnspan=2)
+                self.gui_util.display_error(self.main_frame, error_message, row=10, column=0, columnspan=2)

@@ -16,7 +16,7 @@ class HellingerDistanceModel:
             orbit_counts_df
         ).percentage_normalisation()
 
-    def computeHellingerDistance(self):
+    def compute_hellinger_distance(self):
         print("computing Hellinger")
         print(self.orbit_counts_df)
 

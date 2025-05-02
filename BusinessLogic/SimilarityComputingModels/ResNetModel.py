@@ -22,20 +22,20 @@ class ResNetModel:
         features = self.model.predict(img_array)
         return features.flatten()
 
-    def getListOfImages(self):
+    def get_list_of_images(self):
         image_files = [f for f in os.listdir(self.img_dir) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
         return image_files
 
-    def getImageFeatures(self, image_files):
+    def get_image_features(self, image_files):
         feature_dict = {}
         for img_name in image_files:
             img_path = os.path.join(self.img_dir, img_name)
             feature_dict[img_name] = self.extract_features(img_path)
         return feature_dict
 
-    def computeSimilarity(self):
+    def compute_similarity(self):
         similarity_list = []
-        feature_dict = self.getImageFeatures(self.getListOfImages())
+        feature_dict = self.get_image_features(self.get_list_of_images())
 
         for img1 in feature_dict.keys():
             img1_clean = os.path.splitext(img1)[0]

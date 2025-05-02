@@ -14,7 +14,7 @@ class ModelPredictor:
         self.model = None
         self.model_dir = 'MachineLearningData/saved_models'
         self.output_dir = 'MachineLearningData/predictions'
-        self.modelUtils = ModelUtils(self.model_dir)
+        self.model_utils = ModelUtils(self.model_dir)
         self.predictionViewer = None
 
     def __predict_new_pairs(self, model, graphlet_df, new_pairs, option_model=None):
@@ -62,7 +62,7 @@ class ModelPredictor:
         return pd.DataFrame(results, columns=['Graph 1', 'Graph 2', 'Similarity', 'Probability'])
 
     def predict(self, graphlet_df, option_model=None):
-        self.model = self.modelUtils.load_model(option_model)
+        self.model = self.model_utils.load_model(option_model)
 
         if 'Unnamed: 0' in graphlet_df.columns:
             graphlet_df = graphlet_df.drop('Unnamed: 0', axis=1)
@@ -79,7 +79,7 @@ class ModelPredictor:
         return result_df
 
     def predict_two_graphlet_distributions(self, graphlet_df, graphlet_df_2, option_model=None):
-        self.model = self.modelUtils.load_model(option_model)
+        self.model = self.model_utils.load_model(option_model)
 
         if 'Unnamed: 0' in graphlet_df.columns:
             graphlet_df = graphlet_df.drop('Unnamed: 0', axis=1)
@@ -105,7 +105,7 @@ class ModelPredictor:
 
     def display_predictions(self, result_df):
         self.predictionViewer = PredictionViewer(result_df)
-        self.predictionViewer.showPredictions()
+        self.predictionViewer.show_predictions()
 
     def download_predictions(self, result_df, option_model=None):
         if not os.path.exists(self.output_dir):

@@ -1,10 +1,8 @@
 import os
 import uuid
-
 import numpy as np
 from sklearn.metrics import accuracy_score, precision_score, f1_score, recall_score, roc_auc_score
 from sklearn.model_selection import train_test_split
-
 from BusinessLogic.DataNormaliser.DataNormaliser import DataNormaliser
 from tensorflow.keras import layers, Model, optimizers, callbacks
 

@@ -47,5 +47,5 @@ class SnapShotOfGraphletsAsGraph:
             scale = 1.5
             pio.write_image(self.fig, img_path, format="png", scale=scale)
 
-    def getImgDir(self):
+    def get_img_dir(self):
         return self.img_dir
