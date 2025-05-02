@@ -3,6 +3,7 @@ from tkinter import filedialog, IntVar
 import customtkinter as ctk
 
 from BusinessLogic.DataVisualiser.DataVisualiser import DataVisualiser
+from BusinessLogic.Exception.CustomException import CustomException
 from BusinessLogic.Exception.EmptyDataException import EmptyDataException
 from BusinessLogic.Exception.WeightSumException import WeightSumException
 from BusinessLogic.ProcessFiles.SimilarityHandler import SimilarityHandler
@@ -210,8 +211,11 @@ class GUIProcessData:
 
         except WeightSumException as e:
             error = str(e)
+        except CustomException as e:
+            error = str(e)
         except Exception as e:
             error = str(e)
+            print(e)
         finally:
             if error != "":
                 self.guiUtil.displayError(self.process_data_frame, error, row=16, column=0, columnspan=2)

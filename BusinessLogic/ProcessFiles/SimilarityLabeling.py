@@ -3,6 +3,8 @@ import pandas as pd
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 
+from BusinessLogic.Exception.CustomException import CustomException
+
 
 class SimilarityLabeling:
     def __init__(self, network_similarities):
@@ -24,6 +26,10 @@ class SimilarityLabeling:
             The calculated threshold value.
         """
         similarity_measures_df = self.network_similarities.getSimilarityMeasures(filterTheSameGraphs=False)
+
+        if similarity_type not in similarity_measures_df.columns:
+            raise CustomException(f"Similarity type '{similarity_type}' not found in similarity measures DataFrame.")
+
 
         scores = similarity_measures_df[similarity_type].values.reshape(-1, 1)
 
