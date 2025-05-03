@@ -4,7 +4,7 @@ import subprocess
 from BusinessLogic.Exception.EmptyDataException import EmptyDataException
 
 PATH = "C:/Users/majof/PycharmProjects/diplomovka/orca/orca.exe"
-GRAPHLETS_COUNTS_FILE_NAME = "graphlet_counts.csv"
+GRAPHLETS_COUNTS_FILE_NAME = "graphlet_distribution.csv"
 SIMILARITY_MEASURES_FILE_NAME = "similarity_measures.csv"
 
 
