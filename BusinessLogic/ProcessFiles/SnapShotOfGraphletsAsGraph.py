@@ -37,6 +37,14 @@ class SnapShotOfGraphletsAsGraph:
                 showlegend=False,
                 margin=dict(l=0, r=0, t=0, b=0),
                 autosize=False,
+                paper_bgcolor='white',
+                plot_bgcolor='white',
+            )
+
+            self.fig.update_layout(
+                showlegend=False,
+                margin=dict(l=0, r=0, t=0, b=0),
+                autosize=False,
             )
             self.fig.update_yaxes(type="log")
 
