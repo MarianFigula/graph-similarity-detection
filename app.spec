@@ -1,0 +1,57 @@
+"""
+PyInstaller spec file for creating an executable with scipy support.
+Replace 'your_script.py' with the actual name of your main Python script.
+"""
+import os
+import sys
+from PyInstaller.utils.hooks import collect_submodules, collect_data_files
+
+# Replace with your script's name
+SCRIPT_NAME = 'main.py'
+
+# Collect all scipy modules and data files
+hiddenimports = collect_submodules('scipy')
+scipy_datas = collect_data_files('scipy')
+
+# Create the Analysis object
+a = Analysis(
+    [SCRIPT_NAME],
+    pathex=[],
+    binaries=[],
+    datas=scipy_datas,
+    hiddenimports=hiddenimports,
+    hookspath=[],
+    hooksconfig={},
+    runtime_hooks=[],
+    excludes=[],
+    win_no_prefer_redirects=False,
+    win_private_assemblies=False,
+    cipher=None,
+    noarchive=False,
+)
+
+# Create the PYZ object
+pyz = PYZ(a.pure, a.zipped_data, cipher=None)
+
+# Create the EXE
+exe = EXE(
+    pyz,
+    a.scripts,
+    a.binaries,
+    a.zipfiles,
+    a.datas,
+    [],
+    name='graph-similarity-1',  # Name of your executable
+    debug=False,
+    bootloader_ignore_signals=False,
+    strip=False,
+    upx=True,
+    upx_exclude=[],
+    runtime_tmpdir=None,
+    console=True,  # Set to False for GUI applications
+    disable_windowed_traceback=False,
+    argv_emulation=False,
+    target_arch=None,
+    codesign_identity=None,
+    entitlements_file=None,
+)
