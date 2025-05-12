@@ -59,7 +59,7 @@ class ModelPredictor:
                     missing.append(graph2_id)
                 print(f"Warning: Could not find graphlet data for {', '.join(missing)}")
 
-        return pd.DataFrame(results, columns=['Graph1', 'Graph2', 'Similarity', 'Probability'])
+        return pd.DataFrame(results, columns=['Graph1', 'Graph2', 'Similarity', 'Confidence score'])
 
     def predict(self, graphlet_df, option_model=None):
         self.model = self.model_utils.load_model(option_model)
