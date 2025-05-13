@@ -6,14 +6,11 @@ import os
 import sys
 from PyInstaller.utils.hooks import collect_submodules, collect_data_files
 
-# Replace with your script's name
 SCRIPT_NAME = 'main.py'
 
-# Collect all scipy modules and data files
 hiddenimports = collect_submodules('scipy')
 scipy_datas = collect_data_files('scipy')
 
-# Create the Analysis object
 a = Analysis(
     [SCRIPT_NAME],
     pathex=[],
@@ -30,7 +27,6 @@ a = Analysis(
     noarchive=False,
 )
 
-# Create the PYZ object
 pyz = PYZ(a.pure, a.zipped_data, cipher=None)
 
 # Create the EXE
@@ -41,7 +37,7 @@ exe = EXE(
     a.zipfiles,
     a.datas,
     [],
-    name='graph-similarity-1',  # Name of your executable
+    name='graph-similarity-1',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
