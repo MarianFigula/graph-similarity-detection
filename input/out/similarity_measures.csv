@@ -1,0 +1,4 @@
+,Graph1,Graph2,Hellinger,ResNet,KSTest,"Label Hellinger (0.3505308829953514, w=0.5)","Label ResNet (0.5442150235176086, w=0.25)","Label KSTest (0.2972820538179516, w=0.25)",Label,Weighted Similarity Score
+0,ba_1k_2k,ba_1k_4k,0.12110757857949844,0.66491455,0.5940706297759378,True,True,True,True,1.0
+1,ba_1k_2k,geo1k_4k,0.6159415680267851,0.40374056,8.737803591291227e-05,False,False,False,False,0.0
+2,ba_1k_4k,geo1k_4k,0.5439668067956235,0.4432905,0.0008995776840176799,False,False,False,False,0.0
