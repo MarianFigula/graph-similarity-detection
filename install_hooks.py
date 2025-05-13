@@ -40,10 +40,8 @@ def install_hook(hook_name, hook_content):
 
     hook_path = os.path.join(hooks_dir, hook_name)
 
-    # Backup the original file if it exists
     backup_file(hook_path)
 
-    # Write the new hook file
     with open(hook_path, 'w') as f:
         f.write(hook_content)
 
@@ -67,20 +65,16 @@ def disable_problematic_scipy_hooks():
     if not hooks_dir:
         return False
 
-    # Find all scipy-related hooks
     scipy_hooks = glob.glob(os.path.join(hooks_dir, 'hook-scipy.*.py'))
 
     for hook_path in scipy_hooks:
-        # Skip the main scipy hook
         if os.path.basename(hook_path) == 'hook-scipy.py':
             continue
 
-        # Create a backup
         backup_file(hook_path)
 
-        # Replace with a simpler version that just collects submodules
         hook_name = os.path.basename(hook_path)
-        module_name = hook_name[5:-3]  # Remove 'hook-' and '.py'
+        module_name = hook_name[5:-3]
 
         simple_hook_content = f"""
 # Simplified hook for {module_name}
@@ -101,12 +95,10 @@ def main():
     """Main function to install all hooks."""
     print("Installing improved PyInstaller hooks...")
 
-    # Install the comprehensive scipy hook
     if not create_comprehensive_scipy_hook():
         print("Failed to install scipy hook.")
         return
 
-    # Disable other problematic scipy hooks
     disable_problematic_scipy_hooks()
 
     print("\nAll hooks installed successfully!")

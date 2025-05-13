@@ -84,7 +84,6 @@ class GUIUtil:
             component.grid_remove()
 
     def __create_info_top_level(self, title, width=300, height=100, **kwargs):
-        # TODO: nastavit pozicia kde sa to bude zobrazovat
         info_window = ctk.CTkToplevel()
         info_window.title(title)
         info_window.geometry(f"{width}x{height}")

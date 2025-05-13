@@ -74,7 +74,6 @@ class SimilarityHandler:
         if ks_check_val:
             method_labels["KSTest"] = self.similarity_label_handler.label_similarity("KSTest", ks_weight)
 
-        # Combine weighted results if there's more than one method enabled
         if len(method_labels) > 0:
             self.similarity_label_handler.combine_weighted_labels(method_labels)
 

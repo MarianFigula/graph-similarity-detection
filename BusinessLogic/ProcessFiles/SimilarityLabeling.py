@@ -92,7 +92,6 @@ class SimilarityLabeling:
 
         weights = {}
         for method, col_name in method_labels.items():
-            # Extract weight from the column name format "Label Method (threshold, w=weight)"
             weight_str = col_name.split("w=")[1].rstrip(")")
             weights[col_name] = float(weight_str)
 
@@ -100,7 +99,6 @@ class SimilarityLabeling:
         for col_name, weight in weights.items():
             weighted_score += similarity_measures_df[col_name].astype(int) * weight
 
-        # Combined Weighted dat do df
         similarity_measures_df["Label"] = weighted_score >= 0.5
         similarity_measures_df["Weighted Similarity Score"] = weighted_score
 
