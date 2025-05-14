@@ -23,6 +23,9 @@ class MLPClassifierGraphSimilarity:
 
         self.uuid = str(uuid.uuid4())[:8]
 
+        if not os.path.exists(self.saved_models_dir):
+            os.makedirs(self.saved_models_dir)
+
     def load_data(self):
         if 'Unnamed: 0' in self.graphlet_counts.columns:
             self.graphlet_counts = self.graphlet_counts.drop('Unnamed: 0', axis=1)
