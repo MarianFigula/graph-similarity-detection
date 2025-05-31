@@ -178,21 +178,24 @@ class GUIProcessData:
         self.kstest_weight.set_disabled(not self.kstest_val.get())
 
     def __handle_compute_similarity(self):
-        orbit_counts_df = self.process_files.get_orbit_counts_df()
-        self.similarity_handler = SimilarityHandler(orbit_counts_df,
-                                                    self.input_entry.get(),
-                                                    self.create_snapshots.get_img_dir() if self.create_snapshots else None
-                                                    )
+        try:
+            orbit_counts_df = self.process_files.get_orbit_counts_df()
+            self.similarity_handler = SimilarityHandler(orbit_counts_df,
+                                                        self.input_entry.get(),
+                                                        self.create_snapshots.get_img_dir() if self.create_snapshots else None
+                                                        )
 
-        self.similarity_measures = self.similarity_handler.count_similarities(
-            hellinger_check_val=bool(self.hellinger_val.get()),
-            netsimile_check_val=bool(self.netsimile_val.get()),
-            resnet_check_val=bool(self.resnet_val.get()),
-            ks_check_val=bool(self.kstest_val.get())
-        )
+            self.similarity_measures = self.similarity_handler.count_similarities(
+                hellinger_check_val=bool(self.hellinger_val.get()),
+                netsimile_check_val=bool(self.netsimile_val.get()),
+                resnet_check_val=bool(self.resnet_val.get()),
+                ks_check_val=bool(self.kstest_val.get())
+            )
 
-        self.label_similarity_button.configure(state="normal")
-        self.export_similarity_measures()
+            self.label_similarity_button.configure(state="normal")
+            self.export_similarity_measures()
+        except Exception as e:
+            self.gui_util.display_error(self.process_data_frame, str(e), row=16, column=0, columnspan=2)
 
     def __handle_label_similarities(self):
         error = ""
