@@ -1,3 +1,4 @@
+import os
 import uuid
 import joblib
 import numpy as np
@@ -20,6 +21,9 @@ class RandomForestClassifierGraphSimilarity:
         self.y_prob = None
 
         self.uuid = str(uuid.uuid4())[:8]
+
+        if not os.path.exists(self.saved_models_dir):
+            os.makedirs(self.saved_models_dir)
 
     def prepare_dateset(self):
         if 'Unnamed: 0' in self.graphlet_counts.columns:
